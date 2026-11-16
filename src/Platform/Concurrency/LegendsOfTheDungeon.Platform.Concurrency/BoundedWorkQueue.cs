@@ -69,7 +69,7 @@ public sealed class BackgroundWorkItem
 }
 
 /// <summary>线程安全有界任务队列，保留关闭时所有未确认完成的任务标识。</summary>
-public sealed class BoundedWorkQueue
+public sealed class BoundedWorkChannel
 {
     private readonly object _gate = new();
     private readonly Dictionary<long, OutstandingWorkState> _outstanding = new();
@@ -78,7 +78,7 @@ public sealed class BoundedWorkQueue
 
     /// <summary>设置队列等待容量；执行中的任务由固定 Worker 数额外限制。</summary>
     /// <param name="capacity">等待队列的正数上限。</param>
-    public BoundedWorkQueue(int capacity)
+    public BoundedWorkChannel(int capacity)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
         _channel = Channel.CreateBounded<BackgroundWorkItem>(

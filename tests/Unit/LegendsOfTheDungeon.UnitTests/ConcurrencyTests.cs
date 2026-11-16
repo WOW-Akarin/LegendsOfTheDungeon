@@ -106,7 +106,7 @@ public sealed class ConcurrencyTests
     [Fact]
     public void WorkQueueBackpressureDuplicateAndClosingAreExplicit()
     {
-        var queue = new BoundedWorkQueue(2);
+        var queue = new BoundedWorkChannel(2);
         var first = new BackgroundWorkItem(1, static _ => ValueTask.CompletedTask);
         Assert.Equal(WorkOfferStatus.Accepted, queue.Offer(first));
         Assert.Equal(WorkOfferStatus.Duplicate, queue.Offer(first));
@@ -124,7 +124,7 @@ public sealed class ConcurrencyTests
     [Fact]
     public async Task WorkerExceptionIsIsolatedAndLaterWorkStillRuns()
     {
-        var queue = new BoundedWorkQueue(4);
+        var queue = new BoundedWorkChannel(4);
         var completed = new List<int>();
         var pool = new BackgroundWorkerPool(queue, workerCount: 1);
         queue.Offer(new BackgroundWorkItem(1, _ => throw new InvalidOperationException("secret-error-message")));
@@ -156,7 +156,7 @@ public sealed class ConcurrencyTests
     {
         using var cancelled = new CancellationTokenSource();
         cancelled.Cancel();
-        var queue = new BoundedWorkQueue(2);
+        var queue = new BoundedWorkChannel(2);
         var invoked = 0;
         queue.Offer(new BackgroundWorkItem(1, _ =>
         {
@@ -177,7 +177,7 @@ public sealed class ConcurrencyTests
     {
         var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var queue = new BoundedWorkQueue(1);
+        var queue = new BoundedWorkChannel(1);
         var pool = new BackgroundWorkerPool(queue, 1);
         Assert.Equal(WorkOfferStatus.Accepted, queue.Offer(new BackgroundWorkItem(21, async _ =>
         {
@@ -206,7 +206,7 @@ public sealed class ConcurrencyTests
     [Fact]
     public async Task ShutdownDrainsAcceptedTasksAndCapsWorkerParallelism()
     {
-        var queue = new BoundedWorkQueue(15);
+        var queue = new BoundedWorkChannel(15);
         var pool = new BackgroundWorkerPool(queue, 2);
         var active = 0;
         var maximum = 0;

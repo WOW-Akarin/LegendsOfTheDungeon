@@ -6,13 +6,14 @@ public sealed class WorkerFailure
     internal WorkerFailure(long id)
     {
         Id = id;
+        Code = "platform.worker.unhandled_exception";
     }
 
     /// <summary>失败任务 ID，供调用方在自己的安全范围内关联。</summary>
     public long Id { get; }
 
     /// <summary>固定错误代码；不得含异常、连接串及负载原文。</summary>
-    public string Code => "platform.worker.unhandled_exception";
+    public string Code { get; }
 }
 
 /// <summary>优雅关闭的稳定结果；未排空时必须处理 Outstanding 清单。</summary>
@@ -50,11 +51,11 @@ public sealed class WorkerShutdownReport
 }
 
 /// <summary>有限并行度、逐项错误隔离的后台 Worker 池，不授予任何 World 写入权限。</summary>
-public sealed class BackgroundWorkerPool
+public sealed class BackgroundWorkerPool : IAsyncDisposable
 {
     private readonly object _failureGate = new();
     private readonly List<WorkerFailure> _failures = [];
-    private readonly BoundedWorkQueue _queue;
+    private readonly BoundedWorkChannel _queue;
     private readonly CancellationTokenSource _stop = new();
     private readonly Task[] _workers;
     private readonly int _maximumFailureRecords;
@@ -66,7 +67,7 @@ public sealed class BackgroundWorkerPool
     /// <param name="queue">共享有界任务队列，调用方拥有接纳权。</param>
     /// <param name="workerCount">正数且固定的并行数。</param>
     /// <param name="maximumFailureRecords">保留的最多脱敏失败记录数。</param>
-    public BackgroundWorkerPool(BoundedWorkQueue queue, int workerCount, int maximumFailureRecords = 16)
+    public BackgroundWorkerPool(BoundedWorkChannel queue, int workerCount, int maximumFailureRecords = 16)
     {
         _queue = queue ?? throw new ArgumentNullException(nameof(queue));
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(workerCount);
@@ -84,10 +85,7 @@ public sealed class BackgroundWorkerPool
     public async Task<WorkerShutdownReport> ShutdownAsync(
         TimeSpan timeout, CancellationToken cancellationToken = default)
     {
-        if (timeout < TimeSpan.Zero)
-        {
-            throw new ArgumentOutOfRangeException(nameof(timeout));
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(timeout, TimeSpan.Zero);
 
         _queue.Complete();
         var drained = false;
@@ -107,12 +105,28 @@ public sealed class BackgroundWorkerPool
             failures = _failures.ToArray();
         }
 
+        var outstanding = _queue.SnapshotOutstanding();
         return new WorkerShutdownReport(
-            drained, _queue.SnapshotOutstanding(),
+            drained && outstanding.Count == 0, outstanding,
             Interlocked.Read(ref _succeeded),
             Interlocked.Read(ref _failed),
             Interlocked.Read(ref _cancelled),
             failures);
+    }
+
+    /// <summary>等待已发出的任务和 Worker 退出后释放取消源；调用方应先用限时 ShutdownAsync 停止接纳并取得未完成清单。</summary>
+    public async ValueTask DisposeAsync()
+    {
+        _queue.Complete();
+        _stop.Cancel();
+        try
+        {
+            await Task.WhenAll(_workers);
+        }
+        finally
+        {
+            _stop.Dispose();
+        }
     }
 
     private async Task ProcessAsync()
