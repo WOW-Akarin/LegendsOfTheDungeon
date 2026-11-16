@@ -76,7 +76,11 @@ public enum WorldEntityResult
     /// <summary>已达到有界实体/回调预算。</summary>
     CapacityExceeded,
     /// <summary>当前版本明确不支持跨世界转移。</summary>
-    TransferNotSupported
+    TransferNotSupported,
+    /// <summary>坐标落在可表示的 Grid 边界之外。</summary>
+    SpatialOutOfBounds,
+    /// <summary>目标 Cell 已显式卸载，必须重新激活。</summary>
+    CellUnloaded
 }
 
 /// <summary>注册前的不可变实体创建意图，不向调用方交付实体可变能力。</summary>
@@ -151,13 +155,16 @@ public sealed class WorldInstance
     private readonly object _gate = new();
     private readonly Dictionary<EntityId, Entry> _entries = [];
     private readonly WorldOwnershipRegistry _ownership;
+    private readonly WorldSpatialIndex _spatial;
     private WorldLifecycle _state = WorldLifecycle.Created;
 
     /// <summary>在共享协调器中为唯一 WorldId 预注册此世界；激活仍必须通过执行器租约。</summary>
     /// <param name="world">非空世界标识。</param>
     /// <param name="epoch">非空世界运行世代。</param>
     /// <param name="ownership">同进程全部世界共用的归属协调器。</param>
-    public WorldInstance(WorldId world, WorldEpoch epoch, WorldOwnershipRegistry ownership)
+    /// <param name="cellSize">三维 Grid Cell 边长（米），合法范围 1–4096。</param>
+    public WorldInstance(WorldId world, WorldEpoch epoch, WorldOwnershipRegistry ownership,
+        double cellSize = 32)
     {
         if (world.IsEmpty || epoch.IsEmpty)
         {
@@ -168,6 +175,7 @@ public sealed class WorldInstance
         World = world;
         Epoch = epoch;
         _ownership = ownership;
+        _spatial = new WorldSpatialIndex(cellSize);
         _ownership.RegisterWorld(this);
     }
 
@@ -220,6 +228,164 @@ public sealed class WorldInstance
 
         snapshot = default;
         return false;
+    }
+
+    /// <summary>空间索引 Cell 的固定边长，单位米。</summary>
+    public double CellSize => _spatial.CellSize;
+
+    /// <summary>Spatial 中附加/活跃实体计数；不包含已移除实体。</summary>
+    public int SpatialIndexedCount
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _spatial.IndexedCount;
+            }
+        }
+    }
+
+    /// <summary>已创建的 Grid Cell 数量（含显式 Unloaded 的空 Cell）。</summary>
+    public int SpatialCellCount
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _spatial.CellCount;
+            }
+        }
+    }
+
+    /// <summary>仅计算位置的 Cell 坐标，不改变任何世界或 Cell 状态。</summary>
+    /// <param name="position">有限世界位置。</param>
+    /// <param name="cell">成功时为 floor 计算的整数 Cell 坐标。</param>
+    /// <returns>位置可由当前 Grid 表示则为 true。</returns>
+    public bool TryLocateCell(Position position, out SpatialCellKey cell) =>
+        _spatial.TryCell(position, out cell);
+
+    /// <summary>获取 Cell 生命周期与实体数量的按值快照。</summary>
+    /// <param name="cell">待查 Cell。</param>
+    /// <param name="snapshot">结果快照。</param>
+    /// <returns>该 Cell 是否曾被创建。</returns>
+    public bool TryGetCell(SpatialCellKey cell, out SpatialCellSnapshot snapshot)
+    {
+        lock (_gate)
+        {
+            return _spatial.TrySnapshot(cell, out snapshot);
+        }
+    }
+
+    /// <summary>显式激活空 Cell；此前 Unloaded 的 Cell 只有此入口可重新进入。</summary>
+    /// <param name="context">P18 当前世界真实同步租约。</param>
+    /// <param name="cell">目标 Cell。</param>
+    /// <returns>成功、重复或容量/生命周期拒绝。</returns>
+    public SpatialCellResult ActivateCell(IWorldWriteContext context, SpatialCellKey cell)
+    {
+        Demand(context);
+        lock (_gate)
+        {
+            return _state == WorldLifecycle.Running
+                ? _spatial.Activate(cell) : SpatialCellResult.InvalidState;
+        }
+    }
+
+    /// <summary>只允许空 Cell 卸载；有成员时拒绝并保持索引不变。</summary>
+    /// <param name="context">P18 当前世界真实同步租约。</param>
+    /// <param name="cell">目标 Cell。</param>
+    /// <returns>成功、重复、占用或生命周期拒绝。</returns>
+    public SpatialCellResult UnloadCell(IWorldWriteContext context, SpatialCellKey cell)
+    {
+        Demand(context);
+        lock (_gate)
+        {
+            return _state == WorldLifecycle.Running
+                ? _spatial.Unload(cell) : SpatialCellResult.InvalidState;
+        }
+    }
+
+    /// <summary>按 Cell 筛选并精确欧氏距离判断，返回 Active 实体的 EntityId 升序快照。</summary>
+    /// <param name="center">查询中心。</param>
+    /// <param name="radius">非负米单位闭区间半径。</param>
+    /// <returns>不可变、已排序的实体快照；不返回内部能力引用。</returns>
+    public IReadOnlyList<WorldEntitySnapshot> QueryNearby(Position center, Distance radius)
+    {
+        lock (_gate)
+        {
+            var result = new List<WorldEntitySnapshot>();
+            foreach (var id in _spatial.Candidates(center, radius))
+            {
+                var entry = _entries[id];
+                if (entry.State == WorldEntityLifecycle.Active &&
+                    IsWithin(entry.Capabilities.Transform.Value.Position, center, radius.Meters))
+                {
+                    result.Add(Snapshot(entry));
+                }
+            }
+
+            return result.AsReadOnly();
+        }
+    }
+
+    /// <summary>按 Grid Cell 粗筛后精确检测三轴闭区间，返回 Active 实体升序快照。</summary>
+    /// <param name="bounds">合法闭区间 Bounds。</param>
+    /// <returns>与暴力扫描语义相同的不可变、已排序实体快照。</returns>
+    public IReadOnlyList<WorldEntitySnapshot> QueryRange(Bounds bounds)
+    {
+        lock (_gate)
+        {
+            var result = new List<WorldEntitySnapshot>();
+            foreach (var id in _spatial.Candidates(bounds))
+            {
+                var entry = _entries[id];
+                if (entry.State == WorldEntityLifecycle.Active &&
+                    bounds.Contains(entry.Capabilities.Transform.Value.Position))
+                {
+                    result.Add(Snapshot(entry));
+                }
+            }
+
+            return result.AsReadOnly();
+        }
+    }
+
+    /// <summary>从 P24 唯一 Transform 重建可丢弃的派生索引，不改变任何实体位置或代际。</summary>
+    /// <param name="context">P18 当前世界真实同步租约。</param>
+    /// <returns>是否在 Running/Draining 下完成同步重建。</returns>
+    public bool RebuildSpatialIndex(IWorldWriteContext context)
+    {
+        Demand(context);
+        lock (_gate)
+        {
+            if (_state is not (WorldLifecycle.Running or WorldLifecycle.Draining))
+            {
+                return false;
+            }
+
+            try
+            {
+                _spatial.Rebuild(_entries.Values.Where(entry => IsLive(entry.State))
+                    .Select(entry => (entry.Identity, entry.Capabilities.Transform.Value.Position)));
+                return true;
+            }
+            catch
+            {
+                _state = WorldLifecycle.Faulted;
+                throw;
+            }
+        }
+    }
+
+    private static WorldEntitySnapshot Snapshot(Entry entry) =>
+        new(entry.Identity, entry.State, entry.Capabilities.Transform.Value,
+            entry.Capabilities.Life.State, entry.Capabilities.Target.State.Selected);
+
+    private static bool IsWithin(Position point, Position center, double radius)
+    {
+        var dx = point.X - center.X;
+        var dy = point.Y - center.Y;
+        var dz = point.Z - center.Z;
+        return Math.Hypot(Math.Hypot(dx, dy), dz) <= radius;
     }
 
     /// <summary>只在有效 P18 Scope 内复制完整代际墓碑并按 EntityId 固定排序。</summary>
@@ -300,6 +466,7 @@ public sealed class WorldInstance
                 }
             }
 
+            _spatial.Clear();
             _ownership.UnregisterWorld(this);
             _state = WorldLifecycle.Stopped;
             return true;
@@ -347,6 +514,12 @@ public sealed class WorldInstance
                 return WorldEntityResult.CapacityExceeded;
             }
 
+            var spatialStatus = _spatial.ValidateDestination(seed.Transform.Position, out var startCell);
+            if (spatialStatus != WorldEntityResult.Added)
+            {
+                return spatialStatus;
+            }
+
             if (!_ownership.TryClaim(this, seed.Identity))
             {
                 return WorldEntityResult.WorldConflict;
@@ -363,8 +536,18 @@ public sealed class WorldInstance
                 throw;
             }
 
-            _entries[seed.Identity.Id] = new Entry(seed);
-            return WorldEntityResult.Added;
+            try
+            {
+                _entries[seed.Identity.Id] = new Entry(seed);
+                _spatial.Add(seed.Identity, startCell);
+                return WorldEntityResult.Added;
+            }
+            catch
+            {
+                // 技术代际已绑定，不能简单释放全局 Claim；统一故障封闭等待可信恢复。
+                _state = WorldLifecycle.Faulted;
+                throw;
+            }
         }
     }
 
@@ -439,7 +622,7 @@ public sealed class WorldInstance
     public WorldEntityResult Despawn(IWorldWriteContext context, EntityIdentity identity) =>
         RemoveCore(context, identity, dispose: true);
 
-    /// <summary>仅活动实体可更新唯一 Transform；空间索引原子联动属于 P20/P27。</summary>
+    /// <summary>统一的原子重定位入口：先准备 Spatial 目标 Cell，再同步提交索引和 P24 唯一 Transform。</summary>
     /// <param name="context">同步世界写入上下文。</param>
     /// <param name="identity">活动实体精确身份。</param>
     /// <param name="transform">新的有限位置与方向。</param>
@@ -455,8 +638,34 @@ public sealed class WorldInstance
                 return status;
             }
 
-            entry!.Capabilities.Transform.Relocate(context, transform);
-            return WorldEntityResult.Relocated;
+            var before = entry!.Capabilities.Transform.Value;
+            if (!_spatial.TryCell(before.Position, out var originalCell))
+            {
+                _state = WorldLifecycle.Faulted;
+                throw new InvalidOperationException("Canonical Transform is outside Spatial Grid.");
+            }
+
+            var spatialStatus = _spatial.ValidateDestination(transform.Position, out var destination);
+            if (spatialStatus != WorldEntityResult.Added)
+            {
+                return spatialStatus;
+            }
+
+            // 已通过同代际与真实租约校验，所有写入在同一 _gate 下完成，
+            // 读者无法看到索引先于 Transform 更新的中间状态。
+            try
+            {
+                context.Demand(identity.World, identity.Epoch, identity.Id, identity.Generation);
+                _spatial.Move(identity, originalCell, destination);
+                entry.Capabilities.Transform.Relocate(context, transform);
+                return WorldEntityResult.Relocated;
+            }
+            catch
+            {
+                // 不声称异常时自动回滚已部分提交的内存对象；世界必须停止工作并重建索引。
+                _state = WorldLifecycle.Faulted;
+                throw;
+            }
         }
     }
 
@@ -690,6 +899,7 @@ public sealed class WorldInstance
             // 提前清空自己的目标，否则稳定 ID 次序停机时先销毁的实体墓碑可能保留旧目标。
             entry.Capabilities.Target.Select(context, null);
             ClearInboundTargets(context, entry.Identity);
+            _spatial.Remove(entry.Identity, entry.Capabilities.Transform.Value.Position);
             context.RetireEntity(entry.Identity.Id, entry.Identity.Generation);
             _ownership.Release(this, entry.Identity);
             entry.Cleanup.Clear();
