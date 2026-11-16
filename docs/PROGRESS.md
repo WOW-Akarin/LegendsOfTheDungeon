@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `8bbedd6bf96a224317b032d802d11e774fca1ff7` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P09 / Command / Query / Event / REVIEW / B
+阶段 / 任务 / 状态 / 目标完成度：P09 / Command / Query / Event / ACCEPTED / B
 
 ## 目标与成功条件
 
@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P09 最终实现 CI run #56 已全绿：Unit 97/97、Architecture 16/16、P04/P05 Gate 全部通过；取消 enqueue 后 discard、Service Locator 搜索和 Runtime.Core 架构/lock 自审通过，当前进入独立 REVIEW。
+P09 已完成独立 Review 并 ACCEPTED；P10 尚未开始。
 
 ## 下一步（最多 5 项）
 
-1. 独立读取 REVIEW HEAD 的 Kernel Messaging、Runtime 端口/dispatcher 与 MessagingTests。
-2. 核对 REVIEW HEAD 自身 Unit 97+、Architecture、P04/P05 Gate 全绿。
-3. 核对 Runtime.Core P03 白名单、Solution、lock graph 与真实引用一致。
-4. 重查无 Service Locator、Kernel 无 Handler registry、Query Snapshot 无可变公开成员。
-5. 无必需问题后将 P09 ACCEPTED，再进入 P10。
+1. 开始 P10 — Platform Configuration / Logging。
+2. 建立模块独立 Options、启动期验证与配置 Hash。
+3. 建立结构化日志上下文 Module/World/Entity/Correlation，并定义日志脱敏。
+4. 启动身份/授权契约与默认拒绝；本地测试身份与生产身份分开。
+5. 错误配置必须在进入 Running 前失败并输出中文诊断。
 
 ## 契约、数据所有权与 ADR 变化
 
