@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+    <ProjectReference Include="../../../src/StaticData/Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj" />
+    <ProjectReference Include="../../../src/StaticData/Core/LegendsOfTheDungeon.StaticData.Core/LegendsOfTheDungeon.StaticData.Core.csproj" />
+    <ProjectReference Include="../../../src/StaticData/Json/LegendsOfTheDungeon.StaticData.Json/LegendsOfTheDungeon.StaticData.Json.csproj" />
+    <ProjectReference Include="../../../src/StaticData/Sql/LegendsOfTheDungeon.StaticData.Sql/LegendsOfTheDungeon.StaticData.Sql.csproj" />
+    <ProjectReference Include="../../../src/Platform/Persistence/LegendsOfTheDungeon.Platform.Persistence/LegendsOfTheDungeon.Platform.Persistence.csproj" />
+  </ItemGroup>
+</Project>

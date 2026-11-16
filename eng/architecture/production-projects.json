@@ -105,6 +105,62 @@
       "allowedProjectReferences": [],
       "allowedPublicApiReferences": [],
       "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/StaticData/Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj",
+      "assemblyName": "LegendsOfTheDungeon.StaticData.Abstractions",
+      "role": "Abstraction",
+      "module": null,
+      "allowedProjectReferences": [],
+      "allowedPublicApiReferences": [],
+      "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/StaticData/Core/LegendsOfTheDungeon.StaticData.Core/LegendsOfTheDungeon.StaticData.Core.csproj",
+      "assemblyName": "LegendsOfTheDungeon.StaticData.Core",
+      "role": "Core",
+      "module": null,
+      "allowedProjectReferences": [
+        "src/StaticData/Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj"
+      ],
+      "allowedPublicApiReferences": [
+        "src/StaticData/Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj"
+      ],
+      "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/StaticData/Json/LegendsOfTheDungeon.StaticData.Json/LegendsOfTheDungeon.StaticData.Json.csproj",
+      "assemblyName": "LegendsOfTheDungeon.StaticData.Json",
+      "role": "PlatformAdapter",
+      "module": null,
+      "allowedProjectReferences": [
+        "src/StaticData/Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj",
+        "src/StaticData/Core/LegendsOfTheDungeon.StaticData.Core/LegendsOfTheDungeon.StaticData.Core.csproj"
+      ],
+      "allowedPublicApiReferences": [
+        "src/StaticData/Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj",
+        "src/StaticData/Core/LegendsOfTheDungeon.StaticData.Core/LegendsOfTheDungeon.StaticData.Core.csproj"
+      ],
+      "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/StaticData/Sql/LegendsOfTheDungeon.StaticData.Sql/LegendsOfTheDungeon.StaticData.Sql.csproj",
+      "assemblyName": "LegendsOfTheDungeon.StaticData.Sql",
+      "role": "PlatformAdapter",
+      "module": null,
+      "allowedProjectReferences": [
+        "src/StaticData/Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj",
+        "src/StaticData/Core/LegendsOfTheDungeon.StaticData.Core/LegendsOfTheDungeon.StaticData.Core.csproj",
+        "src/StaticData/Json/LegendsOfTheDungeon.StaticData.Json/LegendsOfTheDungeon.StaticData.Json.csproj",
+        "src/Platform/Persistence/LegendsOfTheDungeon.Platform.Persistence/LegendsOfTheDungeon.Platform.Persistence.csproj"
+      ],
+      "allowedPublicApiReferences": [
+        "src/StaticData/Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj",
+        "src/StaticData/Core/LegendsOfTheDungeon.StaticData.Core/LegendsOfTheDungeon.StaticData.Core.csproj",
+        "src/StaticData/Json/LegendsOfTheDungeon.StaticData.Json/LegendsOfTheDungeon.StaticData.Json.csproj",
+        "src/Platform/Persistence/LegendsOfTheDungeon.Platform.Persistence/LegendsOfTheDungeon.Platform.Persistence.csproj"
+      ],
+      "allowedInternalsVisibleTo": []
     }
   ]
 }

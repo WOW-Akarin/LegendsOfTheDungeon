@@ -129,6 +129,22 @@
       },
       "legendsofthedungeon.platform.diagnostics": {
         "type": "Project"
+      },
+      "legendsofthedungeon.staticdata.abstractions": {
+        "type": "Project"
+      },
+      "legendsofthedungeon.staticdata.core": {
+        "type": "Project",
+        "dependencies": {
+          "LegendsOfTheDungeon.StaticData.Abstractions": "[1.0.0, )"
+        }
+      },
+      "legendsofthedungeon.staticdata.json": {
+        "type": "Project",
+        "dependencies": {
+          "LegendsOfTheDungeon.StaticData.Abstractions": "[1.0.0, )",
+          "LegendsOfTheDungeon.StaticData.Core": "[1.0.0, )"
+        }
       }
     }
   }
