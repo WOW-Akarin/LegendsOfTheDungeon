@@ -24,11 +24,11 @@
 
 ## 当前停点
 
-P07 首次实现 CI run #36 在 build 被 CS0133 阻断：TimeSpan.MaxValue.Ticks 不是编译期常量。正在把 Duration 上限改为 static readonly，语义与边界不变。
+P07 run #37 已越过 CS0133，但 build 被 CA1036×2 阻断：Duration/Tick 实现 IComparable 却缺比较运算符。正在补齐 < <= > >=，不 suppress Analyzer。
 
 ## 下一步（最多 5 项）
 
-1. 提交 CS0133 修复并读取下一次 CI。
+1. 提交 CA1036 比较运算符修复并读取下一次 CI。
 2. 读取首次 CI 的 Analyzer/P04/Unit/Architecture/P05 Gate 真实结果。
 3. 若失败，从第一个真实诊断修复，不引入系统时钟或真实 Sleep。
 4. 核对 Timer 边界、同 Tick、取消、UTC 跳变、离线 cap 与溢出实际证据。

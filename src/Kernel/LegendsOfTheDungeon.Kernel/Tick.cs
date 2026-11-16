@@ -44,4 +44,28 @@ public readonly record struct Tick : IComparable<Tick>
     {
         return Value.CompareTo(other.Value);
     }
+
+    /// <summary>
+    /// 判断左侧 Tick 是否早于右侧。
+    /// </summary>
+    public static bool operator <(Tick left, Tick right) =>
+        left.Value < right.Value;
+
+    /// <summary>
+    /// 判断左侧 Tick 是否早于或等于右侧。
+    /// </summary>
+    public static bool operator <=(Tick left, Tick right) =>
+        left.Value <= right.Value;
+
+    /// <summary>
+    /// 判断左侧 Tick 是否晚于右侧。
+    /// </summary>
+    public static bool operator >(Tick left, Tick right) =>
+        left.Value > right.Value;
+
+    /// <summary>
+    /// 判断左侧 Tick 是否晚于或等于右侧。
+    /// </summary>
+    public static bool operator >=(Tick left, Tick right) =>
+        left.Value >= right.Value;
 }

@@ -113,4 +113,28 @@ public readonly record struct Duration : IComparable<Duration>
     {
         return Milliseconds.CompareTo(other.Milliseconds);
     }
+
+    /// <summary>
+    /// 判断左侧持续时间是否小于右侧。
+    /// </summary>
+    public static bool operator <(Duration left, Duration right) =>
+        left.Milliseconds < right.Milliseconds;
+
+    /// <summary>
+    /// 判断左侧持续时间是否小于等于右侧。
+    /// </summary>
+    public static bool operator <=(Duration left, Duration right) =>
+        left.Milliseconds <= right.Milliseconds;
+
+    /// <summary>
+    /// 判断左侧持续时间是否大于右侧。
+    /// </summary>
+    public static bool operator >(Duration left, Duration right) =>
+        left.Milliseconds > right.Milliseconds;
+
+    /// <summary>
+    /// 判断左侧持续时间是否大于等于右侧。
+    /// </summary>
+    public static bool operator >=(Duration left, Duration right) =>
+        left.Milliseconds >= right.Milliseconds;
 }
