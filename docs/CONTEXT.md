@@ -1,23 +1,24 @@
 # 当前上下文
 
-更新时间：2026-11-17；main 直推，无分支。
-项目：通用 C#/.NET10 游戏服务器，非 WoW 3.3.5a 客户端兼容；上游 AzerothCore 固定 SHA `17f9f9d5003708136c798ab4ef8c1b9762251bad` 只作通用机制参考。
-架构：模块化单体、P18 WorldExecutor 独占同步写租约、P17 WorldInstance 唯一 Registry、P24 Transform 唯一空间真相、P20 派生 Spatial/Cell/Grid。
+更新时间：2026-11-17；GitHub `WOW-Akarin/LegendsOfTheDungeon`；main 直推、不创建分支。
+项目：通用 .NET 10 游戏服务器；非 WoW 3.3.5a 客户端兼容。架构基线：模块化单体、World Actor 独占同步 Scope、领域唯一真相、P03 严格依赖边界。
 
-## 当前阶段
+## 前置阶段
 
-P00–P20 与 P24(B) 已 ACCEPTED。P20 归档 HEAD `ec80ea7a7ce2755a70807f750c0a4fe9d4f01f0a`，CI #188 九 Job SUCCESS（257 Unit/16 Architecture）。
+P00–P20、P24(B)、P26(C) 已正式 ACCEPTED。最新 P26 归档 HEAD `58e84431d5acf70a743f5a3ffc6a38be90bf7e65`，CI #195 10/10 SUCCESS（275 Unit/16 Architecture）。P17 WorldInstance、P18 WorldExecutor、P19 确定性 Tick、P20 Spatial Grid、P26 控制/标签均具备真实验证。
 
-正在实施 **P26 Control / Ownership / Tags（ACCEPTED，目标 C）**，尚无本次 CI PASS。P21 Visibility 要求 P20 + P26，不能跳过依赖。
+## 当前 P21
 
-## P26 边界
+**P21 — Visibility / Relevance（IN_PROGRESS，目标 C）**，依赖 P20 + P26 已满足，首次代码 HEAD 尚无 CI 通过证据。
 
-- 领域 Entities.Core 明确 Control/Tags/Relationships 单一写所有者；临时来源带 World/Epoch/EntityId/Generation + 序号与种类；四类 Owner/Creator/Controller/Summoner 不共享角色槽位。
-- WorldInstance 负责 P18 Scope、活跃代际校验、禁止跨角色关系环、销毁全部入向引用；只导出冻结的 Tag、Control 与关系快照，供未来 P21 Visibility。
-- P19 状态 Hash 升级到 schema v3，记录来源分布及序号，不把双来源 Stun 当成单来源 Stun。
-- CI 从 9 Job 扩为 10 Job，新增真实 `WorldControlProbe`。实现 #192、独立 REVIEW #193、正式 ACCEPTED #194 均十 Job SUCCESS，P26 C 完整验收。
-- 生产 Host/网络授权 P60、P21 Visibility Enter/Leave、P25 Stats、P62.F 完整回放、P64 性能仍未完成；未预设通过结论。
+- `Runtime.World.WorldVisibilitySet` 为每个完整 Observer EntityIdentity 私有的派生有界可见集合；不占有可变实体或第二套 Transform。真实 P18 World Scope 发布版本化只读 `WorldVisibilityView` 与 `WorldVisibilityDelta`。
+- 查询从 P20 Nearby 空间候选按距离闭区间筛选，P26 Required/Excluded Tags、Life 与 Control 状态后按 EntityId 排序；观察者本人永不属于自身列表。
+- 每次成功 Refresh 获得连续 per-observer SnapshotVersion 和 World/Epoch/Observer；重复刷新不重复 Enter/Leave。目标销毁或旧代际被替换、观察者退出/死亡、Tag/Control/位置跨界在下次 Refresh 输出正确 Delta；历史视图不被原地修改。
+- 最多 1024 Visible、半径最大 4096m，容量溢出不会发布部分版本；Faulted 世界拒绝刷新，P18 过期租约不能写。
+- 新增 Unit、真实独立 WorldVisibilityProbe、第 11 个 CI 阻断 Job。P21 实现、独立 REVIEW、正式 ACCEPTED 皆需本身全部 11 Job SUCCESS。
 
-## 下一安全动作
+## 不属于 P21 验收
 
-P26 实现、独立审查、正式验收已全部 10/10 SUCCESS；开始下一独立阶段 P21 Visibility / Relevance（P20 + P26 前置已经满足），需独立实现 Enter/Leave Delta、Snapshot Version 与过滤测试，不提前标记 P21 PASS。入口：[PROGRESS](PROGRESS.md)、[P26](progress/P26.md)、[WORLD_CONTROL](modules/WORLD_CONTROL.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)、[恢复规范](RECOVERY_WORKFLOW.md)。
+目前只实现 Pull + Refresh，不是即时网络推送。P23 Packet/客户端编码、P27 Movement、P60 Host 授权、P62 Replay 和 P64 高负载尚未通过。P21 完成后按路线图推进后续已满足依赖的阶段。
+
+入口：[PROGRESS](PROGRESS.md)、[P21](progress/P21.md)、[WORLD_VISIBILITY](modules/WORLD_VISIBILITY.md)、[DEVELOPMENT_ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)。
