@@ -43,12 +43,12 @@
 | P11/P13/P14/P15/P16/P18 原有集成回归 | PASS |
 | 完整 CI | **7/7 SUCCESS** |
 | 独立 REVIEW HEAD CI | **7/7 SUCCESS**，run #173，230 Unit / 16 Architecture |
-| 正式 ACCEPTED HEAD CI | NOT_RUN |
+| 正式 ACCEPTED HEAD CI | **7/7 SUCCESS**，run #174，230 Unit / 16 Architecture |
 
 过程失败透明保存：#167 NuGet NU1004 漏传递 Project、#168 P03-008 缺职责说明、#169 world-lifecycle YAML 路径误拼、#170 真停机残留 Target。均修复而非跳过，#171 七 Job 首次完整 SUCCESS，#172 加固故障标记与 Claim 回滚后再七 Job 全绿。
 
 ## 审查结论与待关闭项
 
-P17 C 规定的注册/唯一所有权、状态转换、重复操作、销毁过期回执、跨世界冲突、拒绝转移在实现层已有真实验证证据。审查未发现本阶段技术 C 必需代码阻塞，独立 REVIEW HEAD run #173 已七 Job 全部 SUCCESS，**P17 正式 ACCEPTED**。正式 ACCEPTED HEAD 仍须独立 CI 核验并归档。
+P17 C 规定的注册/唯一所有权、状态转换、重复操作、销毁过期回执、跨世界冲突、拒绝转移在实现层已有真实验证证据。审查未发现本阶段技术 C 必需代码阻塞，独立 REVIEW HEAD run #173 已七 Job 全部 SUCCESS，**P17 正式 ACCEPTED**。正式 ACCEPTED HEAD `404381f6764e301218d4ef76cea499abb90d46f3` 的 run #174 七 Job 全部 SUCCESS，P17 技术 C 结论正式收口。
 
 后续有界边界：P19 Tick/Scheduler、P20 Spatial、P27 移动输入、真实 Timer/AI/订阅适配器、P60 生产 Host、P58.T 多节点转移、P64/P66 性能长稳，均不属于此次 ACCEPTED 的事实。
