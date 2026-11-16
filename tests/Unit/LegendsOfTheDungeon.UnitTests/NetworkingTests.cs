@@ -106,6 +106,43 @@ public sealed class NetworkingTests
     }
 
     [Fact]
+    public void ConcurrentProducersCannotOverfillBoundedSocketSendQueue()
+    {
+        var buffer = new OutboundFrameBuffer(
+            Options(maxPayload: 64, frames: 7, queuedBytes: 70,
+                framesPerSecond: 100_000, bytesPerSecond: 1_000_000));
+        var results = new FrameOfferStatus[500];
+        Parallel.For(0, results.Length, i =>
+        {
+            results[i] = buffer.Offer(new byte[8]);
+        });
+
+        Assert.Equal(7, results.Count(static result => result == FrameOfferStatus.Accepted));
+        Assert.Equal(493, results.Count(static result => result == FrameOfferStatus.Busy));
+        Assert.Equal(7, buffer.QueuedFrames);
+        Assert.Equal(56, buffer.QueuedBytes);
+        buffer.Complete();
+    }
+
+    [Fact]
+    public void ConcurrentRateRequestsCannotBypassSingleConnectionBudget()
+    {
+        var budget = new FrameRateBudget(5, 50);
+        var accepted = 0;
+        Parallel.For(0, 500, _ =>
+        {
+            if (budget.TryAccept(10, 10))
+            {
+                Interlocked.Increment(ref accepted);
+            }
+        });
+
+        Assert.Equal(5, accepted);
+        Assert.False(budget.TryAccept(1, 999));
+        Assert.True(budget.TryAccept(1, 1010));
+    }
+
+    [Fact]
     public async Task AcceptedOutgoingPayloadIsSnapshottedBeforeCallerMutation()
     {
         using var wire = new MemoryStream();
