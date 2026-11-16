@@ -116,7 +116,7 @@ static async Task OversizedAsync()
         BinaryPrimitives.WriteUInt32BigEndian(header, uint.MaxValue);
         await raw.GetStream().WriteAsync(header);
         _ = await FailureAsync(receiver, FrameFailure.TooLarge);
-        Check(receiver.OfferSend([1]) == FrameOfferStatus.Closed,
+        Check(receiver.OfferSend(new byte[] { 1 }) == FrameOfferStatus.Closed,
             "oversize must close connection");
     }
     finally
@@ -160,7 +160,7 @@ static async Task SlowHeaderAsync()
             accepted.GetStream(), Options(readTimeoutMs: 80));
         await raw.GetStream().WriteAsync(new byte[] { 0, 0 });
         _ = await FailureAsync(receiver, FrameFailure.Timeout);
-        Check(receiver.OfferSend([3]) == FrameOfferStatus.Closed,
+        Check(receiver.OfferSend(new byte[] { 3 }) == FrameOfferStatus.Closed,
             "timeout must abort connection");
     }
     finally
@@ -179,18 +179,18 @@ static async Task BidirectionalAsync()
             IPAddress.Loopback, Port(listener), Options());
         using var accepted = await acceptTask;
         var serverStream = accepted.GetStream();
-        Check(client.OfferSend([7, 3, 1]) == FrameOfferStatus.Accepted,
+        Check(client.OfferSend(new byte[] { 7, 3, 1 }) == FrameOfferStatus.Accepted,
             "tcp writer did not accept frame");
         Check((await LengthPrefixedFrameCodec.ReadAsync(serverStream, Options()))!
             .SequenceEqual(new byte[] { 7, 3, 1 }), "server did not receive frame");
 
-        await LengthPrefixedFrameCodec.WriteAsync(serverStream, [5, 4], Options());
+        await LengthPrefixedFrameCodec.WriteAsync(serverStream, new byte[] { 5, 4 }, Options());
         Check((await client.ReceiveAsync())!.SequenceEqual(new byte[] { 5, 4 }),
             "client did not receive reply");
         var report = await client.StopAsync(TimeSpan.FromSeconds(2));
         Check(report.Drained && report.WrittenFrames == 1 && report.QueuedFrames == 0,
             "graceful send shutdown did not drain");
-        Check(client.OfferSend([9]) == FrameOfferStatus.Closed,
+        Check(client.OfferSend(new byte[] { 9 }) == FrameOfferStatus.Closed,
             "stopped connection accepted new work");
     }
     finally
@@ -210,7 +210,7 @@ static async Task DisconnectAsync()
         await using var receiver = new FramedStreamTransport(accepted.GetStream(), Options());
         raw.Client.Shutdown(SocketShutdown.Send);
         Check(await receiver.ReceiveAsync() is null, "EOF at frame boundary must return null");
-        Check(receiver.OfferSend([1]) == FrameOfferStatus.Closed, "EOF must release transport");
+        Check(receiver.OfferSend(new byte[] { 1 }) == FrameOfferStatus.Closed, "EOF must release transport");
         await receiver.DisposeAsync();
     }
     finally
@@ -271,7 +271,7 @@ static async Task SlowReaderBackpressureAsync()
 
         Check(busy, "slow peer must eventually trigger bounded backpressure");
         var report = await client.StopAsync(TimeSpan.FromMilliseconds(100));
-        Check(client.OfferSend([1]) == FrameOfferStatus.Closed, "shutdown accepted new frames");
+        Check(client.OfferSend(new byte[] { 1 }) == FrameOfferStatus.Closed, "shutdown accepted new frames");
         Check(report.QueuedFrames >= 0 && report.QueuedFrames <= 1,
             "send queue exceeded declared bound");
     }
