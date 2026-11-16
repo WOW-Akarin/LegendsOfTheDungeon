@@ -45,7 +45,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M1 基础。  
-当前阶段：P18 — WorldMailbox / WorldExecutor，**REVIEW**。P00–P16 已验收，P17 仍受 P18/P24 依赖阻塞，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P18 — WorldMailbox / WorldExecutor，**ACCEPTED**。P00–P16 已验收，P17 仍受 P18/P24 依赖阻塞，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 

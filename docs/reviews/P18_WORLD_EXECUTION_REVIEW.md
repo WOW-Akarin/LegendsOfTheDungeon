@@ -1,6 +1,6 @@
 # P18 — WorldMailbox / WorldExecutor 独立四视角 Review
 
-- 状态：REVIEW
+- 状态：ACCEPTED
 - 代码审查基线：5d51a41920110471f31e8efd3c157d9c3386f243
 - 实现 CI #159 SUCCESS（六 Job、210 Unit、16 Architecture）
 - 时间：2026-11-16
@@ -23,4 +23,4 @@ Runtime.Abstractions 定义窄 Port，Platform.WorldExecution 使用 P12 有界 
 - #151–#155 失败与修复保留真实日志；#156–#159 连续全部六 Job SUCCESS。
 - P18 的技术 Guard 不是 P17 真实 Entity 系统或 P19 逻辑 Tick；P60 生产签发/授权实现仍未交付；完整线上闭环与 P64/P66 性能尚不具证据。
 
-**结论：P18 技术 C 范围必需未解决项 0，允许进入独立 REVIEW HEAD CI。** 不得在这次 CI 前将阶段标记为正式 ACCEPTED。
+**结论：P18 技术 C 范围必需未解决项 0；独立 REVIEW HEAD 04c862c 的 CI run #160 六 Job 全部 SUCCESS，P18 正式 ACCEPTED。** 正式 ACCEPTED HEAD 尚需六 Job CI 单独核验。
