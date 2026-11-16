@@ -174,14 +174,15 @@ internal static class ArchitectureRuleEngine
 
             foreach (var target in targets)
             {
-                if (!indegree.ContainsKey(target))
+                if (!indegree.TryGetValue(target, out var targetIndegree))
                 {
                     continue;
                 }
 
-                indegree[target]--;
+                targetIndegree--;
+                indegree[target] = targetIndegree;
 
-                if (indegree[target] == 0)
+                if (targetIndegree == 0)
                 {
                     queue.Enqueue(target);
                 }
@@ -353,7 +354,7 @@ internal static class ArchitectureRuleEngine
         return violations;
     }
 
-    private static IReadOnlySet<string> EmptySet()
+    private static HashSet<string> EmptySet()
     {
         return new HashSet<string>(StringComparer.Ordinal);
     }

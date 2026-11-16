@@ -24,13 +24,13 @@
 
 ## 当前停点
 
-P03 第一批 Architecture Test 实现已准备落库：显式生产项目清单、真实项目图/API/IVT 扫描、P03-001～008 规则、正/负例 fixture 和 Architecture 失败注入 Gate。下一步读取首次 CI。
+P03 首次实现 CI run #8 已失败：restore 通过，build 被 CA1854/CA1859 Analyzer 共 5 个 error 阻止。正在按 Analyzer 建议修复集合访问/具体类型，不降低 Gate。
 
 ## 下一步（最多 5 项）
 
-1. 推送 P03 Architecture Test 实现并读取首次 GitHub Actions run。
-2. 若编译/测试失败，从第一个真实错误修复，不删规则、不弱化 fixture。
-3. CI 通过后记录实际 Architecture test 数量与三类负向 Gate。
+1. 提交 CA1854/CA1859 修复并读取下一次 CI。
+2. 若出现新的编译/测试失败，从新的第一个真实错误继续修复。
+3. CI 通过后记录 Architecture test 数量与 build/unit/architecture 三类负向 Gate。
 4. 独立核对真实生产图、公共 API/IVT 扫描和无关键词误报原则。
 5. 全部出口证据满足后进入 REVIEW。
 
@@ -51,7 +51,8 @@ P03 不改变业务状态所有权和公共业务契约。新增的是工程级�
 | 命令/检查 | 环境与时间 | 结果 | 报告 |
 |---|---|---|---|
 | P02 依赖状态 | GitHub，2026-11-16 | PASS | progress/P02.md |
-| P03 真实 Architecture Tests | 尚未实现 | NOT_RUN | 待 CI |
+| P03 run #8 build | GitHub Actions，2026-11-16 | FAIL：CA1854×1 / CA1859×4 | run 43803313873 |
+| P03 真实 Architecture Tests | build 未通过 | NOT_RUN | 待修复后 CI |
 | P03 故意违规负例 | 尚未实现 | NOT_RUN | 待 CI |
 
 ## 失败、阻塞、风险与未验证假设

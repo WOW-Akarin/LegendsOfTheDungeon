@@ -118,7 +118,7 @@ internal static class RepositoryArchitectureLoader
             manifest.SharedHubModuleFanInThreshold);
     }
 
-    private static IReadOnlySet<string> ReadProjectReferences(
+    private static HashSet<string> ReadProjectReferences(
         string repositoryRoot,
         string projectPath)
     {

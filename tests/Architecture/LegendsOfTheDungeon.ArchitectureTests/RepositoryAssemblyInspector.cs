@@ -224,8 +224,8 @@ internal static class RepositoryAssemblyInspector
         string sourcePath,
         string member,
         Type? type,
-        IReadOnlyDictionary<string, string> projectByAssemblyName,
-        ICollection<ApiExposure> exposures)
+        Dictionary<string, string> projectByAssemblyName,
+        List<ApiExposure> exposures)
     {
         if (type is null)
         {
