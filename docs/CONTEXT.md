@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P05 — ACCEPTED
+当前阶段：P06 — IN_PROGRESS
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P00–P05 已 ACCEPTED。Kernel 已具备 9 个 Strong 身份/代际值、Result/KernelError/ValidationIssue、严格 canonical ID 文本边界和跨类型编译 Gate。P06 尚未开始。
+P00–P05 已 ACCEPTED。P06 已启动，正在实现纯数学 Geometry：Position/Vector/Distance/Angle/Transform/Bounds，并固定右手坐标、Z 向上、米/弧度与 Yaw 归一约定。
 
 ## 阻塞与技术债
 
-当前无 P05 阻塞。P06 将在现有 Kernel 基础值之上实现 Geometry；不得让纯数学类型依赖 Runtime/World。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P06 阻塞。Geometry 必须保持纯数学，不依赖 Runtime/World；非有限数在构造边界拒绝，有限算术溢出显式失败。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
@@ -59,6 +59,7 @@ P00–P05 已 ACCEPTED。Kernel 已具备 9 个 Strong 身份/代际值、Result
 - [P03 证据](progress/P03.md)
 - [P04 证据](progress/P04.md)
 - [P05 证据](progress/P05.md)
+- [P06 证据](progress/P06.md)
 - [Kernel 基础值契约](modules/KERNEL.md)
 - [架构职责审查](reviews/ARCHITECTURE_RESPONSIBILITY_REVIEW.md)
 - [文档质量审查](reviews/DOCUMENTATION_QUALITY_REVIEW.md)

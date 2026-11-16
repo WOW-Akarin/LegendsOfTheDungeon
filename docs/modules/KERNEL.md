@@ -70,3 +70,25 @@ Canonical 文本形式是 `InvariantCulture` 下的十进制无符号整数：
 
 
 > 命名说明：路线图中的通用 “Error” 概念在 C# API 中命名为 `KernelError`，以满足启用的 CA1716 跨语言 API 规则；语义没有改变。
+
+
+## Geometry（P06）
+
+Geometry 是纯数学值契约，不拥有世界状态，也不查询 Runtime：
+
+- `Position`：三维世界位置，单位米；
+- `Vector`：三维向量，单位由调用语境决定；位置差向量单位米；
+- `Distance`：非负米值；
+- `Angle`：方向角，弧度，canonical 范围 `[0, 2π)`；
+- `Transform`：Position + Yaw；
+- `Bounds`：轴对齐闭区间边界盒。
+
+坐标系为右手系，`+Z` 向上；Yaw=0 指向 `+X`，正方向绕 `+Z` 逆时针朝 `+Y`。所有 public 构造拒绝 NaN/Infinity。零向量本身合法，但归一化零向量失败。有限输入的算术若产生非有限结果，必须显式报溢出。
+
+序列化格式仍由 Adapter 决定；Kernel 不引用 JSON/数据库序列化库。测试用 test-only wire DTO 验证数值字段经过 JSON 回读后可重新构造同一 Geometry 值，不把具体 JSON 形态升级为 Kernel wire 契约。
+
+契约 ID / 版本：`kernel.geometry.v1`  
+提供模块 / 状态所有者：Kernel / 纯数学值，无可变领域状态  
+同步或异步 / 合法执行上下文：纯值，无线程亲和性  
+持久化与传输：Adapter 负责格式；回到 Kernel 时重新执行有限数、范围与 Bounds 不变量校验  
+相关测试 / ADR / AC 参考：P06 Unit + P03/P04 持续 Gate；不参考 AzerothCore 专有公式
