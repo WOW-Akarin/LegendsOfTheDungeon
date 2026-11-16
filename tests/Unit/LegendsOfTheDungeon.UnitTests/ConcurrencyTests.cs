@@ -208,6 +208,55 @@ public sealed class ConcurrencyTests
     }
 
     [Fact]
+    public async Task LogicalSchedulerAndReservedMailboxFeedBoundedWorkersEndToEnd()
+    {
+        var scheduler = new LogicalScheduler<string>(4);
+        scheduler.Schedule(5, "normal-a");
+        scheduler.Schedule(5, "normal-b");
+        scheduler.Schedule(7, "future");
+        var mailbox = new BoundedMailbox<string>(
+            normalCapacity: 2, criticalCapacity: 1, maximumCriticalBurst: 1);
+
+        foreach (var delivery in scheduler.DrainDue(5, 2))
+        {
+            Assert.Equal(MailboxOfferResult.Accepted,
+                mailbox.Offer(delivery.Payload, MailboxLane.Normal));
+        }
+
+        // 普通车道已满，数据库回执仍应占用独立预留容量。
+        Assert.Equal(MailboxOfferResult.Busy, mailbox.Offer("overflow", MailboxLane.Normal));
+        Assert.Equal(MailboxOfferResult.Accepted, mailbox.Offer("db-receipt", MailboxLane.Critical));
+        Assert.Equal(MailboxOfferResult.Busy, mailbox.Offer("critical-overflow", MailboxLane.Critical));
+        Assert.Empty(scheduler.DrainDue(6, 3));
+
+        var queue = new BoundedWorkChannel(3);
+        var observed = new List<string>();
+        await using var workers = new BackgroundWorkerPool(queue, 1);
+        long nextId = 1;
+        foreach (var item in mailbox.Drain(3))
+        {
+            var payload = item.Value;
+            Assert.Equal(WorkOfferStatus.Accepted, queue.Offer(new BackgroundWorkItem(nextId++, _ =>
+            {
+                observed.Add(payload);
+                return ValueTask.CompletedTask;
+            })));
+        }
+
+        mailbox.Complete();
+        Assert.Equal(MailboxOfferResult.Closed, mailbox.Offer("late", MailboxLane.Normal));
+
+        var report = await workers.ShutdownAsync(TimeSpan.FromSeconds(5));
+        Assert.True(report.Drained);
+        Assert.Empty(report.Outstanding);
+        Assert.Equal(["db-receipt", "normal-a", "normal-b"], observed);
+
+        var future = Assert.Single(scheduler.DrainDue(7, 1));
+        Assert.Equal("future", future.Payload);
+        Assert.Equal(0, scheduler.Count);
+    }
+
+    [Fact]
     public async Task FailureSummariesAreBoundedAndNeverContainExceptions()
     {
         var queue = new BoundedWorkChannel(8);
