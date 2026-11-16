@@ -28,6 +28,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [progress/P14.md](progress/P14.md)：P14 指标、诊断阶段证据
 - [progress/P15.md](progress/P15.md)：P15 JSON/SQL 数据加载阶段记录
 - [modules/STATIC_DATA.md](modules/STATIC_DATA.md)：P15 通用 Schema、JSON/SQL 来源、版本 Hash 与冻结索引契约
+- [reviews/P15_STATIC_DATA_REVIEW.md](reviews/P15_STATIC_DATA_REVIEW.md)：P15 JSON/SQL 独立四视角审查
 - [modules/DIAGNOSTICS.md](modules/DIAGNOSTICS.md)：P14 固定维度指标、健康、Trace 与慢操作契约
 - [reviews/P14_DIAGNOSTICS_REVIEW.md](reviews/P14_DIAGNOSTICS_REVIEW.md)：P14 独立四视角审查
 - [operations/P64_BASELINE.md](operations/P64_BASELINE.md)：P64.F 测试环境和负载准备清单（尚未测量）
@@ -38,7 +39,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M1 基础。  
-当前阶段：P15 — Static Data Schema / Loader，**IN_PROGRESS**。P00–P14 已验收；P15 正按 P15.J/P15.S 开发，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P15 — Static Data Schema / Loader，**REVIEW**。P00–P14 已验收；P15 代码及 CI #131 五 Job 全绿，独立 REVIEW/ACCEPTED HEAD 尚待验收，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 
