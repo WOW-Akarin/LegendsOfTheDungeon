@@ -24,14 +24,14 @@
 
 ## 当前停点
 
-P04 首次 CI run #16：现有 Solution 与旧 Gate 全绿，但缺失 XML 夹具未触发 CS1591。根因是 GenerateDocumentationFile 在 Directory.Build.targets 设置过晚；正在前移到 Directory.Build.props，并增加 LOTD0005 防止普通项目直接关闭 Gate。
+P04 run #17 已证明 CS1591、Generated/ThirdParty 例外、LOTD0002/3/4 全部有效；自审发现 LOTD0005 夹具创建后漏调用，正在补齐第 9 个负例。
 
 ## 下一步（最多 5 项）
 
-1. 提交 GenerateDocumentationFile 前移和 LOTD0005 修复。
-2. 读取下一次 CI，确认缺失 Public XML 真正命中 CS1591。
-3. 核对 Generated/ThirdParty、非法例外、NoWarn/WarningsNotAsErrors、直接关闭 Gate 的全部夹具。
-4. 记录 documentation-gate artifact，并完成中文语义人工 Review。
+1. 提交 LOTD0005 负例实际调用。
+2. 读取下一次 CI，确认九组文档 Gate 全部按预期通过/失败。
+3. 记录新的 documentation-gate artifact。
+4. 独立核对中文语义 Review、AC 来源规则、新增说明文档中文和 N/A 理由。
 5. 全部出口证据满足后进入 REVIEW。
 
 ## 修改文件及原因
@@ -52,7 +52,8 @@ P04 不改变业务公共契约和状态所有权。新增工程级文档质量 
 |---|---|---|---|
 | P03 依赖状态 | GitHub，2026-11-16 | PASS | progress/P03.md |
 | P04 run #16 主 Solution | GitHub Actions，2026-11-16 | PASS | run 43804622279 |
-| P04 缺失 XML 负例 | GitHub Actions，2026-11-16 | FAIL：未触发 CS1591，已定位 targets 设置过晚 | run 43804622279 |
+| P04 run #16 缺失 XML 负例 | GitHub Actions，2026-11-16 | FAIL：未触发 CS1591，已定位 targets 设置过晚 | run 43804622279 |
+| P04 run #17 文档 Gate | GitHub Actions，2026-11-16 | PASS（8 项已执行）；自审发现 LOTD0005 未调用，最终证据仍待补 | run 43804767321 / artifact 14196769817 |
 | 合规/缺失/例外自测夹具 | 尚未实现 | NOT_RUN | 待 CI |
 | 中文语义与复杂逻辑人工 Checklist | 尚未建立 | NOT_RUN | 待 Review |
 

@@ -253,5 +253,7 @@ expect_failure_with   "NoWarn 绕过 CS1591 被拒绝"   "$FIXTURE_ROOT/no-warn-
 
 expect_failure_with   "WarningsNotAsErrors 降级 CS1591 被拒绝"   "$FIXTURE_ROOT/not-as-error-bypass/Fixture.csproj"   "LOTD0004"   "$LOG_ROOT/not-as-error-bypass.log" | tee -a "$SUMMARY"
 
+expect_failure_with   "普通项目直接关闭 GenerateDocumentationFile 被拒绝"   "$FIXTURE_ROOT/disable-without-exemption/Fixture.csproj"   "LOTD0005"   "$LOG_ROOT/disable-without-exemption.log" | tee -a "$SUMMARY"
+
 echo >>"$SUMMARY"
 echo "PASS: P04 文档质量自动 Gate 自测全部通过。" | tee -a "$SUMMARY"
