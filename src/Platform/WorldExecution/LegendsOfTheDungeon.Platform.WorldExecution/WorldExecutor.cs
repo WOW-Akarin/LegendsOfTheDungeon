@@ -598,6 +598,17 @@ public sealed class WorldExecutor
 
         public WorldId World => _owner._world;
         public WorldEpoch Epoch => _scope.Epoch;
+        public void DemandWorld(WorldId world, WorldEpoch epoch)
+        {
+            if (world != _owner._world || epoch != _scope.Epoch ||
+                world.IsEmpty || epoch.IsEmpty)
+            {
+                throw new WorldAccessException(WorldAccessFault.InvalidGeneration);
+            }
+
+            _owner.DemandScope(_scope);
+        }
+
         public void Demand(
             WorldId world, WorldEpoch epoch, EntityId entity, EntityGeneration generation)
         {

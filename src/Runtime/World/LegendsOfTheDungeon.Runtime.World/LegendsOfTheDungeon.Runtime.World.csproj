@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../../Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj" />
+    <ProjectReference Include="../../Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj" />
+    <ProjectReference Include="../../../Entities/Core/LegendsOfTheDungeon.Entities.Core/LegendsOfTheDungeon.Entities.Core.csproj" />
+  </ItemGroup>
+</Project>

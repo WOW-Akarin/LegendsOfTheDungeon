@@ -1,26 +1,24 @@
 # 当前进度
 
 更新时间：2026-11-16 +08:00
-分支：main（按要求直接更新，不创建分支）
-当前阶段：P24 — Entity Identity / Transform / Life（ACCEPTED，目标 B）
-最近已验收：P00–P16、P18、P24(B)；P17/P19 尚未验收
+分支：main（直接更新，不创建分支）
+当前阶段：P17 — WorldInstance / Registry / Lifecycle（IN_PROGRESS，目标 C）
+最近已验收：P00–P16、P18、P24(B)，P17/P19 未验收
 
-## 最近稳定基线
+## 最近可靠证据
 
-- P18 实现基线：5d51a41920110471f31e8efd3c157d9c3386f243；独立 REVIEW：04c862cfe52991701e8011c0f67a2da3d31c5565。
-- P18 正式 ACCEPTED：95d2e3028453fb712bd1eafcb6d27e634c52397d，CI run #161 六 Job 全绿。
-- P18 归档 HEAD：1f1a01b06a967acce29c0762a65b46c08055f636；CI run #162 六 Job 全绿。
+- P18 WorldExecutor ACCEPTED：六 Job 全绿，技术同步 Scope/双车道/回执/过期门禁。
+- P24(B) ACCEPTED：实现 #163、独立 REVIEW #164、正式 ACCEPTED #165 及归档 #166 均六 Job 全绿，216/216 Unit、16/16 Architecture。
+- P24 归档 HEAD：`94329e2c2e98d35eef8d7afc2614d9dc1629f597`；CI #166（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43887320098）六 Job SUCCESS。
 
-## P24 当前工作
+## P17 当前交付（实现 CI 待验证）
 
-- 新增 Entities.Core：实体四元组身份、唯一 Transform 能力、Life/Target 窄能力、固定组合容器。
-- P18 同步世界租约绑定实体原归属；目标跨世界与旧 Epoch 拒绝；死亡清目标。
-- 新增真实 WorldExecutor Unit 测试、P03 架构白名单、Solution 与锁图。
-- [P24 阶段记录](progress/P24.md)、[Entities 领域契约](modules/ENTITIES.md)。
-- 实现 HEAD `52088378c23c320796e669760dfc1a1ffc4f350e`，CI #163 六 Job 全部 SUCCESS；216/216 Unit、16/16 Architecture，P11/P13/P14/P15/P16/P18 真实集成回归 PASS。
-- 四视角审查已记录：[P24 独立审查](reviews/P24_ENTITIES_REVIEW.md)。REVIEW HEAD `b5af3d4247645515d6f582110331d43edb9d7bd9` 的 CI #164 六 Job 全绿，P24(B) 正式 ACCEPTED；正式 ACCEPTED HEAD `e4aaf50b18d9f059946d2bf3f4b9c3af76f9e61c` 的 CI #165 六 Job SUCCESS（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43886904893）。
+- `Runtime.World` 实现世界生命周期和实体代际注册表，新增 World 级真实租约校验。
+- 跨世界归属仅一处共享 Claim，不将实体可变实例暴露给其它 World；销毁保留旧代际 tombstone。
+- `Remove/Despawn/Stop` 走有界同步清理，并调用 P18 RetireEntity 使旧回执失效；目标自动清理与注册表代际校验。
+- 新建独立 P17 世界生命周期 Unit 和真实并行 Worker 集成 Probe；CI 从六 Job 增加为七 Job。
+- [P17 阶段记录](progress/P17.md)、[技术契约](modules/WORLD_LIFECYCLE.md)。
 
 ## 下一安全动作
 
-1. P24 已按规定完成实现 #163、独立 REVIEW #164、正式 ACCEPTED #165 三次完整六 Job 验证。
-2. 下一阶段 P17 WorldInstance/Registry/Lifecycle；P19 仍依赖 P17，不得越过其注册与生命周期 Gate。
+观察本次实现 HEAD 的七个真实 CI Job，遇 FAIL 先修复，完成独立 REVIEW 后才允许 P17 ACCEPTED 和后续 P19 WorldTick。尚不声称 P19/P20/P27/Host/正式性能完成。

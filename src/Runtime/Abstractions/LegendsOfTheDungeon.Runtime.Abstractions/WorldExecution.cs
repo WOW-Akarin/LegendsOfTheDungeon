@@ -25,6 +25,11 @@ public interface IWorldWriteContext
     /// <summary>当前世界生命周期 Epoch。</summary>
     WorldEpoch Epoch { get; }
 
+    /// <summary>验证当前 World/Epoch 的真实同步租约，不要求已有实体；供 P17 世界生命周期使用。</summary>
+    /// <param name="world">领域世界本来拥有的 WorldId。</param>
+    /// <param name="epoch">世界实例本来拥有的 Epoch。</param>
+    void DemandWorld(WorldId world, WorldEpoch epoch);
+
     /// <summary>对实体写入前必须显式验证领域实体绑定的 WorldId、Epoch、真实租约和 Generation。</summary>
     /// <param name="world">领域实体原本拥有的 WorldId，禁止直接从当前执行器推导填充。</param>
     /// <param name="epoch">领域实体原本绑定的 WorldEpoch，不是外部消息无条件提供的值。</param>

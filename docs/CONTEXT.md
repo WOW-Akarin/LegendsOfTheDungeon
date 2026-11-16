@@ -1,32 +1,21 @@
 # 当前上下文
 
-更新时间：2026-11-16 +08:00
-分支：main（用户要求直接更新、不建立分支）
-当前里程碑：M1 基础 → M2 最小世界
-当前阶段：P24 — Entity Identity / Transform / Life（ACCEPTED，目标 B）
+更新时间：2026-11-16 +08:00；分支：main
+范围：通用 C#/.NET10 游戏服务器，不兼容 WoW 3.3.5a 客户端；上游 AzerothCore 固定 SHA `17f9f9d5003708136c798ab4ef8c1b9762251bad` 仅作机制参考。
+基线：SDK 10.0.404、PostgreSQL 18、Linux x64；10 World/10,000 Entity/50ms Tick 仍是未验证的目标档位。
 
-## 不变的范围与架构
+## 架构不变量
 
-- 通用 C# / .NET 10 游戏服务器核心；不兼容 WoW 3.3.5a 客户端；研究 AzerothCore 固定 SHA `17f9f9d5003708136c798ab4ef8c1b9762251bad` 的通用机制。
-- 模块化单体、World Actor、Ports & Adapters；领域状态有唯一所有者，只有有效 WorldExecutor 同步 Scope 可以写 World。
-- 双车道有界 Mailbox，异步结果带 World/Epoch/Entity/Generation/RequestSeq 回执；默认安全拒绝，禁止 DB/网络 Worker 持有可变实体引用。
-- 统一 .NET SDK 10.0.404；Linux x64；PostgreSQL 18；后续目标 10 World / 10,000 实体、50ms 逻辑 Tick，尚未有负载通过证据。
+模块化单体 / World Actor / Ports & Adapters；WorldExecutor 是唯一世界同步写租约，DB/Network Worker 只能入队，进出消息必须有界并二次检查身份、Epoch、Generation、RequestSeq。领域核心不依赖具体 DB/Host/Transport。不可通过万能 Manager/Service Locator、假成功和跳过门禁完成任务。
 
-## 稳定的已验收阶段
+## 阶段真相
 
-P00–P16、P18 和 P24（B）已 ACCEPTED。P18 具有真实 WorldExecutor Guard、异步回执、故障与限额证据；最终归档 HEAD `1f1a01b` CI #162 六 Job 全绿。P17 WorldInstance 的 P24 前置条件已解除，可进入开发；P19 WorldTick 受 P17 阻塞。
+P00–P16、P18、P24(B) ACCEPTED。P24 归档 HEAD `94329e2c2e98d35eef8d7afc2614d9dc1629f597` 的 CI #166 六 Job SUCCESS，现进入 P17（IN_PROGRESS，目标 C）。P17 直接依赖 P15.J/P18/P24，已满足。P19 仍依赖 P17 的正式验收。
 
-## P24 当前进展和停点
+P17 当前开发：`Runtime.World` 世界与实体 Registry、显式共享跨世界唯一归属、状态机、P18 世界级租约、同步清理接口、读快照和目标活跃代际校验，配合新的 `WorldLifecycleProbe` 七 Job CI。**当前实现 CI 尚未跑完，不记录 PASS**。
 
-本次建立 `Entities.Core` 领域薄能力：四元组不可变身份、Transform 唯一位置真相、只读 LifeState、窄 TargetState、同步 World Demand Guard；固定组合容器不提供可变能力集合或服务定位。已编写 `EntityCapabilitiesTests`，并调整 Solution、P03 白名单、NuGet locked 图；实现 HEAD `5208837` CI #163、独立 REVIEW HEAD `b5af3d4` CI #164、正式 ACCEPTED HEAD `e4aaf50` CI #165 三次均六 Job SUCCESS（216 Unit、16 Architecture）；P24(B) 已完整验收。
+风险：清理异常保留 Claim 交由未来 Host 恢复，不声称世界状态原子回滚；TransferNotSupported；真实 Timer/AI/Spatial/Tick、生产身份、性能等仍未完成。
 
-下一安全动作：推进 P17 WorldInstance/Registry/Lifecycle，建立跨世界唯一归属、实体创建/移除/销毁状态机，并在 P17 接线后补真实活跃目标 Generation 校验。
+下一安全动作：核对 P17 实现 HEAD 七 Job CI，修复失败，执行独立四视角 REVIEW 后再 ACCEPTED。
 
-仍未完成：P17 世界注册/实体生命周期、真实 Target 存在性、Transform/Spatial 原子协调、P19 Tick、P32 Health、生产授权 Host、P62 回放、P64/P66 性能长稳。
-
-## 恢复入口
-
-- [当前状态](PROGRESS.md) / [P24 阶段记录](progress/P24.md) / [Entities 模块契约](modules/ENTITIES.md)
-- [路线图](DEVELOPMENT_ROADMAP.md) / [项目范围](PROJECT_SPEC.md) / [架构](ARCHITECTURE.md)
-- [P18 证据](progress/P18.md) / [WorldExecutor 契约](modules/WORLD_EXECUTION.md)
-- [恢复流程](RECOVERY_WORKFLOW.md) / [构建门禁](operations/BUILD.md)
+入口：[PROGRESS](PROGRESS.md)、[P17 记录](progress/P17.md)、[世界生命周期契约](modules/WORLD_LIFECYCLE.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)、[恢复规则](RECOVERY_WORKFLOW.md)。
