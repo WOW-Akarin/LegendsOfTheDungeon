@@ -1,9 +1,10 @@
 # P21 — Visibility / Relevance 独立四视角审查
 
-- 状态：REVIEW，目标 C，**尚未正式 ACCEPTED**
+- 状态：ACCEPTED，目标 C
 - 稳定实现 HEAD：`0af03e5a96b743e2ecce85dcc6335e9d95fa2901`
 - 实现 CI #197：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43916141338，11/11 SUCCESS
-- 独立 REVIEW HEAD：本次审查提交，CI NOT_RUN；正式 ACCEPTED HEAD：NOT_RUN
+- 独立 REVIEW HEAD：`fe790ec26a11699e38e2b54f917268faf3dd5c98`，CI #198（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43916929617）11/11 SUCCESS
+- 正式 ACCEPTED HEAD：本次状态提交，CI NOT_RUN
 - 直接依赖 P20 Spatial / P26 Control+Tags 已 ACCEPTED；P17 世界生命周期、P18 同步租约、P19 Tick 亦已验收。保持 main 直推、无分支。
 
 ## 1. 功能与确定性视图
@@ -44,7 +45,7 @@
 | P21 容量拒绝不发布/旧 Scope 拒绝 Probe | PASS |
 | 原有 10 Job（P17–P20/P26 + 网络/DB/诊断） | PASS |
 | 实现 HEAD 完整 CI | **11/11 SUCCESS** |
-| 独立 REVIEW HEAD | NOT_RUN |
+| 独立 REVIEW HEAD | **11/11 SUCCESS**，run #198，290 Unit/16 Architecture |
 | 正式 ACCEPTED HEAD | NOT_RUN |
 
 失败透明保留：#196 初始实现 CS0165 观察者 definite assignment、CA1859 具体返回类型要求，构建 FAIL；严格修复后 #197 十一 Job 全绿，没有关闭或放宽任何 Gate。
@@ -53,4 +54,4 @@
 
 P21 C 路线图要求的 VisibilitySet、Distance/Tag/State Filter、Enter/Leave Delta、只读 View、World/Epoch/快照版本与边界重复/状态变化/实体销毁/快照不原位变更均由真实 CI 验证，未发现当前 C 出口必需修复的代码阻塞。
 
-**但是独立 REVIEW HEAD 尚未执行自己的 CI，当前仍是 REVIEW。** 待本审查 HEAD 11 Job 全绿，再提交正式 ACCEPTED 并独立核验 ACCEPTED HEAD；P21 完成不代表客户端协议、推送或 P64 性能已实现。
+独立 REVIEW HEAD run #198 十一 Job 全部 SUCCESS，P21 C 必需出口阻塞 0，**正式 ACCEPTED**；正式验收状态 HEAD 本身仍需独立 11 Job 复核。此结论不代表客户端 Packet、网络推送或 P64 性能已经实现。

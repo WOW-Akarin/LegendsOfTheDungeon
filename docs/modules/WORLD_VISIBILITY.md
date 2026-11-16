@@ -1,6 +1,6 @@
 # P21 — Visibility / Relevance 技术契约
 
-状态：REVIEW（目标 C）。直接依赖 P20 Spatial 和 P26 Control/Tags 均已正式 ACCEPTED。稳定实现 HEAD `0af03e5a96b743e2ecce85dcc6335e9d95fa2901` CI #197 11/11 SUCCESS，独立 REVIEW HEAD CI 待核验。
+状态：ACCEPTED（目标 C）。直接依赖 P20 Spatial 和 P26 Control/Tags 均已正式 ACCEPTED。实现 #197、独立 REVIEW HEAD `fe790ec26a11699e38e2b54f917268faf3dd5c98` CI #198 均 11/11 SUCCESS；正式 ACCEPTED HEAD CI 待核验。
 
 ## WorldVisibilitySet 的读取边界
 
@@ -37,3 +37,7 @@
 - #196 因 CS0165（观察者快照初始化）和 CA1859（私有集合返回类型）在 Release 编译阶段 FAIL；保留原记录并遵守分析门禁修复。
 - #197（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43916141338）**11/11 SUCCESS**，290 Unit / 16 Architecture；P21 五类真实边界/状态/退休/观察者隔离/背压探针成功，原有十 Job 全绿。
 - 独立四视角 REVIEW 文件：[P21_VISIBILITY_REVIEW](../reviews/P21_VISIBILITY_REVIEW.md)；当前独立 REVIEW HEAD 及 ACCEPTED HEAD CI 未执行，不提前验收。
+
+## 独立审查与正式 C 验收
+
+[P21 四视角审查](../reviews/P21_VISIBILITY_REVIEW.md) 的独立 REVIEW HEAD `fe790ec26a11699e38e2b54f917268faf3dd5c98` CI #198 十一 Job 全绿，确认当前 C 必需阻塞 0，P21 正式 ACCEPTED。状态提交本身仍要独立 11 Job 核验。P23 网络广播、P60 Host 和 P64 规模负载不在此结论内。
