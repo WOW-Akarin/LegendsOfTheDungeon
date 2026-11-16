@@ -143,7 +143,7 @@ public static class StaticCatalogBuilder
             AppendInt32(hasher, field.MaxLength);
         }
 
-        AppendInt32(hasher, rows.Count);
+        AppendInt32(hasher, rows.Length);
         foreach (var row in rows)
         {
             AppendText(hasher, row.Id);
