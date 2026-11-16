@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P08 已启动，尚未提交 Random 实现。
+P08 Random 实现与 Unit 已准备落库：xoshiro256** v1、状态导出恢复、固定精度 Probability、正整数 WeightedSelector、Combat/Loot/AI 稳定独立流。
 
 ## 下一步（最多 5 项）
 
-1. 实现 IRandom / RandomState / DeterministicRandom。
-2. 实现 Probability / WeightedOption / WeightedSelector。
-3. 实现 RandomStreamKind / RandomStreams 稳定流派生。
-4. 添加 known-vector、状态恢复、边界概率/权重、AI/Loot 隔离测试。
-5. 运行 P03/P04/P05/P06/P07 回归并独立 Review。
+1. 提交 P08 Random 与 Unit。
+2. 读取首次 CI 的 Analyzer/P04/Unit/Architecture/P05 Gate 真实结果。
+3. 若失败，从第一个真实诊断修复，不改变算法版本来迎合测试。
+4. 核对 known vector、状态恢复、概率/权重边界与 AI/Loot 隔离实际证据。
+5. 独立自审无 HashCode/System.Random 后进入 REVIEW。
 
 ## 契约、数据所有权与 ADR 变化
 
