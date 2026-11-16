@@ -15,6 +15,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [progress/](progress/)：阶段验收证据
 - [templates/](templates/)：CONTEXT、PROGRESS 与阶段归档模板
 - [RECOVERY_WORKFLOW.md](RECOVERY_WORKFLOW.md)：恢复顺序、状态迁移、更新触发点与 BLOCKED 规则
+- [operations/BUILD.md](operations/BUILD.md)：SDK、NuGet 锁文件与统一验证入口
 
 ## 当前状态
 

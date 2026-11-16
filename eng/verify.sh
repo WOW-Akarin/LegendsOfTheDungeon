@@ -8,7 +8,7 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_NOLOGO=1
 
 dotnet --info
-dotnet restore LegendsOfTheDungeon.slnx --nologo
+dotnet restore LegendsOfTheDungeon.slnx --nologo --locked-mode
 dotnet build LegendsOfTheDungeon.slnx --configuration Release --no-restore --nologo
 
 rm -rf artifacts/test-results

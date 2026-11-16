@@ -16,6 +16,7 @@ P00 必须在代码出现前冻结足以约束后续实现的工程方向、首�
 - 目标框架保持 `.NET 10` / `net10.0`，与三份设计基线一致。
 - 2026-11-16 核查时 .NET 10 仍为受支持的 LTS；即使 .NET 11 已发布，也不在 P00 静默升级目标框架。
 - P02 必须在实际 CI/开发环境执行 `dotnet --info`，选择**实际安装并验证过的 10.0.xxx SDK** 写入 `global.json`。
+- P02 于 2026-11-16 在 GitHub Actions Linux x64 runner 实际验证 SDK `10.0.404`（MSBuild `18.9.15`），`global.json` 因此固定为 `10.0.404`；这不是根据网页版本号臆填。
 - `global.json` 使用精确 SDK 版本，`rollForward` 采用 `latestPatch`，`allowPrerelease=false`。
 - 在 P02 实测前不填造 SDK feature band 或补丁号。
 

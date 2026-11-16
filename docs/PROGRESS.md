@@ -23,15 +23,15 @@
 
 ## 当前停点
 
-P02 CI run #2 已全绿。为强化干净环境可复现性，正在由 CI 生成 NuGet packages.lock.json；生成后提交并切换 --locked-mode 再做最终 Review。
+P02 CI run #3 已全绿并生成 4 个 NuGet lock file；锁文件已取回准备提交，统一 restore 正切换为 --locked-mode。
 
 ## 下一步（最多 5 项）
 
-1. 读取锁文件生成 CI，并下载 nuget-lock-files artifact。
-2. 将生成的 packages.lock.json 提交到对应 4 个项目。
-3. 把正式 restore 切换到 --locked-mode 并再次跑 CI。
-4. 更新 ADR-0002/BUILD 文档与 P02 验收证据。
-5. 独立 Review 通过后将 P02 ACCEPTED。
+1. 提交 4 个 packages.lock.json 并以 --locked-mode 运行下一次 CI。
+2. 核对 locked restore、Release build、Unit、Architecture、负向 Gate 与 artifact。
+3. 完成工程文件/项目数量/链接/状态自审。
+4. 进入 REVIEW 并更新 ADR-0002/BUILD 证据。
+5. Review 无必需问题后将 P02 ACCEPTED。
 
 ## 修改文件及原因
 

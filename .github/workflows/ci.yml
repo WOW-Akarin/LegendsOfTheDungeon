@@ -39,16 +39,6 @@ jobs:
       - name: Verify negative build and test gates
         run: ./eng/verify-negative-gates.sh
 
-      - name: Upload generated NuGet lock files
-        uses: actions/upload-artifact@v6
-        with:
-          name: nuget-lock-files
-          path: |
-            src/**/packages.lock.json
-            tests/**/packages.lock.json
-          if-no-files-found: error
-          retention-days: 14
-
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v6
