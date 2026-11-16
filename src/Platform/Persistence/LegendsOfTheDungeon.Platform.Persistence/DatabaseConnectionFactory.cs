@@ -44,8 +44,27 @@ public sealed class DatabaseConnectionFactory
     /// <param name="isolationLevel">不能使用 Unspecified。</param>
     /// <param name="cancellationToken">取消信号。</param>
     /// <returns>拥有连接和事务的可异步释放作用域。</returns>
-    public async Task<PersistenceTransaction> BeginTransactionAsync(
-        IsolationLevel isolationLevel, CancellationToken cancellationToken = default)
+    public Task<PersistenceTransaction> BeginTransactionAsync(
+        IsolationLevel isolationLevel, CancellationToken cancellationToken = default) =>
+        BeginTransactionCoreAsync(isolationLevel, null, cancellationToken);
+
+    /// <summary>仅供受控故障测试创建事务，正式生产调用应使用无注入的普通入口。</summary>
+    /// <param name="isolationLevel">明确的事务隔离级别。</param>
+    /// <param name="injector">显式的故障点实现。</param>
+    /// <param name="cancellationToken">取消信号。</param>
+    /// <returns>带可控故障点的事务作用域。</returns>
+    public Task<PersistenceTransaction> BeginTransactionWithFaultInjectionAsync(
+        IsolationLevel isolationLevel, IPersistenceFailureInjector injector,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(injector);
+        return BeginTransactionCoreAsync(isolationLevel, injector, cancellationToken);
+    }
+
+    private async Task<PersistenceTransaction> BeginTransactionCoreAsync(
+        IsolationLevel isolationLevel,
+        IPersistenceFailureInjector? injector,
+        CancellationToken cancellationToken)
     {
         if (!Enum.IsDefined(isolationLevel) || isolationLevel == IsolationLevel.Unspecified)
         {
@@ -56,7 +75,7 @@ public sealed class DatabaseConnectionFactory
         try
         {
             var transaction = await connection.BeginTransactionAsync(isolationLevel, cancellationToken);
-            return new PersistenceTransaction(connection, transaction);
+            return new PersistenceTransaction(connection, transaction, injector);
         }
         catch
         {

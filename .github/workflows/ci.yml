@@ -94,7 +94,7 @@ jobs:
       CI: 'true'
       DOTNET_NOLOGO: '1'
       DOTNET_CLI_TELEMETRY_OPTOUT: '1'
-      LOTD_TEST_POSTGRES: 'Host=127.0.0.1;Port=5432;Username=lotd_test;Password=ephemeral_test_password;Database=lotd_test;Timeout=10'
+      LOTD_TEST_POSTGRES: 'Host=127.0.0.1;Port=5432;Username=lotd_test;Password=ephemeral_test_password;Database=lotd_test;Maximum Pool Size=1;Timeout=10'
     steps:
       - name: Checkout
         uses: actions/checkout@v5

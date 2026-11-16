@@ -266,6 +266,88 @@ try
             "成功批量写入必须由调用方明确提交。");
     }
 
+    await using (var transaction = await factory.BeginTransactionWithFaultInjectionAsync(
+        IsolationLevel.ReadCommitted, new FailAt(PersistenceFailurePoint.BeforeCommit)))
+    {
+        await transaction.ExecuteNonQueryAsync(new ParameterizedCommand(
+            "INSERT INTO lotd_p11_probe.version_probe (id, version, payload) VALUES (777, 0, 1)", []));
+        try
+        {
+            await transaction.CommitAsync();
+            throw new InvalidOperationException("提交前故障没有终止事务。");
+        }
+        catch (TimeoutException)
+        {
+            Check(transaction.State == PersistenceTransactionState.Active,
+                "提交前故障应保持可回滚状态。");
+        }
+    }
+
+    await using (var transaction = await factory.BeginTransactionWithFaultInjectionAsync(
+        IsolationLevel.ReadCommitted, new FailAt(PersistenceFailurePoint.AfterCommit)))
+    {
+        await transaction.ExecuteNonQueryAsync(new ParameterizedCommand(
+            "INSERT INTO lotd_p11_probe.idempotency_probe (request_id, result) "
+            + "VALUES (@request_id, 9) ON CONFLICT (request_id) DO NOTHING",
+            [new SqlParameterValue("@request_id", DbType.String, "lost-ack-001")]));
+        Check(await transaction.CommitAsync() == CommitOutcome.Unknown,
+            "已落库但确认回执丢失必须报告 Unknown。");
+        Check(transaction.State == PersistenceTransactionState.OutcomeUnknown,
+            "Unknown 提交必须冻结当前会话。");
+        try
+        {
+            await transaction.ExecuteScalarAsync(new ParameterizedCommand("SELECT 1", []));
+            throw new InvalidOperationException("Unknown 事务不应再执行命令。");
+        }
+        catch (InvalidOperationException exception) when (
+            exception.Message.Contains("结果未知", StringComparison.Ordinal))
+        {
+            // Unknown 后必须重新建连接并查询持久账本。
+        }
+    }
+
+    await using (var transaction = await factory.BeginTransactionWithFaultInjectionAsync(
+        IsolationLevel.ReadCommitted, new FailAt(PersistenceFailurePoint.AfterRollback)))
+    {
+        await transaction.ExecuteNonQueryAsync(new ParameterizedCommand(
+            "INSERT INTO lotd_p11_probe.version_probe (id, version, payload) VALUES (778, 0, 1)", []));
+        try
+        {
+            await transaction.RollbackAsync();
+            throw new InvalidOperationException("回滚结果丢失故障未触发。");
+        }
+        catch (TimeoutException)
+        {
+            Check(transaction.State == PersistenceTransactionState.OutcomeUnknown,
+                "回滚确认丢失不允许报告 RolledBack。");
+        }
+    }
+
+    await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
+    {
+        var uncommitted = await transaction.ExecuteScalarAsync(new ParameterizedCommand(
+            "SELECT COUNT(*) FROM lotd_p11_probe.version_probe WHERE id IN (777,778)", []));
+        Check(Convert.ToInt64(uncommitted, CultureInfo.InvariantCulture) == 0,
+            "提交前/回滚后故障遗留了不应存在的行。");
+
+        var persisted = await transaction.ExecuteScalarAsync(new ParameterizedCommand(
+            "SELECT COUNT(*) FROM lotd_p11_probe.idempotency_probe "
+            + "WHERE request_id=@request_id",
+            [new SqlParameterValue("@request_id", DbType.String, "lost-ack-001")]));
+        Check(Convert.ToInt64(persisted, CultureInfo.InvariantCulture) == 1,
+            "丢失确认后必须查询到真实提交的幂等账本。");
+        var retry = await transaction.ExecuteNonQueryAsync(new ParameterizedCommand(
+            "INSERT INTO lotd_p11_probe.idempotency_probe (request_id, result) "
+            + "VALUES (@request_id, 999) ON CONFLICT (request_id) DO NOTHING",
+            [new SqlParameterValue("@request_id", DbType.String, "lost-ack-001")]));
+        Check(retry == 0, "Unknown 消歧后重复请求不应再次写入。");
+        Check(await transaction.CommitAsync() == CommitOutcome.Committed,
+            "消歧事务应成功提交。");
+    }
+
+    Console.WriteLine("P11 failure injection PASS: before commit, after actual commit, "
+        + "after actual rollback, unknown-receipt ledger recovery.");
+
     Console.WriteLine("P11 migration and bounded bulk PASS: repeat, checksum, "
         + "failed DDL rollback, prevalidation, atomic batch failure.");
 
@@ -285,5 +367,23 @@ static void Check(bool condition, string reason)
     if (!condition)
     {
         throw new InvalidOperationException(reason);
+    }
+}
+
+internal sealed class FailAt : IPersistenceFailureInjector
+{
+    private readonly PersistenceFailurePoint _point;
+
+    public FailAt(PersistenceFailurePoint point)
+    {
+        _point = point;
+    }
+
+    public void Trigger(PersistenceFailurePoint point)
+    {
+        if (point == _point)
+        {
+            throw new TimeoutException("专用测试故障点：模拟数据库确认回执丢失。");
+        }
     }
 }

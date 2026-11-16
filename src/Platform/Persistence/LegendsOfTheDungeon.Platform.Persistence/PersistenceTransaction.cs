@@ -31,11 +31,14 @@ public sealed class PersistenceTransaction : IAsyncDisposable
 {
     private readonly DbConnection _connection;
     private readonly DbTransaction _transaction;
+    private readonly IPersistenceFailureInjector? _injector;
 
-    internal PersistenceTransaction(DbConnection connection, DbTransaction transaction)
+    internal PersistenceTransaction(DbConnection connection, DbTransaction transaction,
+        IPersistenceFailureInjector? injector)
     {
         _connection = connection;
         _transaction = transaction;
+        _injector = injector;
     }
 
     /// <summary>获得事务状态。</summary>
@@ -74,10 +77,12 @@ public sealed class PersistenceTransaction : IAsyncDisposable
     {
         EnsureActive();
         cancellationToken.ThrowIfCancellationRequested();
+        _injector?.Trigger(PersistenceFailurePoint.BeforeCommit);
         State = PersistenceTransactionState.OutcomeUnknown;
         try
         {
             await _transaction.CommitAsync(cancellationToken);
+            _injector?.Trigger(PersistenceFailurePoint.AfterCommit);
             State = PersistenceTransactionState.Committed;
             return CommitOutcome.Committed;
         }
@@ -96,6 +101,7 @@ public sealed class PersistenceTransaction : IAsyncDisposable
         cancellationToken.ThrowIfCancellationRequested();
         State = PersistenceTransactionState.OutcomeUnknown;
         await _transaction.RollbackAsync(cancellationToken);
+        _injector?.Trigger(PersistenceFailurePoint.AfterRollback);
         State = PersistenceTransactionState.RolledBack;
     }
 
