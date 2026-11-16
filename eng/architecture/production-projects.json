@@ -23,6 +23,21 @@
         "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj"
       ],
       "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/Runtime/Core/LegendsOfTheDungeon.Runtime.Core/LegendsOfTheDungeon.Runtime.Core.csproj",
+      "assemblyName": "LegendsOfTheDungeon.Runtime.Core",
+      "role": "Core",
+      "module": null,
+      "allowedProjectReferences": [
+        "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj",
+        "src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj"
+      ],
+      "allowedPublicApiReferences": [
+        "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj",
+        "src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj"
+      ],
+      "allowedInternalsVisibleTo": []
     }
   ]
 }

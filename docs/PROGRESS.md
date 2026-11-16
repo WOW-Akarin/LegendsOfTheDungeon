@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P09 已启动，尚未提交消息/分发实现。
+P09 第一批实现已准备落库：Kernel 消息/DeferredEvent、Runtime.Abstractions 端口、Runtime.Core 显式 dispatcher、Solution/架构/lock graph 与 test-only 示例模块。
 
 ## 下一步（最多 5 项）
 
-1. 实现 Kernel 消息值契约与 DeferredEventQueue。
-2. 实现 Runtime.Abstractions Handler/Dispatcher/Publisher 端口。
-3. 新增 Runtime.Core 显式 registry/dispatcher，并同步 Solution/架构白名单/lock files。
-4. 用 test-only 示例模块完成 Command→Result、Query Snapshot、DeferredEvent 和错误/取消/上限测试。
-5. 跑完整 CI 并独立 Review，无必需问题后 ACCEPTED。
+1. 提交 P09 第一批实现。
+2. 读取 locked restore/build/Analyzer/Unit/Architecture 的第一个真实诊断。
+3. 若失败，修实现/锁图/测试，不绕过 P03/P04。
+4. 核对 Demo Command→Result、Query Snapshot、DeferredEvent、上限/注册/未知消息实际证据。
+5. 独立自审无 Service Locator、Query 不泄漏可变对象后进入 REVIEW。
 
 ## 契约、数据所有权与 ADR 变化
 

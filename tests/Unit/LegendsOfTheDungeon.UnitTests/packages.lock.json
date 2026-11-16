@@ -95,6 +95,13 @@
         "dependencies": {
           "LegendsOfTheDungeon.Kernel": "[1.0.0, )"
         }
+      },
+      "legendsofthedungeon.runtime.core": {
+        "type": "Project",
+        "dependencies": {
+          "LegendsOfTheDungeon.Kernel": "[1.0.0, )",
+          "LegendsOfTheDungeon.Runtime.Abstractions": "[1.0.0, )"
+        }
       }
     }
   }
