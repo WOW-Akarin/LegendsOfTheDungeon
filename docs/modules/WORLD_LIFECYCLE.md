@@ -1,6 +1,6 @@
 # P17 — WorldInstance / Registry / Lifecycle 技术契约
 
-状态：IN_PROGRESS；P17 目标 C。P15.J/P18/P24 已 ACCEPTED。本次实现必须由真实 CI 验证，不以提交作为通过证据。
+状态：REVIEW；P17 目标 C。P15.J/P18/P24 已 ACCEPTED。实现 HEAD `15d974ab3fe3e2b863e02a9389a2d24b3f693935` 的 run #172 七 Job SUCCESS，独立 REVIEW HEAD CI 尚待验证。
 
 ## 所有权与注册
 
