@@ -119,7 +119,7 @@ Kernel 时间契约把三类时间分开：
 
 ## Random（P08）
 
-Kernel 的确定性随机契约使用固定 `xoshiro256**` 算法版本 1。Seed 通过固定 SplitMix64 初始化，运行状态由四个 64-bit 字组成；`RandomState` 同时记录算法 ID、版本、原始 Seed 与四个状态字；Adapter 持久化时必须完整保存这些字段，恢复时不允许跨算法/版本静默解释。
+Kernel 的确定性随机契约使用固定 `xoshiro256**` 算法版本 1。PRNG 实例有可变序列状态，不保证并发线程安全；调用方必须由单一逻辑所有者串行推进，或在更高层显式同步。Seed 通过固定 SplitMix64 初始化，运行状态由四个 64-bit 字组成；`RandomState` 同时记录算法 ID、版本、原始 Seed 与四个状态字；Adapter 持久化时必须完整保存这些字段，恢复时不允许跨算法/版本静默解释。
 
 `IRandom` 只暴露无符号 64-bit 随机和无偏有界抽样。Combat、Loot、AI 后续模块只依赖该接口；`DeterministicRandom` 是 Kernel 提供的可复现实现。
 

@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `87f7e29467be9319a6359c724deda597985cdd81` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P08 / Kernel Random / IN_PROGRESS / B
+阶段 / 任务 / 状态 / 目标完成度：P08 / Kernel Random / REVIEW / B
 
 ## 目标与成功条件
 
@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P08 run #48 已全绿：Unit 86/86、Architecture 16/16、P04/P05 Gate 全部通过。契约自审发现 RandomState 应显式保存 Seed，且命名流需锁定固定派生向量；正在补强。
+P08 最终实现 CI run #49 已全绿：Unit 86/86、Architecture 16/16、P04/P05 Gate 全部通过；Seed 持久化、固定流向量与不稳定随机源审查通过，当前进入独立 REVIEW。
 
 ## 下一步（最多 5 项）
 
-1. 提交 Seed 持久化与命名流固定向量补强并读取最终实现 CI。
-2. 读取首次 CI 的 Analyzer/P04/Unit/Architecture/P05 Gate 真实结果。
-3. 若失败，从第一个真实诊断修复，不改变算法版本来迎合测试。
-4. 核对 known vector、状态恢复、概率/权重边界与 AI/Loot 隔离实际证据。
-5. 独立自审无 HashCode/System.Random 后进入 REVIEW。
+1. 独立读取 REVIEW HEAD 的 RandomState/Random/Probability/WeightedSelector/RandomStreams 与 RandomTests。
+2. 核对 REVIEW HEAD 自身 Unit 86+、Architecture、P04/P05 Gate 全绿。
+3. 核对 Seed/状态/算法版本与命名流派生版本均已锁定。
+4. 重查 System.Random/Random.Shared/GetHashCode/时间戳/Guid Seed 路径为 0。
+5. 无必需问题后将 P08 ACCEPTED，再进入 P09。
 
 ## 契约、数据所有权与 ADR 变化
 
@@ -47,8 +47,8 @@ P08 run #48 已全绿：Unit 86/86、Architecture 16/16、P04/P05 Gate 全部通
 | 命令/检查 | 环境与时间 | 结果 | 报告 |
 |---|---|---|---|
 | P07 依赖状态 | GitHub Actions，2026-11-16 | PASS | progress/P07.md |
-| P08 Unit | 尚未实现 | NOT_RUN | 待 CI |
-| P03/P04/P05/P06/P07 回归 | 尚未执行 P08 HEAD | NOT_RUN | 待 CI |
+| P08 Unit | GitHub Actions，2026-11-16 | PASS：86/86 | run 43811342353 / artifact 14200686587 |
+| P03/P04/P05/P06/P07 回归 | GitHub Actions，2026-11-16 | PASS：Architecture 16/16 + 文档/Strong ID Gate | run 43811342353 |
 
 ## 风险与未验证假设
 
@@ -63,7 +63,7 @@ P08 run #48 已全绿：Unit 86/86、Architecture 16/16、P04/P05 Gate 全部通
 2. 核对 main HEAD 与 P08 起始 SHA `87f7e29467be9319a6359c724deda597985cdd81`。
 3. 打开 Kernel Random 源码与 `RandomTests.cs`。
 4. 读取最新 CI；失败时从第一个 Analyzer/Compiler/Test 真实诊断修复，不改算法版本来迎合测试。
-5. 出口证据满足后进入 REVIEW。
+5. P08 已进入 REVIEW；按 progress/P08.md 当前停点做独立审查。
 
 ## 不应重复执行的操作
 
