@@ -114,6 +114,9 @@
         "dependencies": {
           "LegendsOfTheDungeon.Kernel": "[1.0.0, )"
         }
+      },
+      "legendsofthedungeon.platform.persistence": {
+        "type": "Project"
       }
     }
   }

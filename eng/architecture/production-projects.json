@@ -64,6 +64,15 @@
         "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj"
       ],
       "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/Platform/Persistence/LegendsOfTheDungeon.Platform.Persistence/LegendsOfTheDungeon.Platform.Persistence.csproj",
+      "assemblyName": "LegendsOfTheDungeon.Platform.Persistence",
+      "role": "PlatformAdapter",
+      "module": null,
+      "allowedProjectReferences": [],
+      "allowedPublicApiReferences": [],
+      "allowedInternalsVisibleTo": []
     }
   ]
 }
