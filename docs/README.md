@@ -20,11 +20,12 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [reviews/DOCUMENTATION_QUALITY_REVIEW.md](reviews/DOCUMENTATION_QUALITY_REVIEW.md)：Public XML、中文语义、复杂逻辑与 AC 来源审查
 - [modules/KERNEL.md](modules/KERNEL.md)：Kernel 基础值、Geometry、Time、Random 契约
 - [modules/MESSAGING.md](modules/MESSAGING.md)：Command / Query / DeferredEvent 协作契约
+- [modules/PLATFORM.md](modules/PLATFORM.md)：P10 配置、日志和 P60.F 身份/授权边界
 
 ## 当前状态
 
 当前里程碑：M0 基线。  
-当前阶段：P09 — Command / Query / Event，**ACCEPTED**。P00–P09 已 ACCEPTED；下一阶段为 P10，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P10 — Platform Configuration / Logging，**IN_PROGRESS**。P00–P09 已 ACCEPTED；实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 

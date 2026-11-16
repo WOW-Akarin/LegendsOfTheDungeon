@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P09 — ACCEPTED
+当前阶段：P10 — IN_PROGRESS
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P00–P09 已 ACCEPTED。Command/Query/Event 协作基础已具备：Kernel 消息与 DeferredEventBuffer、Runtime Handler/Dispatcher 端口、Runtime.Core 显式注册/分发、提交后事件发布和只读 Query Snapshot 示例。P10 尚未开始。
+P00–P09 已 ACCEPTED。P10 已启动：Platform 配置启动门禁、结构化日志/脱敏、非敏感配置指纹；Security.Contracts 启动 P60.F 默认拒绝契约。
 
 ## 阻塞与技术债
 
-当前无 P09 阻塞。P10 将建立 Platform Configuration / Logging；Platform 不得包含业务规则，敏感 Token/连接串不得进入日志或报告。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P10 阻塞。Platform 不包含游戏业务规则；未接入真实认证 Adapter 前所有生产身份绑定/授权默认拒绝。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
@@ -70,3 +70,6 @@ P00–P09 已 ACCEPTED。Command/Query/Event 协作基础已具备：Kernel 消�
 - [构建基线](operations/BUILD.md)
 - [UPSTREAM](UPSTREAM.md)
 - [AC 研究模板](research/azerothcore/REFERENCE_TEMPLATE.md)
+
+- [P10 证据](progress/P10.md)
+- [Platform 契约](modules/PLATFORM.md)

@@ -1,70 +1,29 @@
 # 当前进度
 
-更新时间（含时区）：2026-11-16 +08:00  
-代码基线 / Branch / 工作区：任务开始 `8bbedd6bf96a224317b032d802d11e774fca1ff7` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P09 / Command / Query / Event / ACCEPTED / B
+更新时间：2026-11-16 +08:00
+代码基线 / Branch：`8dd36bbf73776d49cbceca110013bcfae91f47d0` / `main`
+当前阶段 / 状态 / 目标完成度：P10 / Platform Configuration / Logging / IN_PROGRESS / B
 
-## 目标与成功条件
-
-建立跨模块协作基础：Command→Result、只读 Query、DeferredEvent 因果/序号与提交后发布；Runtime.Core 提供显式 Handler 注册/分发，重复注册与未知消息失败，派生事件队列有数量/深度上限，且不存在全局 Service Locator。
-
-## 开始前状态与已有未提交修改
-
-- P00–P08 已 ACCEPTED。
-- P09 开始 HEAD：`8bbedd6bf96a224317b032d802d11e774fca1ff7`。
-- 当前生产项目只有 Kernel 与 Runtime.Abstractions；P09 将新增职责明确的 Runtime.Core。
-- 当前执行容器无 dotnet；GitHub Actions .NET 10.0.404 runner 继续作为真实编译/测试环境。
-- 用户要求直接更新 `main`，不创建任务分支。
-
-## 已完成与证据链接
-
-- [P08 证据](progress/P08.md) 已验收 Random。
-- [Command / Query / Event 协作契约](modules/MESSAGING.md) 已建立。
-- [P09 阶段证据](progress/P09.md) 已建立。
+## 开始状态
+- P00–P09 已 ACCEPTED；P09 最终 CI run #58：Unit 97/97、Architecture 16/16。
+- P10 直接依赖 P09；无生产 Host、没有真实认证 Adapter。
+- 当前容器无 dotnet SDK；以 GitHub Actions .NET 10.0.404 执行正式验证。
+- 用户要求只更新 main，不建分支。
 
 ## 当前停点
+P10 已启动。下一步实现独立 Options/验证/安全配置指纹、结构化日志、身份绑定与默认拒绝；同步项目图、locked restore 与测试。
 
-P09 已完成独立 Review 并 ACCEPTED；P10 尚未开始。
+## 下一步
+1. 创建 Platform 与 Security.Contracts 项目，并同步 P03 白名单、Solution 与 lock graph。
+2. 实现配置启动门禁及安全诊断、非敏感配置指纹。
+3. 实现结构化操作/审计/性能日志与敏感数据负向测试。
+4. 实现 P60.F 最小身份/授权 Port 默认拒绝和本地测试身份隔离。
+5. 真实 CI → 独立 REVIEW → ACCEPTED。
 
-## 下一步（最多 5 项）
+## 证据
+- [P09 验收](progress/P09.md)
+- [P10 阶段](progress/P10.md)
+- [Platform 契约](modules/PLATFORM.md)
 
-1. 开始 P10 — Platform Configuration / Logging。
-2. 建立模块独立 Options、启动期验证与配置 Hash。
-3. 建立结构化日志上下文 Module/World/Entity/Correlation，并定义日志脱敏。
-4. 启动身份/授权契约与默认拒绝；本地测试身份与生产身份分开。
-5. 错误配置必须在进入 Running 前失败并输出中文诊断。
-
-## 契约、数据所有权与 ADR 变化
-
-新增 A1 协作契约 `runtime.messaging.v1`。DeferredEventQueue 只拥有单次 Command 执行的临时事件队列状态，不拥有领域状态；Handler 注册由 Runtime.Core 所有。无架构方向变化，不新增 ADR。
-
-## AC 参考与已知差异（适用时）
-
-不适用。P09 是项目通用协作模型，不复制 AzerothCore dispatcher/event bus 实现。
-
-## 验证
-
-| 命令/检查 | 环境与时间 | 结果 | 报告 |
-|---|---|---|---|
-| P08 依赖状态 | GitHub Actions，2026-11-16 | PASS | progress/P08.md |
-| P09 Unit | GitHub Actions，2026-11-16 | PASS：97/97 | run 43813919670 / artifact 14201089332 |
-| Architecture/P04/P05 回归 | GitHub Actions，2026-11-16 | PASS：Architecture 16/16 + 文档/Strong ID Gate | run 43813919670 |
-
-## 风险与未验证假设
-
-- Runtime.Core dispatcher 是类型专用 registry，不得演变成任意 Service Locator。
-- Query Snapshot 的深层不可变性仍需模块 Review；marker interface 不能单独证明。
-- P09 只保证“Handler 成功返回后才 publish”；不提供数据库 outbox 或跨进程 exactly-once。
-- Event publisher 提交后失败会向上传播；恢复/outbox 属于后续 Persistence 阶段。
-
-## 恢复步骤
-
-1. 读取 ARCHITECTURE、CONTEXT、PROGRESS、modules/MESSAGING.md 与 progress/P09.md。
-2. 核对 main HEAD 与 P09 起始 SHA `8bbedd6bf96a224317b032d802d11e774fca1ff7`。
-3. 打开 Kernel Messaging、Runtime.Abstractions Messaging、Runtime.Core dispatcher 和 MessagingTests。
-4. 读取最新 CI；失败时从第一个 Analyzer/Compiler/Test 真实诊断修复，不添加 Service Locator 或 suppress。
-5. 出口证据满足后进入 REVIEW。
-
-## 不应重复执行的操作
-
-不要把 Handler registry 放进 Kernel；不要增加全局静态 dispatcher/service provider；不要让 Query 返回可变领域实体。
+## 风险
+P10 无真实生产 ServerHost，B 阶段使用独立启动门禁模拟 Host 接线，不宣称真实宿主已集成。秘密值变化不改变公开配置指纹，后续需单独轮换记录。P60.F 本阶段不包含 RBAC/生产认证、真实网络入口。
