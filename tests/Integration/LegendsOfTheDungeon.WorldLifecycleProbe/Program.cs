@@ -198,7 +198,8 @@ static Task FaultedCleanupAsync()
     });
     executor.CreateTrustedProducer().Offer(new Act(ctx => world.Despawn(ctx, id)));
     Check(executor.RunBatch(1).Status == WorldRunStatus.Faulted &&
-        owner.ClaimedEntities == 1, "fault prematurely released ownership");
+        owner.ClaimedEntities == 1 && world.State == WorldLifecycle.Faulted,
+        "fault prematurely released ownership or failed to mark world fault");
     return Task.CompletedTask;
 }
 

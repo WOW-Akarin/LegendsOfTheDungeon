@@ -661,21 +661,30 @@ public sealed class WorldInstance
 
     private void Detach(IWorldWriteContext context, Entry entry, bool dispose)
     {
-        // 先隔离状态再依注册顺序清理；若回调失败，P18 将 Faulted 且归属保持不释放。
+        // 先隔离再同步撤销；失败时保留 Claim/代际，标记 WorldInstance 故障；
+        // P18 还会使真实 WorldExecutor Faulted，不允许在部分清理状态继续运行。
         entry.State = WorldEntityLifecycle.Removing;
-        foreach (var cleanup in entry.Cleanup)
+        try
         {
-            cleanup.OnRemoving(entry.Identity);
-        }
+            foreach (var cleanup in entry.Cleanup)
+            {
+                cleanup.OnRemoving(entry.Identity);
+            }
 
-        // 即使已从其它实体撤销此 ID，被移除实体自己的 Target 也必须清空；
-        // 否则依稳定 ID 顺序停机时，较早销毁的对象墓碑会保留过期目标。
-        entry.Capabilities.Target.Select(context, null);
-        ClearInboundTargets(context, entry.Identity);
-        context.RetireEntity(entry.Identity.Id, entry.Identity.Generation);
-        _ownership.Release(this, entry.Identity);
-        entry.Cleanup.Clear();
-        entry.State = dispose ? WorldEntityLifecycle.Disposed : WorldEntityLifecycle.Detached;
+            // 提前清空自己的目标，否则稳定 ID 次序停机时先销毁的实体墓碑可能保留旧目标。
+            entry.Capabilities.Target.Select(context, null);
+            ClearInboundTargets(context, entry.Identity);
+            context.RetireEntity(entry.Identity.Id, entry.Identity.Generation);
+            _ownership.Release(this, entry.Identity);
+            entry.Cleanup.Clear();
+            entry.State = dispose ? WorldEntityLifecycle.Disposed : WorldEntityLifecycle.Detached;
+        }
+        catch
+        {
+            // 不能伪装回滚：已清理的资源可能无法恢复；所有权保留供 Host 后续诊断。
+            _state = WorldLifecycle.Faulted;
+            throw;
+        }
     }
 
     private void ClearInboundTargets(IWorldWriteContext context, EntityIdentity removed)

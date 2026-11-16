@@ -16,7 +16,7 @@
 - `Add`：Created Seed → Attached；`Activate`：Attached → Active；`Spawn`：一次同步租约内 Add+Activate。禁止同一 World 当前活跃 EntityId 重复 Add。
 - `Remove`：Attached/Active → Removing → Detached；`Despawn`：Attached/Active → Removing → Disposed，Detached→Disposed；重复调用 `AlreadyCompleted`，已过期身份 `Stale`。
 - `IWorldEntityCleanup.OnRemoving` 由实体生命周期负责按登记顺序执行、每代最多一次；每实体最多 16 个，重复实例拒绝。由后续 Timer、订阅、AI、路径请求撤销组件接入，不会虚构当前已有真实 Timer/AI。
-- 只有所有清理成功后才 P18 RetireEntity 并释放跨世界归属。清理异常意味着 P18 Faulted，留在 Removing 并保留 Claim 供可信 Host 恢复；不声称自动回滚或异步清理完成。
+- 只有所有清理成功后才 P18 RetireEntity 并释放跨世界归属。清理异常意味着 P18 WorldExecutor 与 P17 WorldInstance 同时 Faulted，实体留在 Removing 并保留 Claim 供可信 Host 恢复；不声称自动回滚或异步清理完成。
 - Stop 只允许 Draining；按稳定 EntityId 顺序清理尚附加/活动实体，撤销回执，全部释放后才能取消 WorldId 注册。
 - 目标选择在 P17 Registry 验证同 World/Epoch、实际活动 Generation、Alive 状态；移除或死亡的目标由同世界其它实体同步清除对应身份引用。输出按值快照，不能留下可变目标实体引用。
 - `Relocate` 仅是 P17 生命周期下验证已 Active 的实体后更新 P24 唯一 Transform。P20/P27 的 Spatial 原子索引联动尚未存在，生产世界移动入口不能提前使用此基础操作当作完整空间移动。

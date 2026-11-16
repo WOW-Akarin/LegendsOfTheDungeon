@@ -281,6 +281,7 @@ public sealed class WorldInstanceTests
             .Offer(new Work(ctx => world.Despawn(ctx, id))));
         Assert.Equal(WorldRunStatus.Faulted, executor.RunBatch(1).Status);
         Assert.True(executor.IsFaulted);
+        Assert.Equal(WorldLifecycle.Faulted, world.State);
         Assert.Equal(1, ownership.ClaimedEntities);
         Assert.True(world.TryGetSnapshot(id.Id, out var snapshot));
         Assert.Equal(WorldEntityLifecycle.Removing, snapshot.Lifecycle);
@@ -379,6 +380,27 @@ public sealed class WorldInstanceTests
         Assert.True(world.TryGetSnapshot(source.Id, out var disposed));
         Assert.Equal(WorldEntityLifecycle.Disposed, disposed.Lifecycle);
         Assert.Null(disposed.Target);
+    }
+
+    [Fact]
+    public void FailedTechnicalBindReleasesGlobalClaimWithoutPublishingEntity()
+    {
+        var ownership = new WorldOwnershipRegistry();
+        var world = new WorldInstance(new WorldId(1), new WorldEpoch(1), ownership);
+        var executor = Executor();
+        Start(executor, world);
+        var id = Identity(412);
+        Run(executor, ctx =>
+        {
+            // 模拟其他受信任组合代码先绑定技术 ID；领域注册不能重复绑定。
+            ctx.BindEntity(id.Id, id.Generation);
+            Assert.Equal(WorldAccessFault.InvalidBinding,
+                Assert.Throws<WorldAccessException>(() => world.Add(ctx, Seed(id))).Fault);
+            Assert.False(ownership.TryGetOwner(id.Id, out _));
+            Assert.Equal(0, world.LiveCount);
+            Assert.False(world.TryGetSnapshot(id.Id, out _));
+            ctx.RetireEntity(id.Id, id.Generation);
+        });
     }
 
     private sealed class Work(Action<IWorldWriteContext> action) : IWorldAction
