@@ -22,3 +22,8 @@
 ## 验证入口
 
 `tests/Unit/LegendsOfTheDungeon.UnitTests/EntityCapabilitiesTests.cs` 使用真实 P18 WorldExecutor 检查存活/目标、真实租约失效、跨 World 拒绝、回收代际拒绝以及只读按值快照。编译、架构、锁文件和 CI 实际结果必须以 GitHub Actions 运行为准，不能把代码提交视为 PASS。
+
+## 实现 Gate 证据
+
+- HEAD `52088378c23c320796e669760dfc1a1ffc4f350e`，GitHub Actions run #163 六 Job SUCCESS：216/216 Unit，16/16 Architecture，真实 WorldExecution/Persistence/StaticData/PostgreSQL/Diagnostics/Networking 集成正常；负向构建、测试、架构以及中文文档 Gate 均 PASS。
+- 独立四视角审查见 [P24_ENTITIES_REVIEW](../reviews/P24_ENTITIES_REVIEW.md)。P24 的正式 ACCEPTED 仍等待 REVIEW HEAD CI。

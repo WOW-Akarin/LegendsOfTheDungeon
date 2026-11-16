@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00
 分支：main（用户要求直接更新、不建立分支）
 当前里程碑：M1 基础 → M2 最小世界
-当前阶段：P24 — Entity Identity / Transform / Life（IN_PROGRESS，目标 B）
+当前阶段：P24 — Entity Identity / Transform / Life（REVIEW，目标 B）
 
 ## 不变的范围与架构
 
@@ -18,9 +18,9 @@ P00–P16 及 P18 已 ACCEPTED。P18 具有真实 WorldExecutor Guard、异步�
 
 ## P24 当前进展和停点
 
-本次建立 `Entities.Core` 领域薄能力：四元组不可变身份、Transform 唯一位置真相、只读 LifeState、窄 TargetState、同步 World Demand Guard；固定组合容器不提供可变能力集合或服务定位。已编写 `EntityCapabilitiesTests`，并调整 Solution、P03 白名单、NuGet locked 图；**当前为 IN_PROGRESS，尚无本次代码的 CI PASS**。
+本次建立 `Entities.Core` 领域薄能力：四元组不可变身份、Transform 唯一位置真相、只读 LifeState、窄 TargetState、同步 World Demand Guard；固定组合容器不提供可变能力集合或服务定位。已编写 `EntityCapabilitiesTests`，并调整 Solution、P03 白名单、NuGet locked 图；**实现 HEAD 5208837 的 CI #163 六 Job SUCCESS（216 Unit、16 Architecture）**，目前处于独立 REVIEW HEAD 验证阶段。
 
-下一安全动作：等待真实 P24 实现 HEAD CI 出结果并修复失败，再独立 REVIEW；不得绕过现有 Gate，也不得提前声明 P24 ACCEPTED。
+下一安全动作：核对 REVIEW HEAD CI 的全部六 Job，完整通过再标记 P24 ACCEPTED 并独立核验 ACCEPTED HEAD；失败必须修复，不能绕过现有 Gate。
 
 仍未完成：P17 世界注册/实体生命周期、真实 Target 存在性、Transform/Spatial 原子协调、P19 Tick、P32 Health、生产授权 Host、P62 回放、P64/P66 性能长稳。
 
