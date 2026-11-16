@@ -198,6 +198,17 @@ public sealed class NetworkingTests
         Assert.Contains("Loopback", error.Message, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void LoopbackServerBacklogIsExplicitlyBounded()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new TcpLoopbackEndpoint(0, Options(), maximumPendingConnections: 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new TcpLoopbackEndpoint(0, Options(), maximumPendingConnections: 129));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new TcpLoopbackEndpoint(-1, Options()));
+    }
+
     private sealed class LocalOnlyBinder : IIdentityBindingPort
     {
         public ValueTask<Result<BoundIdentity>> BindAsync(

@@ -172,32 +172,31 @@ static async Task SlowHeaderAsync()
 
 static async Task BidirectionalAsync()
 {
-    var listener = Listen();
-    try
-    {
-        var acceptTask = listener.AcceptTcpClientAsync();
-        await using var client = await TcpLoopbackConnector.ConnectAsync(
-            IPAddress.Loopback, Port(listener), Options());
-        using var accepted = await acceptTask;
-        var serverStream = accepted.GetStream();
-        Check(client.OfferSend(new byte[] { 7, 3, 1 }) == FrameOfferStatus.Accepted,
-            "tcp writer did not accept frame");
-        Check((await LengthPrefixedFrameCodec.ReadAsync(serverStream, Options()))!
-            .SequenceEqual(new byte[] { 7, 3, 1 }), "server did not receive frame");
+    var options = Options();
+    await using var endpoint = new TcpLoopbackEndpoint(0, options, maximumPendingConnections: 4);
+    Check(IPAddress.IsLoopback(endpoint.LocalEndpoint.Address),
+        "listener must bind to loopback, not wildcard/public address");
+    var acceptTask = endpoint.AcceptAsync().AsTask();
+    await using var client = await TcpLoopbackConnector.ConnectAsync(
+        IPAddress.Loopback, endpoint.LocalEndpoint.Port, options);
+    await using var server = await acceptTask;
+    Check(client.OfferSend(new byte[] { 7, 3, 1 }) == FrameOfferStatus.Accepted,
+        "tcp writer did not accept frame");
+    Check((await server.ReceiveAsync())!
+        .SequenceEqual(new byte[] { 7, 3, 1 }), "server adapter did not receive frame");
 
-        await LengthPrefixedFrameCodec.WriteAsync(serverStream, new byte[] { 5, 4 }, Options());
-        Check((await client.ReceiveAsync())!.SequenceEqual(new byte[] { 5, 4 }),
-            "client did not receive reply");
-        var report = await client.StopAsync(TimeSpan.FromSeconds(2));
-        Check(report.Drained && report.WrittenFrames == 1 && report.QueuedFrames == 0,
-            "graceful send shutdown did not drain");
-        Check(client.OfferSend(new byte[] { 9 }) == FrameOfferStatus.Closed,
-            "stopped connection accepted new work");
-    }
-    finally
-    {
-        listener.Stop();
-    }
+    Check(server.OfferSend(new byte[] { 5, 4 }) == FrameOfferStatus.Accepted,
+        "server adapter could not enqueue reply");
+    Check((await client.ReceiveAsync())!.SequenceEqual(new byte[] { 5, 4 }),
+        "client did not receive reply");
+    var report = await client.StopAsync(TimeSpan.FromSeconds(2));
+    Check(report.Drained && report.WrittenFrames == 1 && report.QueuedFrames == 0,
+        "client graceful send shutdown did not drain");
+    var serverReport = await server.StopAsync(TimeSpan.FromSeconds(2));
+    Check(serverReport.Drained && serverReport.WrittenFrames == 1,
+        "server graceful send shutdown did not drain");
+    Check(client.OfferSend(new byte[] { 9 }) == FrameOfferStatus.Closed,
+        "stopped client accepted new work");
 }
 
 static async Task DisconnectAsync()
