@@ -82,11 +82,7 @@ public sealed class PublicOptionsWriter
     /// <param name="value">非负整数值。</param>
     public void AddInteger(string key, int value)
     {
-        if (value < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(value));
-        }
-
+        ArgumentOutOfRangeException.ThrowIfNegative(value);
         Add(key, value.ToString(CultureInfo.InvariantCulture));
     }
 
