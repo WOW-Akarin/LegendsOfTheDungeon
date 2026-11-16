@@ -169,6 +169,15 @@
           "LegendsOfTheDungeon.Runtime.Abstractions": "[1.0.0, )",
           "LegendsOfTheDungeon.Entities.Core": "[1.0.0, )"
         }
+      },
+      "legendsofthedungeon.platform.worldscheduling": {
+        "type": "Project",
+        "dependencies": {
+          "LegendsOfTheDungeon.Kernel": "[1.0.0, )",
+          "LegendsOfTheDungeon.Runtime.Abstractions": "[1.0.0, )",
+          "LegendsOfTheDungeon.Runtime.World": "[1.0.0, )",
+          "LegendsOfTheDungeon.Platform.WorldExecution": "[1.0.0, )"
+        }
       }
     }
   }

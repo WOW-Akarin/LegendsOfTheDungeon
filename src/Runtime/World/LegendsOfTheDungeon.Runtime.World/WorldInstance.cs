@@ -222,6 +222,22 @@ public sealed class WorldInstance
         return false;
     }
 
+    /// <summary>只在有效 P18 Scope 内复制完整代际墓碑并按 EntityId 固定排序。</summary>
+    internal IReadOnlyList<WorldEntitySnapshot> SnapshotForTick(IWorldWriteContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        context.DemandWorld(World, Epoch);
+        lock (_gate)
+        {
+            var snapshots = _entries.Values.OrderBy(entry => entry.Identity.Id.Value)
+                .Select(entry => new WorldEntitySnapshot(entry.Identity, entry.State,
+                    entry.Capabilities.Transform.Value, entry.Capabilities.Life.State,
+                    entry.Capabilities.Target.State.Selected))
+                .ToArray();
+            return Array.AsReadOnly(snapshots);
+        }
+    }
+
     /// <summary>Created → Loading；在空世界时也必须拥有真实同步世界租约。</summary>
     /// <param name="context">P18 有效世界写入上下文。</param>
     /// <returns>是否成功转换。</returns>

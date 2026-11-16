@@ -215,6 +215,25 @@
         "src/Entities/Core/LegendsOfTheDungeon.Entities.Core/LegendsOfTheDungeon.Entities.Core.csproj"
       ],
       "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/Platform/WorldScheduling/LegendsOfTheDungeon.Platform.WorldScheduling/LegendsOfTheDungeon.Platform.WorldScheduling.csproj",
+      "assemblyName": "LegendsOfTheDungeon.Platform.WorldScheduling",
+      "role": "PlatformAdapter",
+      "module": null,
+      "allowedProjectReferences": [
+        "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj",
+        "src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj",
+        "src/Runtime/World/LegendsOfTheDungeon.Runtime.World/LegendsOfTheDungeon.Runtime.World.csproj",
+        "src/Platform/WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution.csproj"
+      ],
+      "allowedPublicApiReferences": [
+        "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj",
+        "src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj",
+        "src/Runtime/World/LegendsOfTheDungeon.Runtime.World/LegendsOfTheDungeon.Runtime.World.csproj",
+        "src/Platform/WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution.csproj"
+      ],
+      "allowedInternalsVisibleTo": []
     }
   ]
 }

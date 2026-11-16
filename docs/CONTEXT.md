@@ -1,21 +1,21 @@
 # 当前上下文
 
-更新时间：2026-11-16 +08:00；分支：main
-范围：通用 C#/.NET10 游戏服务器，不兼容 WoW 3.3.5a 客户端；上游 AzerothCore 固定 SHA `17f9f9d5003708136c798ab4ef8c1b9762251bad` 仅作机制参考。
-基线：SDK 10.0.404、PostgreSQL 18、Linux x64；10 World/10,000 Entity/50ms Tick 仍是未验证的目标档位。
+更新时间：2026-11-16 +08:00；分支 main
+项目：通用 C#/.NET 10 游戏服务器核心（非 WoW 3.3.5a 客户端兼容服务）；上游 AzerothCore 固定 SHA `17f9f9d5003708136c798ab4ef8c1b9762251bad` 仅用作通用机制参考。
 
-## 架构不变量
+## 技术方向与阶段真相
 
-模块化单体 / World Actor / Ports & Adapters；WorldExecutor 是唯一世界同步写租约，DB/Network Worker 只能入队，进出消息必须有界并二次检查身份、Epoch、Generation、RequestSeq。领域核心不依赖具体 DB/Host/Transport。不可通过万能 Manager/Service Locator、假成功和跳过门禁完成任务。
+SDK 10.0.404、Linux x64、PostgreSQL 18；模块化单体 / World Actor / Ports & Adapters，单世界只允许 P18 同步 Scope 改变状态；Worker 只排队不可用异步持有实体写引用。P07/P08/P14/P17/P18/P24 等已正式验收。
 
-## 阶段真相
+P17 归档 HEAD `fa2f4a3c3ea704a9d76e8b5445fa01c96535c8e6`，CI #175 7/7 SUCCESS，含 230 Unit/16 Architecture。**现进入 P19（IN_PROGRESS，目标 C），代码正在提交，尚无本阶段实现 CI PASS，不提前验收。**
 
-P00–P16、P18、P24(B)、P17(C) ACCEPTED。P24 归档 HEAD `94329e2c2e98d35eef8d7afc2614d9dc1629f597` 的 CI #166 六 Job SUCCESS，现进入 P17（ACCEPTED，目标 C）。P17 直接依赖 P15.J/P18/P24，已满足。P19 仍依赖 P17 的正式验收。
+## 当前 P19 交付边界
 
-P17 当前开发：`Runtime.World` 世界与实体 Registry、显式共享跨世界唯一归属、状态机、P18 世界级租约、同步清理接口、读快照和目标活跃代际校验，配合新的 `WorldLifecycleProbe` 七 Job CI。实现 HEAD `15d974a` CI #172、独立 REVIEW HEAD `28dcac5` CI #173 均七 Job SUCCESS（230 Unit、16 Architecture、P17 四类真实 Probe PASS），P17(C) 已正式 ACCEPTED；正式 ACCEPTED HEAD `404381f` 的 CI #174 7/7 SUCCESS。
+- Domain：`Runtime.World/WorldTickPipeline` 固定四相位、Phase/Key 稳定排序；FakeClock CurrentTick 控制到期；P17 `SnapshotForTick` 的稳定 SHA256 哈希，以 World/Epoch/Tick 和按 ID 排序的 EntityIdentity/Generation/Transform/Life/Target 为输入。
+- Adapter：`Platform.WorldScheduling` 复用 P18 WorldExecutor，最多 64 世界、8 Worker、每世界每轮至多 8 Tick、RunBatch ≤1024；邮箱背压和队列待执行区分，慢 Tick 单调测量不入 Hash。
+- Tests：新增 P19 单元/真实 Worker Probe，CI 从七 Job 增为八 Job。实现 CI 尚待验证，不能记录通过。
+- P19 不能当作 P20 Spatial/P27 移动、P62.F 完整回放、P64.F 性能、P60 生产 Host 已完成；10 World/10,000 Entity/50ms 是未达到验证的目标。
 
-风险：清理异常保留 Claim 交由未来 Host 恢复，不声称世界状态原子回滚；TransferNotSupported；真实 Timer/AI/Spatial/Tick、生产身份、性能等仍未完成。
+## 下一安全动作
 
-下一安全动作：推进 P19 WorldTick/Scheduler，先实现确定性单世界 Tick、有限多世界 Worker 配额与次序校验；P19 是下一阶段的独立工作，不得预先宣称通过。
-
-入口：[PROGRESS](PROGRESS.md)、[P17 记录](progress/P17.md)、[世界生命周期契约](modules/WORLD_LIFECYCLE.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)、[恢复规则](RECOVERY_WORKFLOW.md)。
+核验 P19 初始代码提交的全部八 Job，修复失败并保留真实历史；再独立 REVIEW 和正式 ACCEPTED。入口：[PROGRESS](PROGRESS.md) / [P19 记录](progress/P19.md) / [WorldTick 契约](modules/WORLD_TICK.md) / [ROADMAP](DEVELOPMENT_ROADMAP.md) / [ARCHITECTURE](ARCHITECTURE.md) / [恢复规则](RECOVERY_WORKFLOW.md)。

@@ -24,6 +24,7 @@
     <ProjectReference Include="../../../src/Platform/Diagnostics/LegendsOfTheDungeon.Platform.Diagnostics/LegendsOfTheDungeon.Platform.Diagnostics.csproj" />
     <ProjectReference Include="../../../src/Platform/Networking/LegendsOfTheDungeon.Platform.Networking/LegendsOfTheDungeon.Platform.Networking.csproj" />
     <ProjectReference Include="../../../src/Platform/WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution.csproj" />
+    <ProjectReference Include="../../../src/Platform/WorldScheduling/LegendsOfTheDungeon.Platform.WorldScheduling/LegendsOfTheDungeon.Platform.WorldScheduling.csproj" />
     <ProjectReference Include="../../../src/Platform/Persistence/LegendsOfTheDungeon.Platform.Persistence/LegendsOfTheDungeon.Platform.Persistence.csproj" />
     <ProjectReference Include="../../../src/StaticData/Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj" />
     <ProjectReference Include="../../../src/StaticData/Core/LegendsOfTheDungeon.StaticData.Core/LegendsOfTheDungeon.StaticData.Core.csproj" />
