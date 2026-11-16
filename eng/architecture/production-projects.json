@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "sharedHubModuleFanInThreshold": 3,
+  "projects": [
+    {
+      "path": "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj",
+      "assemblyName": "LegendsOfTheDungeon.Kernel",
+      "role": "Foundation",
+      "module": null,
+      "allowedProjectReferences": [],
+      "allowedPublicApiReferences": [],
+      "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj",
+      "assemblyName": "LegendsOfTheDungeon.Runtime.Abstractions",
+      "role": "Abstraction",
+      "module": null,
+      "allowedProjectReferences": [
+        "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj"
+      ],
+      "allowedPublicApiReferences": [
+        "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj"
+      ],
+      "allowedInternalsVisibleTo": []
+    }
+  ]
+}

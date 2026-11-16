@@ -24,19 +24,19 @@
 
 ## 当前停点
 
-P03 已启动。下一步创建显式生产项目架构清单、项目图加载器、规则引擎和真实/夹具测试。
+P03 第一批 Architecture Test 实现已准备落库：显式生产项目清单、真实项目图/API/IVT 扫描、P03-001～008 规则、正/负例 fixture 和 Architecture 失败注入 Gate。下一步读取首次 CI。
 
 ## 下一步（最多 5 项）
 
-1. 创建显式生产项目清单，记录角色、模块归属、允许的 ProjectReference、允许的 IVT 与共享职责审查状态。
-2. 从 Solution/csproj 读取真实生产引用图，并检查清单覆盖、白名单和无环。
-3. 实现 Domain→Platform/Host、跨模块 Infrastructure/Internal、Modules→Hosts、公共 API 泄漏、IVT 规则。
-4. 为每条规则增加合法和故意违规 fixture；增加依赖集中度职责审查 Gate，避免关键词扫描。
-5. 在 GitHub Actions 运行完整 architecture tests，失败从真实日志修复后再 REVIEW。
+1. 推送 P03 Architecture Test 实现并读取首次 GitHub Actions run。
+2. 若编译/测试失败，从第一个真实错误修复，不删规则、不弱化 fixture。
+3. CI 通过后记录实际 Architecture test 数量与三类负向 Gate。
+4. 独立核对真实生产图、公共 API/IVT 扫描和无关键词误报原则。
+5. 全部出口证据满足后进入 REVIEW。
 
 ## 修改文件及原因
 
-本次启动提交只更新 P03 状态与恢复索引；实现文件在下一提交落库。
+将新增架构清单、规则引擎、真实仓库扫描器、正/负例测试、职责审查文档，并扩展 Architecture 负向 Gate。
 
 ## 契约、数据所有权与 ADR 变化
 
