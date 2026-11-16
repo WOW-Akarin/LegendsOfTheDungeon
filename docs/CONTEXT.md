@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M1 基础  
-当前阶段：P15 — REVIEW
+当前阶段：P15 — ACCEPTED（P16 NOT_STARTED）
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 建立 .NET 10 Solution；截至 P10 已验�
 
 ## 当前任务与下一步
 
-P00–P10 已 ACCEPTED。P11 已 ACCEPTED：实现基线 0a092260，run #72 Unit 109/109、Architecture 16/16、真实 PostgreSQL 18 Integration 全绿；独立 REVIEW HEAD 270022e 的 run #73 两个 job 全绿。ConnectionFactory、参数化命令、事务 Unknown、Migration、BoundedBulkLoader、P65.F 初始注入与幂等消歧已形成可复现证据。正式 ACCEPTED HEAD b395553 的 run #74 也已完整 SUCCESS。P12 已正式 ACCEPTED：实现基线 d9e22e4，run #83 Unit 123/123、Architecture 16/16、PG Integration 全绿；独立 REVIEW HEAD 48d5604 的 run #84 两个 Job SUCCESS。双车道 Mailbox、逻辑 Scheduler、有界 WorkChannel、有限 WorkerPool、超时未完成清单与 Abandoned 恢复标识已验证。正式 ACCEPTED HEAD 14f509c run #85 全绿，最终归档 HEAD 987b6e7 run #86 完整 SUCCESS。P13 已正式 ACCEPTED：实现基线 42952d3，run #99 Unit 139/139、Architecture 16/16、真实 TCP Loopback 10 项与 PostgreSQL 集成全绿；独立 REVIEW HEAD f49e599 的 run #100 三 Job SUCCESS。正式 ACCEPTED HEAD 8fc43bf 的 run #101 三 Job 完整 SUCCESS，P13 最终归档 HEAD f969109 的 #102 三 Job 也 SUCCESS。P14 已正式 ACCEPTED：实现基线 f4d7b6c run #112 四 Job SUCCESS（Unit 151/151、Architecture 16/16、真实 Worker 诊断 6 项、PostgreSQL/TCP 回归）；独立 REVIEW HEAD a496aadd run #113 四 Job 全绿。正式 ACCEPTED HEAD 220c5d9 的 run #114 四 Job 完整 SUCCESS，最终归档 HEAD fa7bb44 的 #115 四 Job SUCCESS。P15.J JSON 与 P15.S PostgreSQL 18 SQL 已实现：最终实现 HEAD 42b0679 的 run #131 五 Job 全绿，Unit 174/174、Architecture 16/16、7 项真实静态数据 PG 探针及 P11/P13/P14 集成均 PASS。P15 已进入 REVIEW，独立验收 HEAD 还未运行。
+P00–P10 已 ACCEPTED。P11 已 ACCEPTED：实现基线 0a092260，run #72 Unit 109/109、Architecture 16/16、真实 PostgreSQL 18 Integration 全绿；独立 REVIEW HEAD 270022e 的 run #73 两个 job 全绿。ConnectionFactory、参数化命令、事务 Unknown、Migration、BoundedBulkLoader、P65.F 初始注入与幂等消歧已形成可复现证据。正式 ACCEPTED HEAD b395553 的 run #74 也已完整 SUCCESS。P12 已正式 ACCEPTED：实现基线 d9e22e4，run #83 Unit 123/123、Architecture 16/16、PG Integration 全绿；独立 REVIEW HEAD 48d5604 的 run #84 两个 Job SUCCESS。双车道 Mailbox、逻辑 Scheduler、有界 WorkChannel、有限 WorkerPool、超时未完成清单与 Abandoned 恢复标识已验证。正式 ACCEPTED HEAD 14f509c run #85 全绿，最终归档 HEAD 987b6e7 run #86 完整 SUCCESS。P13 已正式 ACCEPTED：实现基线 42952d3，run #99 Unit 139/139、Architecture 16/16、真实 TCP Loopback 10 项与 PostgreSQL 集成全绿；独立 REVIEW HEAD f49e599 的 run #100 三 Job SUCCESS。正式 ACCEPTED HEAD 8fc43bf 的 run #101 三 Job 完整 SUCCESS，P13 最终归档 HEAD f969109 的 #102 三 Job 也 SUCCESS。P14 已正式 ACCEPTED：实现基线 f4d7b6c run #112 四 Job SUCCESS（Unit 151/151、Architecture 16/16、真实 Worker 诊断 6 项、PostgreSQL/TCP 回归）；独立 REVIEW HEAD a496aadd run #113 四 Job 全绿。正式 ACCEPTED HEAD 220c5d9 的 run #114 四 Job 完整 SUCCESS，最终归档 HEAD fa7bb44 的 #115 四 Job SUCCESS。P15.J JSON 与 P15.S PostgreSQL 18 SQL 已实现：最终实现 HEAD 42b0679 的 run #131 五 Job 全绿，Unit 174/174、Architecture 16/16、7 项真实静态数据 PG 探针及 P11/P13/P14 集成均 PASS。P15 已正式 ACCEPTED：实现 #131（174 Unit/16 Architecture/PG 7项及五 Job SUCCESS）；独立 REVIEW HEAD ce19933 的 run #132 五 Job SUCCESS。正式 ACCEPTED HEAD CI 尚待复核；P16 NOT_STARTED。
 
 ## 阻塞与技术债
 
-P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。下一安全动作：独立验证 P15 REVIEW HEAD 的全部五 Job CI，再正式 ACCEPTED 并复核 ACCEPTED HEAD。P16 引用校验/热重载仍未开始。真实业务 Host 埋点仍属后续阶段。生产认证和 WorldExecutor 仍未接线。P12 不替代 P18 WorldExecutor，性能和业务恢复仍待后续阶段。
+P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。下一安全动作：复核 P15 正式 ACCEPTED HEAD 的五 Job CI，之后按路线图进入 P16。P16 引用校验/热重载仍未开始。真实业务 Host 埋点仍属后续阶段。生产认证和 WorldExecutor 仍未接线。P12 不替代 P18 WorldExecutor，性能和业务恢复仍待后续阶段。
 
 ## 关键入口
 

@@ -39,7 +39,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M1 基础。  
-当前阶段：P15 — Static Data Schema / Loader，**REVIEW**。P00–P14 已验收；P15 代码及 CI #131 五 Job 全绿，独立 REVIEW/ACCEPTED HEAD 尚待验收，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P15 — Static Data Schema / Loader，**ACCEPTED**。P00–P15 已验收；下一阶段 P16 — Catalog Validator / Freeze / Reload 尚未开始，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 
