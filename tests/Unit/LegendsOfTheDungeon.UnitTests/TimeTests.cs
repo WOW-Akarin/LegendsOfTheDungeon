@@ -32,6 +32,27 @@ public sealed class TimeTests
     }
 
     [Fact]
+    public void DurationAndTickComparisonOperatorsFollowScalarOrder()
+    {
+        var shortDuration = new Duration(10);
+        var longDuration = new Duration(20);
+        var earlyTick = new Tick(3);
+        var lateTick = new Tick(4);
+
+        Assert.True(shortDuration < longDuration);
+        Assert.True(shortDuration <= longDuration);
+        Assert.True(longDuration > shortDuration);
+        Assert.True(longDuration >= shortDuration);
+        Assert.Equal(0, shortDuration.CompareTo(new Duration(10)));
+
+        Assert.True(earlyTick < lateTick);
+        Assert.True(earlyTick <= lateTick);
+        Assert.True(lateTick > earlyTick);
+        Assert.True(lateTick >= earlyTick);
+        Assert.Equal(0, earlyTick.CompareTo(new Tick(3)));
+    }
+
+    [Fact]
     public void TickStartsAtZeroAndRejectsOverflow()
     {
         Assert.Equal(0UL, default(Tick).Value);
@@ -105,6 +126,20 @@ public sealed class TimeTests
         Assert.Throws<OverflowException>(() => clock.AdvanceTicks(1));
         Assert.Equal(10UL, clock.CurrentTick.Value);
         Assert.Equal(maximum, clock.MonotonicElapsed);
+    }
+
+    [Fact]
+    public void FakeClockRejectsZeroTickDuration()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => new FakeClock(default, Epoch));
+    }
+
+    [Fact]
+    public void LogicalTimerRejectsClockWithZeroTickDuration()
+    {
+        Assert.Throws<InvalidOperationException>(
+            () => LogicalTimer.Start(new InvalidClock(), new Duration(1)));
     }
 
     [Fact]
