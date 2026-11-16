@@ -325,6 +325,52 @@ public sealed class WorldSpatialTests
                 world.RebuildSpatialIndex(captured!)).Fault);
     }
 
+    [Fact]
+    public void RemovalCleanupCannotObserveRemovingEntityInSpatialQueries()
+    {
+        var (world, executor) = Create();
+        var removing = Id(71);
+        var remaining = Id(72);
+        var observedRemoving = false;
+        Run(executor, ctx =>
+        {
+            Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(removing, 2)));
+            Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(remaining, 3)));
+            Assert.Equal(WorldEntityResult.CleanupRegistered,
+                world.RegisterCleanup(ctx, removing, new Cleanup(id =>
+                {
+                    Assert.Equal(removing, id);
+                    Assert.True(world.TryGetSnapshot(id.Id, out var removingView));
+                    Assert.Equal(WorldEntityLifecycle.Removing, removingView.Lifecycle);
+                    var visible = world.QueryRange(new Bounds(
+                        new Position(0, -1, -1), new Position(5, 1, 1)));
+                    Assert.Equal([72UL], visible.Select(item => item.Identity.Id.Value));
+                    observedRemoving = true;
+                })));
+            Assert.Equal(WorldEntityResult.Removed, world.Remove(ctx, removing));
+        });
+        Assert.True(observedRemoving);
+        Assert.Equal(1, world.SpatialIndexedCount);
+        Assert.Equal([72UL], world.QueryNearby(new Position(3, 0, 0), new Distance(2))
+            .Select(item => item.Identity.Id.Value));
+    }
+
+    [Fact]
+    public void FaultedWorldDoesNotPublishPotentiallyDamagedSpatialQueryResults()
+    {
+        var (world, executor) = Create();
+        Run(executor, ctx =>
+        {
+            Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(Id(1), 1)));
+            Assert.True(world.Fault(ctx));
+        });
+        Assert.Throws<InvalidOperationException>(() =>
+            world.QueryNearby(new Position(1, 0, 0), new Distance(2)));
+        Assert.Throws<InvalidOperationException>(() =>
+            world.QueryRange(new Bounds(new Position(0, 0, 0), new Position(2, 2, 2))));
+        Assert.True(world.TryGetSnapshot(Id(1).Id, out _));
+    }
+
     private static Position RandomPosition(Random random) =>
         new(random.Next(-300, 301), random.Next(-300, 301), random.Next(-120, 121));
 
@@ -334,6 +380,11 @@ public sealed class WorldSpatialTests
         var dy = one.Y - other.Y;
         var dz = one.Z - other.Z;
         return Math.Sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    private sealed class Cleanup(Action<EntityIdentity> action) : IWorldEntityCleanup
+    {
+        public void OnRemoving(EntityIdentity identity) => action(identity);
     }
 
     private sealed class Work(Action<IWorldWriteContext> action) : IWorldAction

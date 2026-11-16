@@ -312,6 +312,7 @@ public sealed class WorldInstance
     {
         lock (_gate)
         {
+            DemandSpatialReadable();
             var result = new List<WorldEntitySnapshot>();
             foreach (var id in _spatial.Candidates(center, radius))
             {
@@ -334,6 +335,7 @@ public sealed class WorldInstance
     {
         lock (_gate)
         {
+            DemandSpatialReadable();
             var result = new List<WorldEntitySnapshot>();
             foreach (var id in _spatial.Candidates(bounds))
             {
@@ -373,6 +375,16 @@ public sealed class WorldInstance
                 _state = WorldLifecycle.Faulted;
                 throw;
             }
+        }
+    }
+
+    // Fail-closed：不可恢复异常可能留下仅部分更新的派生索引。
+    // 允许 Host 检查单实体 canonical 快照，但禁止将损坏的 Spatial 查询误报为可信结果。
+    private void DemandSpatialReadable()
+    {
+        if (_state == WorldLifecycle.Faulted)
+        {
+            throw new InvalidOperationException("Spatial query is unavailable for a faulted world.");
         }
     }
 
