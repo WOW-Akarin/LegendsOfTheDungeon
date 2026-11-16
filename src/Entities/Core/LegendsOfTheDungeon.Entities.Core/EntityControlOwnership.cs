@@ -407,7 +407,7 @@ public sealed class EntityTagCapability
     public bool Revoke(IWorldWriteContext context, EntityEffectHandle handle)
     {
         _identity.Demand(context);
-        if (handle.Identity != _identity)
+        if (handle.Identity != _identity || handle.Kind != EntityEffectKind.Tag)
         {
             return false;
         }
