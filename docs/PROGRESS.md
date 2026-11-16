@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `710b995a6655bd71eafaf7d22a2cd75349e829a1` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P02 / Solution 与 CI 骨架 / REVIEW / B（工程）
+阶段 / 任务 / 状态 / 目标完成度：P02 / Solution 与 CI 骨架 / ACCEPTED / B（工程）
 
 ## 目标与成功条件
 
@@ -23,15 +23,15 @@
 
 ## 当前停点
 
-P02 最终 locked-mode CI run #4 已全绿；工程交付完成，当前进入独立 REVIEW。
+P02 已完成独立 Review 并 ACCEPTED；P03 尚未开始。
 
 ## 下一步（最多 5 项）
 
-1. 独立核对 global.json、Solution、中央工程/包设置与 4 个 lock file。
-2. 核对统一验证脚本和 CI 仍使用 exact SDK、locked restore、正/负向 Gate。
-3. 核对 P02/BUILD/ADR/CONTEXT 的链接和事实一致性。
-4. 确认未创建无调用方的大量空项目，P03 架构规则未被提前宣称完成。
-5. 无必需问题后将 P02 ACCEPTED。
+1. 开始 P03 — Architecture Tests 第一批。
+2. 建立真实生产 Assembly 依赖白名单和无环检查。
+3. 为 Domain→Adapter/Host、跨模块 Infrastructure/Internal、Modules→Hosts 等规则建立正例与故意违规负例。
+4. 对 Common/Utils/中心 Manager 仅做辅助检测，职责聚集保留人工审查。
+5. P03 的每条规则通过 CI 正/负例后再进入 REVIEW。
 
 ## 修改文件及原因
 
@@ -60,8 +60,8 @@ P02 暂不新增业务公共契约；只建立工程 Assembly 边界。若 CI �
 ## 失败、阻塞、风险与未验证假设
 
 - 当前执行容器缺少 dotnet，但不阻塞使用 GitHub Actions 作为真实 P02 验证环境。
-- 当前执行容器仍无 dotnet；本阶段可复现证据来自干净 GitHub Actions Linux x64 runner。
-- P03 的完整架构依赖规则尚未实现；P02 的 Architecture tests 只是工程入口与 smoke test。
+- 当前执行容器仍无 dotnet；P02 的可复现证据来自干净 GitHub Actions Linux x64 runner。
+- P03 的完整架构依赖规则尚未实现；P02 的 Architecture tests 只是工程入口与 smoke test，属于下一阶段工作。
 
 ## 恢复步骤
 
@@ -69,7 +69,7 @@ P02 暂不新增业务公共契约；只建立工程 Assembly 边界。若 CI �
 2. 核对 main HEAD 与任务起始 SHA `710b995a6655bd71eafaf7d22a2cd75349e829a1`。
 3. 打开 `.github/workflows/ci.yml` 与工程文件，读取最新 workflow run。
 4. 若 CI 失败，从第一个真实失败日志修复，不降低 Gate。
-5. P02 已进入 REVIEW；按 progress/P02.md 的当前停点完成独立审查。
+5. P02 已 ACCEPTED；下一任务从 DEVELOPMENT_ROADMAP 的 P03 开始。
 
 ## 不应重复执行的操作
 
