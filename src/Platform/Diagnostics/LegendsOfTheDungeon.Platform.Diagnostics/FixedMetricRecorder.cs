@@ -50,7 +50,7 @@ public sealed class FixedMetricRecorder
     }
 
     /// <summary>固定维度的槽位总数，无论发生多少实体或任务。</summary>
-    public int MaximumSeries => AreaCount * OutcomeCount;
+    public const int MaximumSeries = AreaCount * OutcomeCount;
 
     /// <summary>按固定类型记录技术操作；不使用自由文本或异常本体。</summary>
     /// <param name="area">Tick/Queue/DB/AI/Script。</param>

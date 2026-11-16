@@ -9,7 +9,7 @@ public sealed class DiagnosticsTests
     public void MetricDimensionsStayAtTwentyDespiteManyUniqueCorrelations()
     {
         var recorder = new FixedMetricRecorder(10);
-        Assert.Equal(20, recorder.MaximumSeries);
+        Assert.Equal(20, FixedMetricRecorder.MaximumSeries);
         for (var i = 0; i < 50_000; i++)
         {
             recorder.Record((DiagnosticArea)(i % 5), DiagnosticOutcome.Succeeded, i % 20);

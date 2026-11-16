@@ -52,7 +52,7 @@ public sealed class BoundedObservationOutbox
 {
     private readonly object _gate = new();
     private readonly Queue<DiagnosticObservation> _entries = new();
-    private readonly SemaphoreSlim _flushing = new(1, 1);
+    private int _flushing;
     private readonly int _capacity;
     private long _dropped;
     private long _failed;
@@ -136,7 +136,12 @@ public sealed class BoundedObservationOutbox
     {
         ArgumentNullException.ThrowIfNull(sink);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumItems);
-        await _flushing.WaitAsync(cancellationToken);
+        if (Interlocked.CompareExchange(ref _flushing, 1, 0) != 0)
+        {
+            // 不让并发导出者彼此等待；当前导出者负责有界批次。
+            return 0;
+        }
+
         try
         {
             var attempted = 0;
@@ -180,7 +185,7 @@ public sealed class BoundedObservationOutbox
         }
         finally
         {
-            _flushing.Release();
+            Volatile.Write(ref _flushing, 0);
         }
     }
 }
