@@ -113,6 +113,7 @@ public sealed class WorldInstanceTests
         Assert.Equal(0, world.LiveCount);
         Assert.True(world.TryGetSnapshot(id.Id, out var disposed));
         Assert.Equal(WorldEntityLifecycle.Disposed, disposed.Lifecycle);
+        Assert.Null(disposed.Target);
     }
 
     [Fact]
@@ -356,6 +357,28 @@ public sealed class WorldInstanceTests
         });
         Assert.Equal(WorldLifecycle.Faulted, world.State);
         Assert.Equal(1, ownership.ClaimedEntities);
+    }
+
+    [Fact]
+    public void DisposedSourceMustForgetItsOwnTargetBeforeOtherEntitiesAreStopped()
+    {
+        var owners = new WorldOwnershipRegistry();
+        var world = new WorldInstance(new WorldId(1), new WorldEpoch(1), owners);
+        var executor = Executor();
+        Start(executor, world);
+        var source = Identity(1);
+        var target = Identity(2);
+        Run(executor, ctx =>
+        {
+            Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(source)));
+            Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(target)));
+            Assert.Equal(WorldEntityResult.TargetChanged, world.SelectTarget(ctx, source, target));
+            Assert.True(world.BeginDrain(ctx));
+            Assert.True(world.Stop(ctx));
+        });
+        Assert.True(world.TryGetSnapshot(source.Id, out var disposed));
+        Assert.Equal(WorldEntityLifecycle.Disposed, disposed.Lifecycle);
+        Assert.Null(disposed.Target);
     }
 
     private sealed class Work(Action<IWorldWriteContext> action) : IWorldAction

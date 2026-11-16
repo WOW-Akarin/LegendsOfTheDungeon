@@ -668,6 +668,9 @@ public sealed class WorldInstance
             cleanup.OnRemoving(entry.Identity);
         }
 
+        // 即使已从其它实体撤销此 ID，被移除实体自己的 Target 也必须清空；
+        // 否则依稳定 ID 顺序停机时，较早销毁的对象墓碑会保留过期目标。
+        entry.Capabilities.Target.Select(context, null);
         ClearInboundTargets(context, entry.Identity);
         context.RetireEntity(entry.Identity.Id, entry.Identity.Generation);
         _ownership.Release(this, entry.Identity);
