@@ -179,7 +179,9 @@ public sealed class FramedStreamTransport : IFrameTransport
 
         var queuedFrames = _outbound.QueuedFrames;
         var queuedBytes = _outbound.QueuedBytes;
-        var deliveryUnknown = Volatile.Read(ref _inFlight) != 0
+        // 超时时，发送者可能刚从队列领取但还未置 InFlight；
+        // 因此只要发送者未退出，就保守地标为结果未知。
+        var deliveryUnknown = !senderEnded || Volatile.Read(ref _inFlight) != 0
             || Volatile.Read(ref _deliveryUnknown) != 0;
         var drained = senderEnded && queuedFrames == 0 && !deliveryUnknown;
         var report = new TransportShutdownReport(

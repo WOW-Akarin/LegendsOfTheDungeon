@@ -106,6 +106,22 @@ public sealed class NetworkingTests
     }
 
     [Fact]
+    public async Task AcceptedOutgoingPayloadIsSnapshottedBeforeCallerMutation()
+    {
+        using var wire = new MemoryStream();
+        await using var transport = new FramedStreamTransport(
+            wire, Options(maxPayload: 64, frames: 2, queuedBytes: 64));
+        var callerOwned = new byte[] { 5, 6, 7 };
+        Assert.Equal(FrameOfferStatus.Accepted, transport.OfferSend(callerOwned));
+        callerOwned[0] = 99;
+        var shutdown = await transport.StopAsync(TimeSpan.FromSeconds(5));
+        Assert.True(shutdown.Drained);
+        Assert.False(shutdown.DeliveryUnknown);
+        Assert.Equal(1L, shutdown.WrittenFrames);
+        Assert.Equal(new byte[] { 0, 0, 0, 3, 5, 6, 7 }, wire.ToArray());
+    }
+
+    [Fact]
     public void SendingFrameRateLimitIsVisibleAndDoesNotEnqueueOnDenial()
     {
         var buffer = new OutboundFrameBuffer(
