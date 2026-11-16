@@ -387,3 +387,38 @@ jobs:
           path: artifacts/world-spatial/report.txt
           if-no-files-found: warn
           retention-days: 14
+
+  world-control:
+    needs: build-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      CI: 'true'
+      DOTNET_NOLOGO: '1'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET 10.0.404
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.404'
+
+      - name: Locked restore P26 control ownership and tags probe
+        run: dotnet restore tests/Integration/LegendsOfTheDungeon.WorldControlProbe/LegendsOfTheDungeon.WorldControlProbe.csproj --locked-mode
+
+      - name: Verify real world control source isolation relation cycles and cleanup
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/world-control
+          dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldControlProbe/LegendsOfTheDungeon.WorldControlProbe.csproj --configuration Release --no-restore | tee artifacts/world-control/report.txt
+
+      - name: Upload P26 world control integration report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: world-control
+          path: artifacts/world-control/report.txt
+          if-no-files-found: warn
+          retention-days: 14

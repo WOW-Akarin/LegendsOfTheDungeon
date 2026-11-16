@@ -1,5 +1,7 @@
 using System.Buffers.Binary;
 using System.Security.Cryptography;
+using System.Text;
+using LegendsOfTheDungeon.Entities.Core;
 using LegendsOfTheDungeon.Kernel;
 using LegendsOfTheDungeon.Runtime.Abstractions;
 
@@ -182,7 +184,7 @@ internal static class WorldStateDigest
         IReadOnlyList<WorldEntitySnapshot> snapshots, WorldId world, WorldEpoch epoch, Tick tick)
     {
         using var digest = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
-        Add(digest, 1); // schema version；变更字段布局时必须增加版本
+        Add(digest, 3); // P26: include all source leases and monotone tokens, not just effective state
         Add(digest, world.Value);
         Add(digest, epoch.Value);
         Add(digest, tick.Value);
@@ -208,9 +210,63 @@ internal static class WorldStateDigest
                 Add(digest, target.Id.Value);
                 Add(digest, target.Generation.Value);
             }
+            Add(digest, (ulong)item.Control);
+            Add(digest, item.ControlSequence);
+            Add(digest, item.TagSequence);
+            Add(digest, (ulong)item.ControlGrants.Count);
+            foreach (var control in item.ControlGrants)
+            {
+                Add(digest, control.Sequence);
+                Add(digest, control.Source.Value);
+                Add(digest, (ulong)control.Flag);
+            }
+
+            Add(digest, (ulong)item.TagGrants.Count);
+            foreach (var grant in item.TagGrants)
+            {
+                Add(digest, grant.Sequence);
+                Add(digest, grant.Source.Value);
+                AddText(digest, grant.Tag);
+            }
+
+            Add(digest, (ulong)item.PermanentTags.Count);
+            foreach (var tag in item.PermanentTags)
+            {
+                AddText(digest, tag);
+            }
+
+            Add(digest, (ulong)item.Tags.Count);
+            foreach (var tag in item.Tags)
+            {
+                AddText(digest, tag);
+            }
+
+            AddRelated(digest, item.Relationships.Owner);
+            AddRelated(digest, item.Relationships.Creator);
+            AddRelated(digest, item.Relationships.Controller);
+            AddRelated(digest, item.Relationships.Summoner);
         }
 
         return Convert.ToHexString(digest.GetHashAndReset());
+    }
+
+    private static void AddText(IncrementalHash digest, string text)
+    {
+        var bytes = Encoding.UTF8.GetBytes(text);
+        Add(digest, (ulong)bytes.Length);
+        digest.AppendData(bytes);
+    }
+
+    private static void AddRelated(IncrementalHash digest, EntityIdentity? identity)
+    {
+        Add(digest, identity.HasValue ? 1UL : 0UL);
+        if (identity is { } value)
+        {
+            Add(digest, value.World.Value);
+            Add(digest, value.Epoch.Value);
+            Add(digest, value.Id.Value);
+            Add(digest, value.Generation.Value);
+        }
     }
 
     private static void AddDouble(IncrementalHash digest, double value) =>

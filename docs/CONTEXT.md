@@ -1,22 +1,23 @@
 # 当前上下文
 
-日期：2026-11-16 +08:00；分支：main；不创建分支
-范围：通用 C#/.NET10 游戏服务器，不兼容 WoW 3.3.5a 客户端；上游固定 SHA `17f9f9d5003708136c798ab4ef8c1b9762251bad` 仅参考机制。
+更新时间：2026-11-17；main 直推，无分支。
+项目：通用 C#/.NET10 游戏服务器，非 WoW 3.3.5a 客户端兼容；上游 AzerothCore 固定 SHA `17f9f9d5003708136c798ab4ef8c1b9762251bad` 只作通用机制参考。
+架构：模块化单体、P18 WorldExecutor 独占同步写租约、P17 WorldInstance 唯一 Registry、P24 Transform 唯一空间真相、P20 派生 Spatial/Cell/Grid。
 
-架构：模块化单体/World Actor/Ports & Adapters；WorldExecutor 唯一真实同步租约，世界/实体的 World/Epoch/Generation 必须有效，后台 Worker 不直接持有可变实体。P24 Transform 是位置唯一写入真相。
+## 当前阶段
 
-## 阶段真相
+P00–P20 与 P24(B) 已 ACCEPTED。P20 归档 HEAD `ec80ea7a7ce2755a70807f750c0a4fe9d4f01f0a`，CI #188 九 Job SUCCESS（257 Unit/16 Architecture）。
 
-P00–P19、P24(B) 已正式验收。P19 归档 HEAD `8aeea75a9bb0e3aa87ce2b0842a3ce31bbffae10`，CI #182 八 Job SUCCESS。当前进入 **P20 Spatial（ACCEPTED，目标 C）**，新增代码尚未获得 CI PASS，不能冒充完成。
+正在实施 **P26 Control / Ownership / Tags（IN_PROGRESS，目标 C）**，尚无本次 CI PASS。P21 Visibility 要求 P20 + P26，不能跳过依赖。
 
-## 当前实现
+## P26 边界
 
-- Runtime.World 内置有界三维 Cell 桶和 EntityId→Cell 派生反向索引；P17 世界 _gate + P18 同步 Scope 统一实体 Add/Move/Remove；不复制 Transform。
-- 初次 Grid：Cell Active/Unloaded，空 Cell 才卸载；Nearby/Range 返回按值且 EntityId 升序的活动实体快照；合法 Cell 与边界按 floor；已卸载/越界移动失败不修改位置。
-- Rebuild 只从唯一 Transform 重建派生索引；Stop 释放所有桶；清理异常 Faulted。
-- Unit/真实 P20 WorldSpatialProbe（随机 850 Move 对照、并发读、Fail Prepare、Stop），首版 Seeded Release 微基准（1600 实体、700 Move、400 查询）在 CI #185 中得到真实数值：Move p95 0.0093ms、Nearby p95 0.3860ms，环境 Ubuntu 26.04.1/4 CPU/Release；不预设性能通过线。
-- CI 从 8 扩成 9 Job，P20 实现 CI、独立 REVIEW 和 ACCEPTED 各自必须完整验证。性能基线不代表 P64 10 World/10,000 Entity/50ms 达标。
+- 领域 Entities.Core 明确 Control/Tags/Relationships 单一写所有者；临时来源带 World/Epoch/EntityId/Generation + 序号与种类；四类 Owner/Creator/Controller/Summoner 不共享角色槽位。
+- WorldInstance 负责 P18 Scope、活跃代际校验、禁止跨角色关系环、销毁全部入向引用；只导出冻结的 Tag、Control 与关系快照，供未来 P21 Visibility。
+- P19 状态 Hash 升级到 schema v3，记录来源分布及序号，不把双来源 Stun 当成单来源 Stun。
+- CI 从 9 Job 扩为 10 Job，新增真实 `WorldControlProbe`。实现、独立 REVIEW、正式 ACCEPTED 各自必须完整通过。
+- 生产 Host/网络授权 P60、P21 Visibility Enter/Leave、P25 Stats、P62.F 完整回放、P64 性能仍未完成；未预设通过结论。
 
 ## 下一安全动作
 
-P20 正式 ACCEPTED HEAD #187 已九 Job SUCCESS。下一阶段优先 P26 — Control / Ownership / Tags（直接依赖 P24，已满足），再启动 P21 Visibility（需要 P20 + P26）。P22 Spawn/Respawn 亦可独立展开；P64 压测尚未完成。不得把首版微基准当成 P64 大规模压测。下一阶段 P21 Visibility/P27 Movement/P62 Full Replay/P64 Performance 当前均未完成。入口：[PROGRESS](PROGRESS.md)、[P20](progress/P20.md)、[Spatial 契约](modules/WORLD_SPATIAL.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)。
+等待初始 HEAD 真实十 Job CI，失败就修复，之后独立 REVIEW HEAD 和 ACCEPTED HEAD 另行核验。入口：[PROGRESS](PROGRESS.md)、[P26](progress/P26.md)、[WORLD_CONTROL](modules/WORLD_CONTROL.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)、[恢复规范](RECOVERY_WORKFLOW.md)。

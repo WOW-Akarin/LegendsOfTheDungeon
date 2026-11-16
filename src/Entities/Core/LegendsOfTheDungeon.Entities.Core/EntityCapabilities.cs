@@ -200,6 +200,9 @@ public sealed class EntityCapabilities
         Transform = new TransformCapability(identity, initialTransform);
         Life = new LifeCapability();
         Target = new TargetCapability(identity, Life);
+        Control = new EntityControlCapability(identity);
+        Tags = new EntityTagCapability(identity);
+        Relationships = new EntityRelationshipCapability(identity);
     }
 
     /// <summary>不可变归属能力。</summary>
@@ -213,6 +216,15 @@ public sealed class EntityCapabilities
 
     /// <summary>不持有实体引用的窄目标能力。</summary>
     public TargetCapability Target { get; }
+
+    /// <summary>按来源叠加并精确撤销的控制能力。</summary>
+    public EntityControlCapability Control { get; }
+
+    /// <summary>永久及临时来源标签的唯一集合能力。</summary>
+    public EntityTagCapability Tags { get; }
+
+    /// <summary>Owner/Creator/Controller/Summoner 四类独立的实体身份关系。</summary>
+    public EntityRelationshipCapability Relationships { get; }
 
     /// <summary>在同一同步世界租约内完成死亡标记和目标清理；重复死亡无副作用。</summary>
     /// <param name="context">有效的 P18 世界写入租约。</param>

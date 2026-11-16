@@ -80,7 +80,23 @@ public enum WorldEntityResult
     /// <summary>坐标落在可表示的 Grid 边界之外。</summary>
     SpatialOutOfBounds,
     /// <summary>目标 Cell 已显式卸载，必须重新激活。</summary>
-    CellUnloaded
+    CellUnloaded,
+    /// <summary>新控制来源已授予。</summary>
+    ControlGranted,
+    /// <summary>指定控制来源已撤销。</summary>
+    ControlRevoked,
+    /// <summary>临时标签来源已授予。</summary>
+    TagGranted,
+    /// <summary>临时标签来源已撤销。</summary>
+    TagRevoked,
+    /// <summary>永久标签状态已修改。</summary>
+    TagChanged,
+    /// <summary>一个关系角色已更新。</summary>
+    RelationChanged,
+    /// <summary>关系目标不存在、过期、已退休或属于其它世界。</summary>
+    RelationUnavailable,
+    /// <summary>关系会造成跨角色循环或自指。</summary>
+    RelationCycle
 }
 
 /// <summary>注册前的不可变实体创建意图，不向调用方交付实体可变能力。</summary>
@@ -111,13 +127,25 @@ public readonly record struct WorldEntitySeed
 public readonly record struct WorldEntitySnapshot
 {
     internal WorldEntitySnapshot(EntityIdentity identity, WorldEntityLifecycle lifecycle,
-        Transform transform, LifeState life, EntityIdentity? target)
+        Transform transform, LifeState life, EntityIdentity? target,
+        EntityControlFlag control, IReadOnlyList<string> tags, EntityRelations relationships,
+        IReadOnlyList<EntityControlGrantSnapshot> controlGrants,
+        IReadOnlyList<EntityTagGrantSnapshot> tagGrants,
+        IReadOnlyList<string> permanentTags, ulong controlSequence, ulong tagSequence)
     {
         Identity = identity;
         Lifecycle = lifecycle;
         Transform = transform;
         Life = life;
         Target = target;
+        Control = control;
+        Tags = tags;
+        Relationships = relationships;
+        ControlGrants = controlGrants;
+        TagGrants = tagGrants;
+        PermanentTags = permanentTags;
+        ControlSequence = controlSequence;
+        TagSequence = tagSequence;
     }
 
     /// <summary>包含代际的实体身份。</summary>
@@ -134,6 +162,30 @@ public readonly record struct WorldEntitySnapshot
 
     /// <summary>只包含不可变身份的目标信息。</summary>
     public EntityIdentity? Target { get; }
+
+    /// <summary>按来源合并后的不可变控制位集合。</summary>
+    public EntityControlFlag Control { get; }
+
+    /// <summary>按值冻结、Ordinal 升序的有效标签，不是任何内部集合。</summary>
+    public IReadOnlyList<string> Tags { get; }
+
+    /// <summary>四类区分角色的关系身份快照。</summary>
+    public EntityRelations Relationships { get; }
+
+    /// <summary>用于确定性状态摘要的不可变控制来源明细。</summary>
+    public IReadOnlyList<EntityControlGrantSnapshot> ControlGrants { get; }
+
+    /// <summary>用于确定性状态摘要的不可变临时标签来源明细。</summary>
+    public IReadOnlyList<EntityTagGrantSnapshot> TagGrants { get; }
+
+    /// <summary>永久标签来源快照；不能与有效标签混为一个多源集合。</summary>
+    public IReadOnlyList<string> PermanentTags { get; }
+
+    /// <summary>此代际控制来源单调递增的最大序号。</summary>
+    public ulong ControlSequence { get; }
+
+    /// <summary>此代际标签来源单调递增的最大序号。</summary>
+    public ulong TagSequence { get; }
 }
 
 /// <summary>可选同步清理回调；供未来 Timer、订阅和异步请求撤销器接入。</summary>
@@ -219,9 +271,7 @@ public sealed class WorldInstance
         {
             if (_entries.TryGetValue(id, out var entry))
             {
-                snapshot = new WorldEntitySnapshot(entry.Identity, entry.State,
-                    entry.Capabilities.Transform.Value, entry.Capabilities.Life.State,
-                    entry.Capabilities.Target.State.Selected);
+                snapshot = Snapshot(entry);
                 return true;
             }
         }
@@ -390,7 +440,12 @@ public sealed class WorldInstance
 
     private static WorldEntitySnapshot Snapshot(Entry entry) =>
         new(entry.Identity, entry.State, entry.Capabilities.Transform.Value,
-            entry.Capabilities.Life.State, entry.Capabilities.Target.State.Selected);
+            entry.Capabilities.Life.State, entry.Capabilities.Target.State.Selected,
+            entry.Capabilities.Control.Effective, entry.Capabilities.Tags.ActiveTags,
+            entry.Capabilities.Relationships.State,
+            entry.Capabilities.Control.ActiveGrants, entry.Capabilities.Tags.ActiveGrants,
+            entry.Capabilities.Tags.PermanentTags,
+            entry.Capabilities.Control.LastSequence, entry.Capabilities.Tags.LastSequence);
 
     private static bool IsWithin(Position point, Position center, double radius) =>
         WorldSpatialIndex.IsWithin(point, center, radius);
@@ -403,10 +458,7 @@ public sealed class WorldInstance
         lock (_gate)
         {
             var snapshots = _entries.Values.OrderBy(entry => entry.Identity.Id.Value)
-                .Select(entry => new WorldEntitySnapshot(entry.Identity, entry.State,
-                    entry.Capabilities.Transform.Value, entry.Capabilities.Life.State,
-                    entry.Capabilities.Target.State.Selected))
-                .ToArray();
+                .Select(Snapshot).ToArray();
             return Array.AsReadOnly(snapshots);
         }
     }
@@ -719,6 +771,254 @@ public sealed class WorldInstance
         }
     }
 
+    /// <summary>在真实 P18 租约中按来源授予单项控制；同来源同标志幂等。</summary>
+    /// <param name="context">真实同步世界写入上下文。</param>
+    /// <param name="identity">受控制实体的完整身份。</param>
+    /// <param name="source">非零业务来源。</param>
+    /// <param name="flag">单项受支持控制标志。</param>
+    /// <param name="handle">成功授予或重复时返回可精确撤销的句柄。</param>
+    /// <returns>明确的授予、重复或配额状态。</returns>
+    public WorldEntityResult GrantControl(IWorldWriteContext context, EntityIdentity identity,
+        EntityEffectSource source, EntityControlFlag flag, out EntityEffectHandle handle)
+    {
+        Demand(context);
+        lock (_gate)
+        {
+            handle = default;
+            var status = FindActive(identity, out var entry);
+            if (status != WorldEntityResult.Added)
+            {
+                return status;
+            }
+
+            return entry!.Capabilities.Control.Grant(context, source, flag, out handle) switch
+            {
+                EntityEffectGrantResult.Granted => WorldEntityResult.ControlGranted,
+                EntityEffectGrantResult.AlreadyExists => WorldEntityResult.AlreadyExists,
+                EntityEffectGrantResult.CapacityExceeded => WorldEntityResult.CapacityExceeded,
+                _ => throw new InvalidOperationException("Unknown control grant result.")
+            };
+        }
+    }
+
+    /// <summary>只撤销当前代际的一个控制来源，其它同类来源继续生效。</summary>
+    /// <param name="context">真实同步世界写入上下文。</param>
+    /// <param name="identity">被控制实体身份。</param>
+    /// <param name="handle">控制类型且完整代际匹配的来源句柄。</param>
+    /// <returns>实际撤销或幂等结果。</returns>
+    public WorldEntityResult RevokeControl(IWorldWriteContext context, EntityIdentity identity,
+        EntityEffectHandle handle)
+    {
+        Demand(context);
+        lock (_gate)
+        {
+            var status = FindActive(identity, out var entry);
+            if (status != WorldEntityResult.Added)
+            {
+                return status;
+            }
+
+            return handle.Identity != identity ? WorldEntityResult.Stale
+                : entry!.Capabilities.Control.Revoke(context, handle)
+                    ? WorldEntityResult.ControlRevoked : WorldEntityResult.AlreadyCompleted;
+        }
+    }
+
+    /// <summary>授予临时来源标签；不同来源可共同维持一个有效 Tag。</summary>
+    /// <param name="context">真实同步世界写入上下文。</param>
+    /// <param name="identity">被标记实体。</param>
+    /// <param name="source">非零标签来源。</param>
+    /// <param name="tag">规范化 ASCII 小写标签。</param>
+    /// <param name="handle">本次标签授予的撤销句柄。</param>
+    /// <returns>授予、重复或配额状态。</returns>
+    public WorldEntityResult GrantTag(IWorldWriteContext context, EntityIdentity identity,
+        EntityEffectSource source, string tag, out EntityEffectHandle handle)
+    {
+        Demand(context);
+        lock (_gate)
+        {
+            handle = default;
+            var status = FindActive(identity, out var entry);
+            if (status != WorldEntityResult.Added)
+            {
+                return status;
+            }
+
+            return entry!.Capabilities.Tags.Grant(context, source, tag, out handle) switch
+            {
+                EntityEffectGrantResult.Granted => WorldEntityResult.TagGranted,
+                EntityEffectGrantResult.AlreadyExists => WorldEntityResult.AlreadyExists,
+                EntityEffectGrantResult.CapacityExceeded => WorldEntityResult.CapacityExceeded,
+                _ => throw new InvalidOperationException("Unknown tag grant result.")
+            };
+        }
+    }
+
+    /// <summary>按完整句柄撤销临时 Tag，不影响其它来源或永久标签。</summary>
+    /// <param name="context">真实同步世界写入上下文。</param>
+    /// <param name="identity">被标记实体。</param>
+    /// <param name="handle">来自当前代际 TagCapability 的句柄。</param>
+    /// <returns>撤销或幂等结果。</returns>
+    public WorldEntityResult RevokeTag(IWorldWriteContext context, EntityIdentity identity,
+        EntityEffectHandle handle)
+    {
+        Demand(context);
+        lock (_gate)
+        {
+            var status = FindActive(identity, out var entry);
+            if (status != WorldEntityResult.Added)
+            {
+                return status;
+            }
+
+            return handle.Identity != identity ? WorldEntityResult.Stale
+                : entry!.Capabilities.Tags.Revoke(context, handle)
+                    ? WorldEntityResult.TagRevoked : WorldEntityResult.AlreadyCompleted;
+        }
+    }
+
+    /// <summary>启停永久 Tag；临时 Tag 撤销不会移除其它来源或永久 Tag。</summary>
+    /// <param name="context">真实同步世界写入上下文。</param>
+    /// <param name="identity">被标记实体。</param>
+    /// <param name="tag">规范化 Tag。</param>
+    /// <param name="enabled">启用/关闭永久来源。</param>
+    /// <returns>状态变更或幂等。</returns>
+    public WorldEntityResult SetPermanentTag(IWorldWriteContext context, EntityIdentity identity,
+        string tag, bool enabled)
+    {
+        Demand(context);
+        lock (_gate)
+        {
+            var status = FindActive(identity, out var entry);
+            if (status != WorldEntityResult.Added)
+            {
+                return status;
+            }
+
+            if (enabled && entry!.Capabilities.Tags.SourceCount >= 64 &&
+                !entry.Capabilities.Tags.HasPermanent(tag))
+            {
+                return WorldEntityResult.CapacityExceeded;
+            }
+
+            return entry!.Capabilities.Tags.SetPermanent(context, tag, enabled)
+                ? WorldEntityResult.TagChanged : WorldEntityResult.AlreadyCompleted;
+        }
+    }
+
+    /// <summary>按有效 Tag 过滤正在活动的实体，返回按 EntityId 升序的不可变快照。</summary>
+    /// <param name="tag">必须是规范化的 Tag。</param>
+    /// <returns>不泄露内部可变标签集合的只读实体快照。</returns>
+    public IReadOnlyList<WorldEntitySnapshot> QueryByTag(string tag)
+    {
+        EntityTagCapability.ValidateTag(tag);
+        lock (_gate)
+        {
+            if (_state == WorldLifecycle.Faulted)
+            {
+                throw new InvalidOperationException("Cannot query potentially partial relationship state.");
+            }
+
+            return Array.AsReadOnly(_entries.Values
+                .Where(entry => entry.State == WorldEntityLifecycle.Active &&
+                                entry.Capabilities.Tags.Contains(tag))
+                .OrderBy(entry => entry.Identity.Id.Value).Select(Snapshot).ToArray());
+        }
+    }
+
+    /// <summary>更新 Owner/Creator/Controller/Summoner 其中一个关系，验证活动代际与跨类型图无环。</summary>
+    /// <param name="context">真实同步世界写入上下文。</param>
+    /// <param name="identity">关系的起点实体。</param>
+    /// <param name="kind">区别四类关系的明确角色。</param>
+    /// <param name="related">当前世界中另一活动代际，或 null 清空。</param>
+    /// <returns>成功、重复、不可用关系或循环拒绝。</returns>
+    public WorldEntityResult SetRelation(IWorldWriteContext context, EntityIdentity identity,
+        EntityRelationKind kind, EntityIdentity? related)
+    {
+        Demand(context);
+        if (!Enum.IsDefined(kind))
+        {
+            throw new ArgumentOutOfRangeException(nameof(kind));
+        }
+
+        lock (_gate)
+        {
+            var status = FindActive(identity, out var entry);
+            if (status != WorldEntityResult.Added)
+            {
+                return status;
+            }
+
+            if (entry!.Capabilities.Relationships.State.Get(kind) == related)
+            {
+                return WorldEntityResult.AlreadyCompleted;
+            }
+
+            if (related is { } target)
+            {
+                if (target.IsEmpty || target.World != World || target.Epoch != Epoch)
+                {
+                    return WorldEntityResult.RelationUnavailable;
+                }
+
+                if (target.Id == identity.Id || HasRelationshipPath(target, identity))
+                {
+                    return WorldEntityResult.RelationCycle;
+                }
+
+                if (FindActive(target, out _) != WorldEntityResult.Added)
+                {
+                    return WorldEntityResult.RelationUnavailable;
+                }
+            }
+
+            return entry.Capabilities.Relationships.Set(context, kind, related)
+                ? WorldEntityResult.RelationChanged : WorldEntityResult.AlreadyCompleted;
+        }
+    }
+
+    private bool HasRelationshipPath(EntityIdentity start, EntityIdentity target)
+    {
+        var pending = new Stack<EntityIdentity>();
+        var visited = new HashSet<EntityIdentity>();
+        pending.Push(start);
+        while (pending.Count > 0)
+        {
+            var current = pending.Pop();
+            if (current == target)
+            {
+                return true;
+            }
+
+            if (!visited.Add(current) || !_entries.TryGetValue(current.Id, out var entry) ||
+                entry.Identity != current || !IsLive(entry.State))
+            {
+                continue;
+            }
+
+            foreach (var kind in Enum.GetValues<EntityRelationKind>())
+            {
+                if (entry.Capabilities.Relationships.State.Get(kind) is { } next)
+                {
+                    pending.Push(next);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private void ClearInboundRelations(IWorldWriteContext context, EntityIdentity retired)
+    {
+        foreach (var entry in _entries.Values)
+        {
+            if (IsLive(entry.State) && entry.Identity != retired)
+            {
+                entry.Capabilities.Relationships.ClearReference(context, retired);
+            }
+        }
+    }
+
     /// <summary>活动实体死亡时同步清除自身及世界内其它实体指向它的目标。</summary>
     /// <param name="context">同步世界写入上下文。</param>
     /// <param name="identity">当前活动实体。</param>
@@ -906,6 +1206,10 @@ public sealed class WorldInstance
             // 提前清空自己的目标，否则稳定 ID 次序停机时先销毁的实体墓碑可能保留旧目标。
             entry.Capabilities.Target.Select(context, null);
             ClearInboundTargets(context, entry.Identity);
+            ClearInboundRelations(context, entry.Identity);
+            entry.Capabilities.Relationships.Clear(context);
+            entry.Capabilities.Control.Clear(context);
+            entry.Capabilities.Tags.Clear(context);
             _spatial.Remove(entry.Identity, entry.Capabilities.Transform.Value.Position);
             context.RetireEntity(entry.Identity.Id, entry.Identity.Generation);
             _ownership.Release(this, entry.Identity);

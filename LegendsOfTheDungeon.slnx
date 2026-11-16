@@ -19,6 +19,7 @@
   <Project Path="tests/Unit/LegendsOfTheDungeon.UnitTests/LegendsOfTheDungeon.UnitTests.csproj" />
   <Project Path="tests/Integration/LegendsOfTheDungeon.WorldTickProbe/LegendsOfTheDungeon.WorldTickProbe.csproj" />
   <Project Path="tests/Integration/LegendsOfTheDungeon.WorldSpatialProbe/LegendsOfTheDungeon.WorldSpatialProbe.csproj" />
+  <Project Path="tests/Integration/LegendsOfTheDungeon.WorldControlProbe/LegendsOfTheDungeon.WorldControlProbe.csproj" />
   <Project Path="tests/Integration/LegendsOfTheDungeon.WorldLifecycleProbe/LegendsOfTheDungeon.WorldLifecycleProbe.csproj" />
   <Project Path="tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/LegendsOfTheDungeon.WorldExecutionProbe.csproj" />
   <Project Path="tests/Integration/LegendsOfTheDungeon.DiagnosticsProbe/LegendsOfTheDungeon.DiagnosticsProbe.csproj" />
