@@ -24,8 +24,16 @@
 - 初次实现 CI #183 因 `Math.Hypot` 不存在而 FAIL；正确替换后 #184 九 Job 首次全绿。对 Removing/Faulted 查询进一步加固后，稳定实现 HEAD `875f0cd64c2dbcf34985c0c2de3a1bbc90c7921b` CI #185 九 Job 全绿。
 - #185 P20 WorldSpatialProbe：850 次 seeded 随机跨 Cell 移动与暴力扫描一致、失败重定位、并发读、重建/移除/Stop、首版 Release Benchmark 全部 PASS。
 - #185 环境 Ubuntu 26.04.1 LTS / 4 CPU / .NET 10 Release / Seed=2071；1600 实体、700 Move、400 Nearby；Move p50/p95/p99 0.0040/0.0093/0.0198 ms；Query p50/p95/p99 0.1866/0.3860/0.4764 ms；分配 7,325,944 bytes。性能非 P64 10 World 压测。
-- 独立审查：[P20 Spatial Review](reviews/P20_WORLD_SPATIAL_REVIEW.md)，REVIEW HEAD `f9a90264fa5fbab02d5ce596414f7c2a133e5bec` CI #186（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43904373576）9/9 SUCCESS。P20 C 正式 ACCEPTED；本次 ACCEPTED HEAD CI 仍待核验。
+- 独立审查：[P20 Spatial Review](reviews/P20_WORLD_SPATIAL_REVIEW.md)，REVIEW HEAD `f9a90264fa5fbab02d5ce596414f7c2a133e5bec` CI #186（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43904373576）9/9 SUCCESS。P20 C 正式 ACCEPTED；正式 ACCEPTED HEAD `1a7a0776c4ed5826e3c407085fa490aff76dcf6b` 的 CI #187（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43904959312）9/9 SUCCESS，P20 C 完整验收收口。
 
 ## 下一安全动作
 
-核验本次 P20 正式 ACCEPTED HEAD 的九 Job CI，之后归档三阶段真实证据；不预先推进 P21 Visibility 或声称 P64 大规模性能已验收。
+P20 实现 #185、独立 REVIEW #186、正式 ACCEPTED #187 均九 Job SUCCESS。下一安全阶段优先 P26 — Control / Ownership / Tags：P21 Visibility 直接依赖 P26（仍未 ACCEPTED），不能跳过。P22 Spawn/Respawn 是另一已解锁独立路线；P64 大规模性能仍未验收。
+
+## P20 正式三阶段验证归档
+
+- 实现 HEAD `875f0cd64c2dbcf34985c0c2de3a1bbc90c7921b`，CI #185 9/9 SUCCESS。
+- 独立 REVIEW HEAD `f9a90264fa5fbab02d5ce596414f7c2a133e5bec`，CI #186 9/9 SUCCESS。
+- 正式 ACCEPTED HEAD `1a7a0776c4ed5826e3c407085fa490aff76dcf6b`，CI #187 9/9 SUCCESS；257 Unit、16 Architecture、空间一致性/并发/故障回归与 Release 基准均通过。
+- 失败历史 #183 `Math.Hypot` 编译不兼容保留；#184 首次九 Job 全绿，#185 两项故障边界补强后再次全绿。
+- 本次归档 HEAD 的 CI 尚待提交后验证，不冒充已通过。

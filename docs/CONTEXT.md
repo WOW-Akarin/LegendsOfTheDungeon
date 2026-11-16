@@ -19,4 +19,4 @@ P00–P19、P24(B) 已正式验收。P19 归档 HEAD `8aeea75a9bb0e3aa87ce2b0842
 
 ## 下一安全动作
 
-核验 P20 正式 ACCEPTED HEAD 的九个 Job，再归档阶段证据与转入 P21 Visibility。不得把首版微基准当成 P64 大规模压测。下一阶段 P21 Visibility/P27 Movement/P62 Full Replay/P64 Performance 当前均未完成。入口：[PROGRESS](PROGRESS.md)、[P20](progress/P20.md)、[Spatial 契约](modules/WORLD_SPATIAL.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)。
+P20 正式 ACCEPTED HEAD #187 已九 Job SUCCESS。下一阶段优先 P26 — Control / Ownership / Tags（直接依赖 P24，已满足），再启动 P21 Visibility（需要 P20 + P26）。P22 Spawn/Respawn 亦可独立展开；P64 压测尚未完成。不得把首版微基准当成 P64 大规模压测。下一阶段 P21 Visibility/P27 Movement/P62 Full Replay/P64 Performance 当前均未完成。入口：[PROGRESS](PROGRESS.md)、[P20](progress/P20.md)、[Spatial 契约](modules/WORLD_SPATIAL.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)。

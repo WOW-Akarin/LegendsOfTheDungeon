@@ -1,6 +1,6 @@
 # P20 — Spatial / Cell / Grid 技术契约
 
-状态：ACCEPTED（目标 C）；依赖 P19 与 P24 已正式 ACCEPTED。稳定实现 #185 和独立 REVIEW HEAD `f9a90264fa5fbab02d5ce596414f7c2a133e5bec` CI #186 均九 Job SUCCESS；正式 ACCEPTED HEAD CI 待核验。
+状态：ACCEPTED（目标 C）；依赖 P19 与 P24 已正式 ACCEPTED。稳定实现 #185 和独立 REVIEW HEAD `f9a90264fa5fbab02d5ce596414f7c2a133e5bec` CI #186 均九 Job SUCCESS；正式 ACCEPTED HEAD `1a7a0776c4ed5826e3c407085fa490aff76dcf6b` CI #187 九 Job SUCCESS。
 
 ## 唯一 Transform 真相与派生索引
 
@@ -37,4 +37,4 @@ P21 Visibility、P27 移动碰撞/速度、P29 Terrain/Navigation、P60 Host、P
 
 ## 独立审查结论
 
-[P20 独立四视角审查](../reviews/P20_WORLD_SPATIAL_REVIEW.md) 在 HEAD `f9a90264fa5fbab02d5ce596414f7c2a133e5bec` CI #186 九 Job SUCCESS，技术 C 必需缺口 0，正式 ACCEPTED。正式状态提交自身仍需 CI 复核；P64 大规模性能仍是后续独立工作。
+[P20 独立四视角审查](../reviews/P20_WORLD_SPATIAL_REVIEW.md) 在 HEAD `f9a90264fa5fbab02d5ce596414f7c2a133e5bec` CI #186 九 Job SUCCESS，技术 C 必需缺口 0，正式 ACCEPTED。正式 ACCEPTED HEAD CI #187 九 Job SUCCESS，P20 C 完整收口；P64 大规模性能仍是后续独立工作。
