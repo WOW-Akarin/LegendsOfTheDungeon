@@ -7,7 +7,7 @@
 - 每次 Drain 通过 maximumItems 限制单轮负载；maximumCriticalBurst 控制两车道同时有任务时的优先接纳比，跨多轮维持连续关键处理次数，防止普通任务饥饿。关键回执没有无限缓存。
 - LogicalScheduler<T> 不执行回调，只存储 (DueTick, 接纳序号, 信封)，不创建系统 Timer 或依赖真实墙钟；严格容量限制、取消释放容量、单 Tick 最大派发数。世界逻辑计时器执行语义由后续 P19 实现。
 - BoundedWorkChannel 用 bounded Channel 作为唯一排队能力，Offer 返回 Accepted/Busy/Closed/Duplicate，不允许无界积压；SnapshotOutstanding 列出已接纳未结束的 Queued/Running/Abandoned ID。
-- BackgroundWorkerPool 使用固定任务消费者，逐项捕获异常、受控取消、失败记录数量有界且不包含原始异常/参数/连接串。关闭先停止接纳，再排空；超过期限发送取消，返回尚未完成的 ID/状态。超时不代表已经执行/已回滚，调用方必须根据持久账本或其他可靠机制恢复未完成任务。DisposeAsync 需要等待已启动的 Worker 退出，随后从有界 Channel 中释放未启动的任务回调，保留 Abandoned ID 供恢复；不得在未获得 ShutdownAsync 报告前随意丢弃关键信息。
+- BackgroundWorkerPool 使用固定任务消费者，逐项捕获异常、受控取消、失败记录数量有界且不包含原始异常/参数/连接串。关闭先停止接纳，再排空；超过期限发送取消，返回尚未完成的 ID/状态。超时不代表已经执行/已回滚，调用方必须根据持久账本或其他可靠机制恢复未完成任务。DisposeAsync 在发送取消后立即释放尚未执行的 Channel 回调并保留 Abandoned ID；不阻塞等待不响应取消的在途任务，取消源在所有 Worker 真正退出后才释放。应先调用 ShutdownAsync 取得完整恢复清单，不能误将 Dispose 解释为已经执行完所有任务。
 
 ## 需要验证的边界
 

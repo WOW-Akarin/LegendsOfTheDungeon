@@ -115,26 +115,33 @@ public sealed class BackgroundWorkerPool : IAsyncDisposable
             failures);
     }
 
-    /// <summary>等待已发出的任务和 Worker 退出后释放取消源；调用方应先用限时 ShutdownAsync 停止接纳并取得未完成清单。</summary>
-    public async ValueTask DisposeAsync()
+    /// <summary>立即取消并释放尚未执行的队列回调；不等待不配合取消的在途任务。先通过 ShutdownAsync 取得恢复清单。</summary>
+    public ValueTask DisposeAsync()
     {
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
         {
-            return;
+            return ValueTask.CompletedTask;
         }
 
         _queue.Complete();
         _stop.Cancel();
-        try
+        // 仅释放尚未领取的回调，保留 Abandoned ID；在途任务无法强制终止。
+        _queue.ReleaseQueuedCallbacksOnAbort();
+        var completed = Task.WhenAll(_workers);
+        if (completed.IsCompleted)
         {
-            await Task.WhenAll(_workers);
-        }
-        finally
-        {
-            // 在所有 Worker 退出后释放尚未执行任务的闭包，不删除供恢复的 ID。
-            _queue.ReleaseQueuedCallbacksAfterWorkersExit();
             _stop.Dispose();
         }
+        else
+        {
+            // 由最后一名 Worker 退出时释放 CTS，避免取消源在运行中被提前释放。
+            _ = completed.ContinueWith(
+                static (_, state) => ((BackgroundWorkerPool)state!)._stop.Dispose(),
+                this, CancellationToken.None,
+                TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+        }
+
+        return ValueTask.CompletedTask;
     }
 
     private async Task ProcessAsync()

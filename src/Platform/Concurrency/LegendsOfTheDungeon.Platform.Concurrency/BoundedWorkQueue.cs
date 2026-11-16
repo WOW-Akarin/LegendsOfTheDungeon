@@ -173,7 +173,7 @@ public sealed class BoundedWorkChannel
         }
     }
 
-    internal void ReleaseQueuedCallbacksAfterWorkersExit()
+    internal void ReleaseQueuedCallbacksOnAbort()
     {
         lock (_gate)
         {

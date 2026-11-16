@@ -208,6 +208,40 @@ public sealed class ConcurrencyTests
     }
 
     [Fact]
+    public async Task DisposeNeverWaitsForUncooperativeHandlerAndReleasesQueuedCallbacks()
+    {
+        var started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var queue = new BoundedWorkChannel(1);
+        var pool = new BackgroundWorkerPool(queue, 1);
+        queue.Offer(new BackgroundWorkItem(31, async _ =>
+        {
+            started.TrySetResult(true);
+            await release.Task; // 明确模拟不配合取消的任务
+        }));
+        await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        queue.Offer(new BackgroundWorkItem(32, static _ => ValueTask.CompletedTask));
+
+        var stopped = await pool.ShutdownAsync(TimeSpan.FromMilliseconds(50));
+        Assert.False(stopped.Drained);
+        Assert.Equal([31L, 32L], stopped.Outstanding.Select(static x => x.Id));
+
+        try
+        {
+            await pool.DisposeAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(2));
+            var pending = queue.SnapshotOutstanding();
+            Assert.Contains(pending, static x => x.Id == 31 &&
+                x.State == OutstandingWorkState.Running);
+            Assert.Contains(pending, static x => x.Id == 32 &&
+                x.State == OutstandingWorkState.Abandoned);
+        }
+        finally
+        {
+            release.TrySetResult(true);
+        }
+    }
+
+    [Fact]
     public async Task LogicalSchedulerAndReservedMailboxFeedBoundedWorkersEndToEnd()
     {
         var scheduler = new LogicalScheduler<string>(4);
