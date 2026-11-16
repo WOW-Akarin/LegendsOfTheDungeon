@@ -1,6 +1,6 @@
 # P19 — WorldTick / Scheduler 确定性技术契约
 
-状态：IN_PROGRESS；目标 C；依赖 P07/P08/P14/P17 均已接受。实现提交后等待真实 CI，不能把提交视作 PASS。
+状态：REVIEW；目标 C；依赖 P07/P08/P14/P17 均已接受。实现 HEAD `630615a915fe0e976314e94c2b88fad7c7f501ff` CI #179 八 Job SUCCESS，独立 REVIEW HEAD 待验证。
 
 ## 固定相位与状态真相
 
@@ -12,7 +12,7 @@
 
 ## 有界多世界调度
 
-- `Platform.WorldScheduling/WorldTickScheduler` 为独立适配器；拥有 `WorldExecutor`、`WorldTickPipeline` 的显式可信绑定，不向不可信 Host/Socket 外泄 Producer。单次最多 64 World / 8 Worker；每世界最多 8 次追赶 Tick，单次 `RunBatch` 最多 1024 消息，默认 2 Worker/4 Tick/128 消息。
+- `Platform.WorldScheduling/WorldTickScheduler` 为独立适配器；通过 `IWorldTickDispatchPort` 窄抽象绑定 P18 执行能力与 `WorldTickPipeline`，不公开具体 WorldExecutor 类型，不向不可信 Host/Socket 外泄 Producer。单次最多 64 World / 8 Worker；每世界最多 8 次追赶 Tick，单次 `RunBatch` 最多 1024 消息，默认 2 Worker/4 Tick/128 消息。
 - 对 WorldId 唯一注册，调度周期与输出报告均按 WorldId 排序；后台 Worker 只提交 P18 `IWorldAction` 后由同步 WorldExecutor 写领域，绝不直接获得租约写权限。同一个调度器禁止并发 `RunDueAsync`，P18 自身继续拒绝同世界重入。
 - 邮箱接纳不等于执行：每世界仅有一个 Pending Tick Action；Batch 若先消耗旧命令，跨轮保留 Pending，绝不重复 Offer 同一 Tick、跳过待处理 Tick 或报告虚假的已提交状态。
 - 邮箱满报 `Backpressured`，世界故障 `Faulted`，停机 `Closed`，独占竞争 `Busy`，落后或本轮预算耗尽 `Deferred`。落后 Tick **不丢弃**，在后续调用中按每轮上限追赶；积压以 `RemainingDueTicks` 报告。
@@ -27,3 +27,9 @@
 ## P03 架构纠偏
 
 初始实现的 `WorldTickBinding(WorldExecutor,...)` 让 P19 平台适配器的公共 API 泄漏了 P18 具体实现类型。现新增 Runtime.Abstractions 的 `IWorldTickDispatchPort`（仅 World/Epoch/IsFaulted/OfferTick/RunTickBatch），P18 `WorldExecutor` 显式实现接口，P19 不再引用 `Platform.WorldExecution` Project；无 P03 例外、阈值降低或隐藏具体平台类型。
+
+## 实现质量证据
+
+- CI #179（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43897180562）：8/8 SUCCESS，242/242 Unit、16/16 Architecture，P19 真实 WorldTickProbe 四场景 PASS，原有七 Job 回归全绿。
+- P03-006 导致修改为 `IWorldTickDispatchPort` 而非豁免；新增项目仅直接引用 Kernel、Runtime.Abstractions、Runtime.World；需要可信组合根提供 P18 实现，防止从网络端获取此调度权能。
+- 独立四视角审查：`docs/reviews/P19_WORLD_TICK_REVIEW.md`；当前正式 ACCEPTED 和完整 P62/P64 证据均不存在。
