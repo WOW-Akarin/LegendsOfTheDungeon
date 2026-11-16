@@ -9,7 +9,7 @@ public sealed class ResultTests
     [Fact]
     public void NonGenericResultEnforcesSuccessAndFailureAccess()
     {
-        var error = new Error("kernel.invalid_id", "标识无效。");
+        var error = new KernelError("kernel.invalid_id", "标识无效。");
         var success = Result.Success();
         var failure = Result.Failure(error);
 
@@ -25,9 +25,9 @@ public sealed class ResultTests
     [Fact]
     public void GenericResultEnforcesValueAndErrorAccess()
     {
-        var error = new Error("kernel.not_found", "未找到目标。");
-        var success = Result<EntityId>.Success(new EntityId(7));
-        var failure = Result<EntityId>.Failure(error);
+        var error = new KernelError("kernel.not_found", "未找到目标。");
+        var success = Result.Success(new EntityId(7));
+        var failure = Result.Failure<EntityId>(error);
 
         Assert.True(success.IsSuccess);
         Assert.Equal(7UL, success.Value.Value);
@@ -53,7 +53,7 @@ public sealed class ResultTests
     [Fact]
     public void GenericSuccessRejectsNullReferencePayload()
     {
-        Assert.Throws<ArgumentNullException>(() => Result<string>.Success(null!));
+        Assert.Throws<ArgumentNullException>(() => Result.Success<string>(null!));
     }
 
     [Theory]
@@ -64,19 +64,19 @@ public sealed class ResultTests
     [InlineData("kernel/invalid")]
     public void ErrorRejectsUnstableMachineCodes(string code)
     {
-        Assert.Throws<ArgumentException>(() => new Error(code, "错误。"));
+        Assert.Throws<ArgumentException>(() => new KernelError(code, "错误。"));
     }
 
     [Fact]
     public void ErrorRejectsMachineCodeLongerThanContractLimit()
     {
-        Assert.Throws<ArgumentException>(() => new Error(new string('a', 97), "错误。"));
+        Assert.Throws<ArgumentException>(() => new KernelError(new string('a', 97), "错误。"));
     }
 
     [Fact]
     public void ErrorCodeSerializesAsStableExactMachineString()
     {
-        var error = new Error(
+        var error = new KernelError(
             "kernel.invalid_id",
             "标识无效。",
             [new ValidationIssue("required", "entityId", "实体标识不能为空。")]);
@@ -96,7 +96,7 @@ public sealed class ResultTests
             new("required", "entityId", "实体标识不能为空。")
         };
 
-        var error = new Error("kernel.validation", "输入验证失败。", issues);
+        var error = new KernelError("kernel.validation", "输入验证失败。", issues);
         issues.Add(new ValidationIssue("range", "worldId", "世界标识超出范围。"));
 
         Assert.Single(error.ValidationIssues);

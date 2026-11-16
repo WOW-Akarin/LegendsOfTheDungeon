@@ -79,9 +79,9 @@ public sealed class ValidationIssue
 }
 
 /// <summary>
-/// 表示失败结果的稳定错误信息。
+/// 表示 Kernel 失败结果的稳定错误信息。
 /// </summary>
-public sealed class Error
+public sealed class KernelError
 {
     private readonly ReadOnlyCollection<ValidationIssue> _validationIssues;
 
@@ -91,7 +91,7 @@ public sealed class Error
     /// <param name="code">稳定机器错误码，必须使用 lowercase ASCII 规则。</param>
     /// <param name="message">面向人类的中文或本地化前错误说明。</param>
     /// <param name="validationIssues">可选字段级验证问题；构造时会防御性复制。</param>
-    public Error(
+    public KernelError(
         string code,
         string message,
         IEnumerable<ValidationIssue>? validationIssues = null)

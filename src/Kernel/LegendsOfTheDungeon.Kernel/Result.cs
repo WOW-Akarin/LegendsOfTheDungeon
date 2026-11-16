@@ -5,16 +5,45 @@ namespace LegendsOfTheDungeon.Kernel;
 /// </summary>
 public readonly record struct Result
 {
-    private const byte SuccessState = 1;
-    private const byte FailureState = 2;
+    internal const byte SuccessStateValue = 1;
+    internal const byte FailureStateValue = 2;
+
+    private const byte SuccessState = SuccessStateValue;
+    private const byte FailureState = FailureStateValue;
 
     private readonly byte _state;
-    private readonly Error? _error;
+    private readonly KernelError? _error;
 
-    private Result(byte state, Error? error)
+    private Result(byte state, KernelError? error)
     {
         _state = state;
         _error = error;
+    }
+
+    /// <summary>
+    /// 创建携带非 null 成功值的泛型结果。
+    /// </summary>
+    /// <typeparam name="T">成功值类型。</typeparam>
+    /// <param name="value">非 null 成功值。</param>
+    /// <returns>已初始化的成功结果。</returns>
+    /// <exception cref="ArgumentNullException">成功值为 null 时抛出。</exception>
+    public static Result<T> Success<T>(T value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        return new Result<T>(Result<T>.SuccessStateValue, value, null);
+    }
+
+    /// <summary>
+    /// 创建携带错误的泛型失败结果。
+    /// </summary>
+    /// <typeparam name="T">成功值类型。</typeparam>
+    /// <param name="error">稳定 Kernel 错误对象。</param>
+    /// <returns>已初始化的失败结果。</returns>
+    /// <exception cref="ArgumentNullException">错误对象为 null 时抛出。</exception>
+    public static Result<T> Failure<T>(KernelError error)
+    {
+        ArgumentNullException.ThrowIfNull(error);
+        return new Result<T>(Result<T>.FailureStateValue, default, error);
     }
 
     /// <summary>
@@ -38,7 +67,7 @@ public readonly record struct Result
     /// 获取失败错误。
     /// </summary>
     /// <exception cref="InvalidOperationException">结果未初始化或当前为成功结果时抛出。</exception>
-    public Error Error
+    public KernelError Error
     {
         get
         {
@@ -68,10 +97,10 @@ public readonly record struct Result
     /// <summary>
     /// 创建失败结果。
     /// </summary>
-    /// <param name="error">稳定错误对象。</param>
+    /// <param name="error">稳定 Kernel 错误对象。</param>
     /// <returns>已初始化的失败结果。</returns>
     /// <exception cref="ArgumentNullException">错误对象为 null 时抛出。</exception>
-    public static Result Failure(Error error)
+    public static Result Failure(KernelError error)
     {
         ArgumentNullException.ThrowIfNull(error);
         return new Result(FailureState, error);
@@ -89,9 +118,9 @@ public readonly record struct Result<T>
 
     private readonly byte _state;
     private readonly T? _value;
-    private readonly Error? _error;
+    private readonly KernelError? _error;
 
-    private Result(byte state, T? value, Error? error)
+    internal Result(byte state, T? value, KernelError? error)
     {
         _state = state;
         _value = value;
@@ -141,7 +170,7 @@ public readonly record struct Result<T>
     /// 获取失败错误。
     /// </summary>
     /// <exception cref="InvalidOperationException">结果未初始化或当前为成功结果时抛出。</exception>
-    public Error Error
+    public KernelError Error
     {
         get
         {
@@ -174,7 +203,7 @@ public readonly record struct Result<T>
     /// <summary>
     /// 创建失败结果。
     /// </summary>
-    /// <param name="error">稳定错误对象。</param>
+    /// <param name="error">稳定 Kernel 错误对象。</param>
     /// <returns>已初始化的失败结果。</returns>
     /// <exception cref="ArgumentNullException">错误对象为 null 时抛出。</exception>
     public static Result<T> Failure(Error error)

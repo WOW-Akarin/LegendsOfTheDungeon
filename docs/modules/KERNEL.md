@@ -41,11 +41,11 @@ Canonical 文本形式是 `InvariantCulture` 下的十进制无符号整数：
 
 数据库/网络 Adapter 可以选择数值或字符串字段，但必须在边界转换回对应的 Strong ID，并执行同样的非零/溢出校验。不得把 `EntityId` 的值直接反序列化成 `ActorId` 等其他身份类型。
 
-## Result 与 Error
+## Result 与 KernelError
 
 `Result` 和 `Result<T>` 只表达成功或带 `Error` 的失败。default Result 是未初始化状态，不等价于失败。
 
-`Error.Code` 是机器稳定键：
+`KernelError.Code` 是机器稳定键：
 
 - lowercase ASCII；
 - 仅允许 `a-z`、`0-9`、`.`、`_`、`-`；
@@ -53,7 +53,7 @@ Canonical 文本形式是 `InvariantCulture` 下的十进制无符号整数：
 - 传输/持久化 Adapter 必须原样保留 Code；
 - `Message` 面向人类，可改进措辞，不应作为业务分支键。
 
-`ValidationIssue` 用于字段/路径级错误，拥有独立稳定 code、path 和 message。Error 内的 issue 集合由 Kernel 防御性复制，调用方不能通过修改原始集合改变已创建 Error。
+`ValidationIssue` 用于字段/路径级错误，拥有独立稳定 code、path 和 message。KernelError 内的 issue 集合由 Kernel 防御性复制，调用方不能通过修改原始集合改变已创建 Error。
 
 ## 契约记录
 
@@ -62,8 +62,11 @@ Canonical 文本形式是 `InvariantCulture` 下的十进制无符号整数：
 真实调用场景 / 调用方：P05 建立后由 P06/P07 及后续 Runtime/Modules 逐步采用；当前不预建 Handler/Service 接口  
 读写类型 / 频率 / 单位：小型值类型；ID 无单位  
 同步或异步 / 合法执行上下文：纯值，无线程亲和性  
-输入、输出、错误码：见本文 Strong ID 与 Result/Error 规则  
+输入、输出、错误码：见本文 Strong ID 与 Result/KernelError 规则  
 取消、超时、重复、乱序语义：不适用于纯值对象  
 是否涉及持久化 / 成功确认点：Kernel 本身不持久化；Adapter 必须执行边界校验  
 兼容与迁移方式：当前为 v1 首次引入；未来若改变 wire 形式需版本化并提供迁移  
 相关测试 / ADR / AC 参考：P05 Unit + compile-negative Gate；不参考 AzerothCore 专有实现
+
+
+> 命名说明：路线图中的通用 “Error” 概念在 C# API 中命名为 `KernelError`，以满足启用的 CA1716 跨语言 API 规则；语义没有改变。

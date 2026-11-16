@@ -25,15 +25,15 @@
 
 ## 当前停点
 
-P05 第一批实现已准备落库：9 个强类型值、Result/Error/ValidationIssue、Unit 边界测试、三类跨 ID 编译失败 Gate 和 CI evidence。
+P05 首次实现 CI run #22 在 build 被 CA1716/CA1000×2 阻断；按 Analyzer 将 Error API 命名为 KernelError，并把泛型 Result factory 移到非泛型 Result，不 suppress。
 
 ## 下一步（最多 5 项）
 
-1. 提交 P05 Kernel primitives、Unit 与 compile-negative Gate。
-2. 读取首次 CI 的 P04 XML/Analyzer/Unit/Architecture/compile-negative 真实结果。
-3. 若失败，从第一个真实错误修复，不添加 ID 转换或 suppress。
-4. 记录 Unit 数量、CS1503 负例和 kernel-contract-gate artifact。
-5. 独立自审契约/序列化/default 语义后进入 REVIEW。
+1. 提交 CA1716/CA1000 API 修复。
+2. 读取下一次 CI；从新的第一个真实编译/测试错误继续修。
+3. CI 通过 build 后核对 Unit、Architecture、P04 与 Strong ID CS1503 Gate。
+4. 记录 kernel-contract-gate artifact 与测试数量。
+5. 独立自审契约/default/序列化语义后进入 REVIEW。
 
 ## 修改文件及原因
 
