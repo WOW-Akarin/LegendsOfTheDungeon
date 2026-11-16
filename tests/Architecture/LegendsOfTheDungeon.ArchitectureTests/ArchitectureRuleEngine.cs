@@ -147,9 +147,9 @@ internal static class ArchitectureRuleEngine
 
             foreach (var target in targets)
             {
-                if (indegree.ContainsKey(target))
+                if (indegree.TryGetValue(target, out var targetIndegree))
                 {
-                    indegree[target]++;
+                    indegree[target] = targetIndegree + 1;
                 }
             }
         }

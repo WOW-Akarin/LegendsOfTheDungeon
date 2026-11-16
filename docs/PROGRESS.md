@@ -24,11 +24,11 @@
 
 ## 当前停点
 
-P03 首次实现 CI run #8 已失败：restore 通过，build 被 CA1854/CA1859 Analyzer 共 5 个 error 阻止。正在按 Analyzer 建议修复集合访问/具体类型，不降低 Gate。
+P03 CI run #9 已将 Analyzer 错误从 5 个收敛到 1 个：仅剩无环检查构造 indegree 的 CA1854。继续改为 TryGetValue，不降低 Gate。
 
 ## 下一步（最多 5 项）
 
-1. 提交 CA1854/CA1859 修复并读取下一次 CI。
+1. 提交最后一处 CA1854 修复并读取下一次 CI。
 2. 若出现新的编译/测试失败，从新的第一个真实错误继续修复。
 3. CI 通过后记录 Architecture test 数量与 build/unit/architecture 三类负向 Gate。
 4. 独立核对真实生产图、公共 API/IVT 扫描和无关键词误报原则。
