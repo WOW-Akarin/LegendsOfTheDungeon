@@ -1,6 +1,6 @@
 # P21 — Visibility / Relevance 技术契约
 
-状态：IN_PROGRESS（目标 C）。直接依赖 P20 Spatial 和 P26 Control/Tags 均已正式 ACCEPTED。本次初始代码尚未获得实际 CI 证据。
+状态：REVIEW（目标 C）。直接依赖 P20 Spatial 和 P26 Control/Tags 均已正式 ACCEPTED。稳定实现 HEAD `0af03e5a96b743e2ecce85dcc6335e9d95fa2901` CI #197 11/11 SUCCESS，独立 REVIEW HEAD CI 待核验。
 
 ## WorldVisibilitySet 的读取边界
 
@@ -31,3 +31,9 @@
 - 当前 View/Delta 是 **Pull + Refresh**，并非实体移动或销毁时立即推送。必须由未来世界 Tick/Visibility 编排在生命周期变更后调用 Refresh，才能将 Enter/Leave 输出给下一层；未建立真正的连接会话或带宽调度，不能称为网络广播方案。
 - 视图按观察者缓存，不带全局世界 SnapshotRevision；将来引入网络包流水序号时需显式组合 World/Epoch/Observer/Version 和收敛逻辑。单次 Refresh 的 P17/P20/P26 快照在 P18 单写范围内采集，不跨多个并发世界。
 - P21 C 没有 P23 真正网络消息、P25 Stats、P27 Movement、P58/P60 Host、P62 全链路 Replay 或 P64 多观察者性能预算验收。1024 可见实体和 4096 m 属于当前有界策略，不应伪称生产扩展性已验证。
+
+## 初次真实验证
+
+- #196 因 CS0165（观察者快照初始化）和 CA1859（私有集合返回类型）在 Release 编译阶段 FAIL；保留原记录并遵守分析门禁修复。
+- #197（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43916141338）**11/11 SUCCESS**，290 Unit / 16 Architecture；P21 五类真实边界/状态/退休/观察者隔离/背压探针成功，原有十 Job 全绿。
+- 独立四视角 REVIEW 文件：[P21_VISIBILITY_REVIEW](../reviews/P21_VISIBILITY_REVIEW.md)；当前独立 REVIEW HEAD 及 ACCEPTED HEAD CI 未执行，不提前验收。
