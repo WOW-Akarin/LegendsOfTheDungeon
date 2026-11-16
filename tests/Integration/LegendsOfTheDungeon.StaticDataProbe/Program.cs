@@ -119,19 +119,24 @@ async Task EquivalenceAsync()
     await ResetAsync();
     await AddAsync("b", """{"active":true,"amount":1.00,"name":"Beta","id":"b"}""");
     await AddAsync("a", """{"amount":2.50,"id":"a","name":"Café"}""");
+    // SQL 的物理 ID 使用分解 Unicode，而 JSON 来源使用 NFC，仍是同一逻辑记录。
+    await AddAsync("e\u0301", """{"amount":3.0,"id":"e\u0301","name":"Accent"}""");
     var sql = await loader.LoadAsync(Schema(), 7, "postgres_fixture");
     var json = JsonStaticCatalogLoader.Load(Schema(), 7, Encoding.UTF8.GetBytes("""
         {"records":[
           {"id":"a","name":"Cafe\u0301","amount":2.5},
-          {"name":"Beta","id":"b","amount":1e0,"active":true}],
+          {"name":"Beta","id":"b","amount":1e0,"active":true},
+          {"name":"Accent","id":"é","amount":3}],
          "catalog":"fixture_catalog","dataVersion":7,"schemaVersion":3}
         """), "json_fixture");
     Check(sql.ContentHash == json.ContentHash,
         "same PostgreSQL JSONB and JSON-file data must have same hash");
-    Check(sql.Records.Count == 2 && sql.Records[0].Id == "a" && sql.Records[1].Id == "b",
+    Check(sql.Records.Count == 3 && sql.Records[0].Id == "a" && sql.Records[1].Id == "b"
+        && sql.Records[2].Id == "é",
         "SQL query must normalize record order");
     Check(sql.Find("a")?.Fields["name"].CanonicalText == "Café",
         "Unicode normalization should match data source");
+    Check(sql.Find("e\u0301")?.Id == "é", "SQL record IDs must normalize to NFC");
     Check(sql.Find("b")?.Fields["amount"].CanonicalText == "1",
         "Decimal 1.00 must have normalized canonical representation");
 }
@@ -149,7 +154,7 @@ async Task VersionGuardAsync()
         && error.FieldName == "schema_version", "wrong schema version not rejected");
     // 之前已冻结的 Catalog 不受失败加载或数据库版本头变动影响。
     Check((await loader.LoadAsync(Schema(), 7, "postgres_fixture"))
-        .Records.Count == 2, "failed load damaged catalog content");
+        .Records.Count == 3, "failed load damaged catalog content");
 }
 
 async Task FieldFailureAsync()

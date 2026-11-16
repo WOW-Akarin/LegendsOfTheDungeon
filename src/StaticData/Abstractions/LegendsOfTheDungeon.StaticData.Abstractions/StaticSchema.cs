@@ -260,7 +260,8 @@ public sealed class StaticDataRow
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(values);
         var normalizedId = id.Normalize(NormalizationForm.FormC);
-        if (string.IsNullOrWhiteSpace(normalizedId) || normalizedId.Length > 64)
+        if (string.IsNullOrWhiteSpace(normalizedId) || normalizedId.Length > 64 ||
+            normalizedId.Any(char.IsControl))
         {
             throw new ArgumentException("记录 ID 超出允许范围。", nameof(id));
         }

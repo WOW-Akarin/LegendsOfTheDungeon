@@ -108,6 +108,8 @@ public sealed class StaticDataTests
         StaticCatalogFault.InvalidValue, 1, "label")]
     [InlineData("""{"id":"a","label":"x","quantity":1.5}""",
         StaticCatalogFault.InvalidValue, 1, "quantity")]
+    [InlineData("""{"id":"bad\u0000","label":"x","quantity":1}""",
+        StaticCatalogFault.InvalidValue, 1, "id")]
     public void InvalidRecordIsRejectedWithSourceRowAndField(
         string records, StaticCatalogFault expected, int row, string field)
     {

@@ -183,7 +183,8 @@ public static class JsonStaticCatalogLoader
             if (key == "id")
             {
                 id = RequireString(property.Value, sourceName, position, "id");
-                if (string.IsNullOrWhiteSpace(id) || id.Length > 64)
+                if (string.IsNullOrWhiteSpace(id) || id.Length > 64 ||
+                    id.Any(char.IsControl))
                 {
                     throw Fault(StaticCatalogFault.InvalidValue, sourceName, position, "id");
                 }

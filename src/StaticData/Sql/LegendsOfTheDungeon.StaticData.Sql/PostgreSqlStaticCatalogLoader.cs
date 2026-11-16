@@ -17,7 +17,8 @@ public sealed class PostgreSqlStaticCatalogLoader
         WHERE catalog_name = @catalog
         """;
     private const string RowsQuery = """
-        SELECT record_id,
+        SELECT CASE WHEN char_length(record_id) <= @max_id_chars
+                    THEN record_id ELSE NULL END,
                CASE WHEN octet_length(payload_json::text) <= @max_bytes
                     THEN payload_json::text ELSE NULL END,
                octet_length(payload_json::text)
@@ -134,6 +135,7 @@ public sealed class PostgreSqlStaticCatalogLoader
             new SqlParameterValue("@schema_version", DbType.Int32, schema.SchemaVersion),
             new SqlParameterValue("@data_version", DbType.Int32, expectedDataVersion),
             new SqlParameterValue("@max_bytes", DbType.Int32, StaticCatalogLimits.MaximumDocumentBytes),
+            new SqlParameterValue("@max_id_chars", DbType.Int32, 64),
             new SqlParameterValue("@record_limit", DbType.Int32, StaticCatalogLimits.MaximumRecords + 1)
         ]);
 
@@ -159,7 +161,13 @@ public sealed class PostgreSqlStaticCatalogLoader
                     StaticCatalogFault.LimitExceeded, sourceName, index, "document");
             }
 
-            var rowId = reader.GetString(0);
+            if (reader.IsDBNull(0))
+            {
+                throw new StaticCatalogException(
+                    StaticCatalogFault.InvalidValue, sourceName, index, "id");
+            }
+
+            var rowId = reader.GetString(0).Normalize(NormalizationForm.FormC);
             var payload = Encoding.UTF8.GetBytes(reader.GetString(1));
             totalBytes += payload.Length;
             if (payload.Length != bytes || totalBytes > StaticCatalogLimits.MaximumDocumentBytes)
