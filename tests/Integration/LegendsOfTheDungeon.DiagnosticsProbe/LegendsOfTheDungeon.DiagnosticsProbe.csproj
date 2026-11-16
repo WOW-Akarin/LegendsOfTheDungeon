@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Platform/Diagnostics/LegendsOfTheDungeon.Platform.Diagnostics/LegendsOfTheDungeon.Platform.Diagnostics.csproj" />
+    <ProjectReference Include="../../../src/Platform/Concurrency/LegendsOfTheDungeon.Platform.Concurrency/LegendsOfTheDungeon.Platform.Concurrency.csproj" />
+  </ItemGroup>
+</Project>

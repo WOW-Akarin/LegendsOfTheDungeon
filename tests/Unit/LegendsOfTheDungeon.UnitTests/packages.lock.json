@@ -126,6 +126,9 @@
         "dependencies": {
           "LegendsOfTheDungeon.Security.Contracts": "[1.0.0, )"
         }
+      },
+      "legendsofthedungeon.platform.diagnostics": {
+        "type": "Project"
       }
     }
   }

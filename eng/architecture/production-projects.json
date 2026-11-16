@@ -96,6 +96,15 @@
         "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj"
       ],
       "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/Platform/Diagnostics/LegendsOfTheDungeon.Platform.Diagnostics/LegendsOfTheDungeon.Platform.Diagnostics.csproj",
+      "assemblyName": "LegendsOfTheDungeon.Platform.Diagnostics",
+      "role": "PlatformAdapter",
+      "module": null,
+      "allowedProjectReferences": [],
+      "allowedPublicApiReferences": [],
+      "allowedInternalsVisibleTo": []
     }
   ]
 }
