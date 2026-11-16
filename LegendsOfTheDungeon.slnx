@@ -6,6 +6,7 @@
   <Project Path="src/Platform/Concurrency/LegendsOfTheDungeon.Platform.Concurrency/LegendsOfTheDungeon.Platform.Concurrency.csproj" />
   <Project Path="src/Platform/Diagnostics/LegendsOfTheDungeon.Platform.Diagnostics/LegendsOfTheDungeon.Platform.Diagnostics.csproj" />
   <Project Path="src/Platform/Networking/LegendsOfTheDungeon.Platform.Networking/LegendsOfTheDungeon.Platform.Networking.csproj" />
+  <Project Path="src/Platform/WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution.csproj" />
   <Project Path="src/Platform/Persistence/LegendsOfTheDungeon.Platform.Persistence/LegendsOfTheDungeon.Platform.Persistence.csproj" />
   <Project Path="src/StaticData/Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj" />
   <Project Path="src/StaticData/Core/LegendsOfTheDungeon.StaticData.Core/LegendsOfTheDungeon.StaticData.Core.csproj" />
@@ -13,6 +14,7 @@
   <Project Path="src/StaticData/Sql/LegendsOfTheDungeon.StaticData.Sql/LegendsOfTheDungeon.StaticData.Sql.csproj" />
   <Project Path="src/Security/Contracts/LegendsOfTheDungeon.Security.Contracts/LegendsOfTheDungeon.Security.Contracts.csproj" />
   <Project Path="tests/Unit/LegendsOfTheDungeon.UnitTests/LegendsOfTheDungeon.UnitTests.csproj" />
+  <Project Path="tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/LegendsOfTheDungeon.WorldExecutionProbe.csproj" />
   <Project Path="tests/Integration/LegendsOfTheDungeon.DiagnosticsProbe/LegendsOfTheDungeon.DiagnosticsProbe.csproj" />
   <Project Path="tests/Integration/LegendsOfTheDungeon.StaticDataProbe/LegendsOfTheDungeon.StaticDataProbe.csproj" />
   <Project Path="tests/Integration/LegendsOfTheDungeon.NetworkingProbe/LegendsOfTheDungeon.NetworkingProbe.csproj" />

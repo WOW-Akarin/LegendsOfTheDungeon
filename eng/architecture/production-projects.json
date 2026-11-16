@@ -161,6 +161,24 @@
         "src/Platform/Persistence/LegendsOfTheDungeon.Platform.Persistence/LegendsOfTheDungeon.Platform.Persistence.csproj"
       ],
       "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/Platform/WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution.csproj",
+      "assemblyName": "LegendsOfTheDungeon.Platform.WorldExecution",
+      "role": "PlatformAdapter",
+      "module": null,
+      "allowedProjectReferences": [
+        "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj",
+        "src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj",
+        "src/Platform/Concurrency/LegendsOfTheDungeon.Platform.Concurrency/LegendsOfTheDungeon.Platform.Concurrency.csproj",
+        "src/Security/Contracts/LegendsOfTheDungeon.Security.Contracts/LegendsOfTheDungeon.Security.Contracts.csproj"
+      ],
+      "allowedPublicApiReferences": [
+        "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj",
+        "src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj",
+        "src/Security/Contracts/LegendsOfTheDungeon.Security.Contracts/LegendsOfTheDungeon.Security.Contracts.csproj"
+      ],
+      "allowedInternalsVisibleTo": []
     }
   ]
 }

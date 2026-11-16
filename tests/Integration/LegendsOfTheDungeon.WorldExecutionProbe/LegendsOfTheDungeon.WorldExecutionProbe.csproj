@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Platform/WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution.csproj" />
+    <ProjectReference Include="../../../src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj" />
+    <ProjectReference Include="../../../src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj" />
+    <ProjectReference Include="../../../src/Platform/Concurrency/LegendsOfTheDungeon.Platform.Concurrency/LegendsOfTheDungeon.Platform.Concurrency.csproj" />
+    <ProjectReference Include="../../../src/Security/Contracts/LegendsOfTheDungeon.Security.Contracts/LegendsOfTheDungeon.Security.Contracts.csproj" />
+  </ItemGroup>
+</Project>
