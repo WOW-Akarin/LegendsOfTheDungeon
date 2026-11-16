@@ -25,7 +25,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M0 基线。  
-当前阶段：P10 — Platform Configuration / Logging，**IN_PROGRESS**。P00–P09 已 ACCEPTED；实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P10 — Platform Configuration / Logging，**REVIEW**。P00–P09 已 ACCEPTED；实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 

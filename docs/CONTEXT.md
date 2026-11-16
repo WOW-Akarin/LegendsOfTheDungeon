@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P10 — IN_PROGRESS
+当前阶段：P10 — REVIEW
 
 ## 当前范围
 
@@ -35,15 +35,15 @@ LegendsOfTheDungeon 是通用 C# / .NET 10 游戏服务器核心。研究 Azerot
 
 ## 已具备能力
 
-P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Kernel 与 Runtime.Abstractions 两个生产 Assembly、Unit/Architecture 测试入口、NuGet lock file 与 CI Gate，并已由 locked-mode CI run #4 全绿验证。尚无业务功能、数据库集成、网络集成或性能通过证据。
+P00/P01 文档基线已验收；P02 建立 .NET 10 Solution；截至 P10 当前实际已有 Kernel、Runtime.Abstractions、Runtime.Core、Platform、Security.Contracts 五个生产 Assembly、Unit/Architecture 测试入口、NuGet lock file 与 CI Gate，并已由 locked-mode CI run #4 全绿验证。尚无业务功能、数据库集成、网络集成或性能通过证据。
 
 ## 当前任务与下一步
 
-P00–P09 已 ACCEPTED。P10 已启动：Platform 配置启动门禁、结构化日志/脱敏、非敏感配置指纹；Security.Contracts 启动 P60.F 默认拒绝契约。
+P00–P09 已 ACCEPTED。P10 Platform Configuration/Logging 已实现并进入 REVIEW：模块 Options/启动验证/安全指纹、结构化日志、Security.Contracts 默认拒绝契约，Unit 106/106 与 Architecture 16/16 已通过。
 
 ## 阻塞与技术债
 
-当前无 P10 阻塞。Platform 不包含游戏业务规则；未接入真实认证 Adapter 前所有生产身份绑定/授权默认拒绝。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P10 必需阻塞。Review HEAD 尚待独立验证。Platform 不包含游戏业务规则；无真实认证 Adapter，生产身份绑定/授权保持默认拒绝。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 

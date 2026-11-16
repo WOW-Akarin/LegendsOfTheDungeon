@@ -1,29 +1,31 @@
 # 当前进度
 
 更新时间：2026-11-16 +08:00
-代码基线 / Branch：`8dd36bbf73776d49cbceca110013bcfae91f47d0` / `main`
-当前阶段 / 状态 / 目标完成度：P10 / Platform Configuration / Logging / IN_PROGRESS / B
+代码基线 / Branch：P10 起始 `8dd36bbf73776d49cbceca110013bcfae91f47d0` / `main`
+阶段 / 状态 / 目标：P10 / Platform Configuration / Logging / REVIEW / B
 
-## 开始状态
-- P00–P09 已 ACCEPTED；P09 最终 CI run #58：Unit 97/97、Architecture 16/16。
-- P10 直接依赖 P09；无生产 Host、没有真实认证 Adapter。
-- 当前容器无 dotnet SDK；以 GitHub Actions .NET 10.0.404 执行正式验证。
-- 用户要求只更新 main，不建分支。
+## 本轮交付
+- Platform 独立 Options、启动校验/生命周期、公开配置 SHA-256 指纹。
+- 操作/审计/性能三类结构化日志，Module/World/Entity/Correlation 上下文与脱敏限制。
+- Security.Contracts 身份/授权端口、默认拒绝与 LocalTest/Production 身份来源隔离。
+- Solution 新增 Platform、Security.Contracts 两个生产项目，P03 白名单及 locked NuGet 图同步。
+- 目前没有真实 Host / 生产身份绑定 Adapter；P60.F 只建立初始基础契约。
+
+## 当前真实证据
+- Run #61：FAIL，CA1512，已按诊断修复，无 suppress。
+- Run #62：SUCCESS，SDK 10.0.404、locked restore、Release build、Unit 106/106、Architecture 16/16、P02/P03/P04/P05 Gate 全通过。
+- 实现提交：`7c998b28822aa12c49ffd57dce19dfb5d5423ae0`。
+- [P10 阶段证据](progress/P10.md)；[Platform 契约](modules/PLATFORM.md)。
 
 ## 当前停点
-P10 第一批实现已落地：Platform 技术 Options/启动门禁/安全指纹/结构化日志，Security.Contracts 默认拒绝身份端口与本地测试身份；同步 P03 manifest、Solution、锁文件与 Unit。待 CI 验证。
+已进入 REVIEW；尚未 ACCEPTED。
 
 ## 下一步
-1. 创建 Platform 与 Security.Contracts 项目，并同步 P03 白名单、Solution 与 lock graph。
-2. 实现配置启动门禁及安全诊断、非敏感配置指纹。
-3. 实现结构化操作/审计/性能日志与敏感数据负向测试。
-4. 实现 P60.F 最小身份/授权 Port 默认拒绝和本地测试身份隔离。
-5. 真实 CI → 独立 REVIEW → ACCEPTED。
+1. 独立复核 REVIEW HEAD 的源码、静态依赖、秘密边界与诊断。
+2. 核对配置无效不 Running、本地身份拒绝生产、无原文敏感日志。
+3. 核对 P10 文档相对链接、Solution/manifest/lock 图。
+4. REVIEW HEAD CI 全绿后更新 ACCEPTED。
+5. 再验证最终 ACCEPTED HEAD 自身 CI 全绿，然后从 P11 开始。
 
-## 证据
-- [P09 验收](progress/P09.md)
-- [P10 阶段](progress/P10.md)
-- [Platform 契约](modules/PLATFORM.md)
-
-## 风险
-P10 无真实生产 ServerHost，B 阶段使用独立启动门禁模拟 Host 接线，不宣称真实宿主已集成。秘密值变化不改变公开配置指纹，后续需单独轮换记录。P60.F 本阶段不包含 RBAC/生产认证、真实网络入口。
+## 风险与恢复
+公开配置 SHA-256 不包含秘密原文、无法检测秘密轮换；后续需单独安全轮换元数据。真正生产认证、网络入口与 ServerHost 尚不存在，默认拒绝不能被误认作完成认证。项目容器没有 dotnet，正式构建均由 GitHub Actions Runner 执行。失败从首个真实诊断继续。
