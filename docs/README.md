@@ -21,7 +21,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M0 基线。  
-当前阶段：P03 — Architecture Tests 第一批，**REVIEW**。P00–P02 已 ACCEPTED；实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P03 — Architecture Tests 第一批，**ACCEPTED**。P00–P03 已 ACCEPTED；下一阶段为 P04，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 

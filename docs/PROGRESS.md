@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `6cbe721366901f61849f43d493b90c96a36eaa46` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P03 / Architecture Tests 第一批 / REVIEW / B（架构规则）
+阶段 / 任务 / 状态 / 目标完成度：P03 / Architecture Tests 第一批 / ACCEPTED / B（架构规则）
 
 ## 目标与成功条件
 
@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P03 最终实现 CI run #12 已全绿：Build、Unit 3/3、Architecture 16/16、build/unit/architecture 三类故意失败 Gate 全部通过。当前进入独立 REVIEW。
+P03 已完成独立 Review 并 ACCEPTED；P04 尚未开始。
 
 ## 下一步（最多 5 项）
 
-1. 独立读取 REVIEW HEAD 的架构清单、RuleEngine、fixture、Assembly 扫描器与 CI 脚本。
-2. 核对 P03-001～008 都有正例/故意违规负例，且真实生产图检查不依赖关键词。
-3. 核对 REVIEW HEAD 自身 CI 全绿并上传 TRX。
-4. 核对 P03/ARCHITECTURE/CONTEXT/README 状态与链接一致。
-5. 无必需问题后将 P03 ACCEPTED，再进入 P04。
+1. 开始 P04 — 中文注释与文档质量 Gate。
+2. 明确 Public 类型/方法 XML 中文注释规则及生成/第三方代码例外。
+3. 建立公共 XML 注释缺失的自动检查；中文语义正确性和复杂逻辑说明保留人工审查。
+4. 为缺失注释建立能失败的负例，并为合规注释建立正例。
+5. P04 的自动 Gate、中文文档和人工 Review Checklist 全部通过后再进入 REVIEW。
 
 ## 修改文件及原因
 
@@ -68,7 +68,7 @@ P03 不改变业务状态所有权和公共业务契约。新增工程级架构�
 2. 核对 main HEAD 与 P03 起始 SHA `6cbe721366901f61849f43d493b90c96a36eaa46`。
 3. 打开 `eng/architecture/` 与 ArchitectureTests，确认真实项目清单和当前失败 fixture。
 4. 读取最新 GitHub Actions run；若失败，从第一个真实 architecture test 修复，不弱化规则。
-5. P03 已进入 REVIEW；按 progress/P03.md 的当前停点做独立审查。
+5. P03 已 ACCEPTED；下一任务从 DEVELOPMENT_ROADMAP 的 P04 开始。
 
 ## 不应重复执行的操作
 

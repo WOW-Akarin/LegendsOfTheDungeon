@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P03 — REVIEW
+当前阶段：P03 — ACCEPTED
 
 ## 当前范围
 
@@ -39,7 +39,7 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P03 第一批 Architecture Gates 已实现并进入 REVIEW：真实 ProjectReference 白名单、Domain/Core→Platform/Host、跨模块 Infrastructure/Internal、Modules→Hosts、无环、公共 API 泄漏、IVT、共享职责 fan-in 审查均已由 CI 正/负例验证。
+P03 第一批 Architecture Gates 已完成独立 Review 并 ACCEPTED：真实 ProjectReference 白名单、Domain/Core→Platform/Host、跨模块 Infrastructure/Internal、Modules→Hosts、无环、公共 API 泄漏、IVT、共享职责 fan-in 审查均由 CI 正/负例强制。
 
 ## 阻塞与技术债
 
