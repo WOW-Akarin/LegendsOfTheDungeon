@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P06 — IN_PROGRESS
+当前阶段：P06 — REVIEW
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P00–P05 已 ACCEPTED。P06 已启动，正在实现纯数学 Geometry：Position/Vector/Distance/Angle/Transform/Bounds，并固定右手坐标、Z 向上、米/弧度与 Yaw 归一约定。
+P00–P05 已 ACCEPTED。P06 Geometry 已实现并进入 REVIEW：Position/Vector/Distance/Angle/Transform/Bounds，右手坐标、+Z 向上、米/弧度、Yaw 归一及非有限数/溢出边界均已有测试。
 
 ## 阻塞与技术债
 
-当前无 P06 阻塞。Geometry 必须保持纯数学，不依赖 Runtime/World；非有限数在构造边界拒绝，有限算术溢出显式失败。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P06 阻塞。Geometry 生产代码保持纯数学，不依赖 Runtime/World/JSON；最终验收前需 REVIEW HEAD 自身 CI 全绿。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
