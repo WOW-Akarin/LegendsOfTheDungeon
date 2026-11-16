@@ -2,6 +2,7 @@ using System.Data;
 using System.Text;
 using LegendsOfTheDungeon.Platform.Persistence;
 using LegendsOfTheDungeon.StaticData.Abstractions;
+using LegendsOfTheDungeon.StaticData.Core;
 using LegendsOfTheDungeon.StaticData.Json;
 using LegendsOfTheDungeon.StaticData.Sql;
 using Npgsql;
@@ -20,6 +21,9 @@ await CheckAsync("postgresql-overlimit-payload-does-not-publish", PayloadLimitAs
 await CheckAsync("postgresql-row-count-hard-bound", RecordLimitAsync);
 await CheckAsync("cancelled-database-read-releases-connection", CancellationAsync);
 Console.WriteLine("P15_STATICDATA_POSTGRES_PASS");
+await CheckAsync("p16-real-sql-bundle-atomic-reload", PackageReloadAsync);
+await CheckAsync("p16-real-sql-bundle-invalid-reference-keeps-old", PackageInvalidReferenceAsync);
+Console.WriteLine("P16_CATALOG_RELOAD_POSTGRES_PASS");
 
 static StaticCatalogSchema Schema() => new("fixture_catalog", 3,
 [
@@ -98,7 +102,7 @@ async Task ResetAsync(int schemaVersion = 3, int dataVersion = 7)
     await transaction.CommitAsync();
 }
 
-async Task AddAsync(string recordId, string payload)
+async Task AddAsync(string recordId, string payload, int dataVersion = 7)
 {
     await using var connection = new NpgsqlConnection(connectionString);
     await connection.OpenAsync();
@@ -106,9 +110,10 @@ async Task AddAsync(string recordId, string payload)
     command.CommandText = """
         INSERT INTO public.lotd_static_catalog_rows
           (catalog_name, schema_version, data_version, record_id, payload_json)
-        VALUES (@catalog, 3, 7, @id, @payload::jsonb)
+        VALUES (@catalog, 3, @data_version, @id, @payload::jsonb)
         """;
     command.Parameters.AddWithValue("@catalog", "fixture_catalog");
+    command.Parameters.AddWithValue("@data_version", dataVersion);
     command.Parameters.AddWithValue("@id", recordId);
     command.Parameters.AddWithValue("@payload", payload);
     await command.ExecuteNonQueryAsync();
@@ -251,4 +256,153 @@ static async Task<StaticCatalogException> FailAsync(Func<Task<LegendsOfTheDungeo
     }
 
     throw new InvalidOperationException("expected stable StaticCatalogException");
+}
+
+static StaticCatalogSchema RelationSchema() => new("relations", 1,
+[
+    new StaticFieldSchema("target", StaticFieldType.Text, true, 64),
+    new StaticFieldSchema("label", StaticFieldType.Text, true, 80)
+]);
+
+static CatalogReferenceRule RelationRule() =>
+    new("relations", "target", "fixture_catalog");
+
+// 仅重置测试目录的版本和行，不触及正式业务数据。
+async Task SetRelationAsync(int version, string target)
+{
+    await using var connection = new NpgsqlConnection(connectionString);
+    await connection.OpenAsync();
+    await using var tx = await connection.BeginTransactionAsync();
+    await using (var clear = connection.CreateCommand())
+    {
+        clear.Transaction = tx;
+        clear.CommandText = """
+            DELETE FROM public.lotd_static_catalog_rows WHERE catalog_name = 'relations';
+            DELETE FROM public.lotd_static_catalog_versions WHERE catalog_name = 'relations';
+            """;
+        await clear.ExecuteNonQueryAsync();
+    }
+
+    await using (var versionCommand = connection.CreateCommand())
+    {
+        versionCommand.Transaction = tx;
+        versionCommand.CommandText = """
+            INSERT INTO public.lotd_static_catalog_versions (catalog_name, schema_version, data_version)
+            VALUES ('relations', 1, @version)
+            """;
+        versionCommand.Parameters.AddWithValue("@version", version);
+        await versionCommand.ExecuteNonQueryAsync();
+    }
+
+    await using (var insert = connection.CreateCommand())
+    {
+        insert.Transaction = tx;
+        insert.CommandText = """
+            INSERT INTO public.lotd_static_catalog_rows
+              (catalog_name, schema_version, data_version, record_id, payload_json)
+            VALUES ('relations', 1, @version, 'edge',
+              jsonb_build_object('id','edge','target',@target,'label','relation'))
+            """;
+        insert.Parameters.AddWithValue("@version", version);
+        insert.Parameters.AddWithValue("@target", target);
+        await insert.ExecuteNonQueryAsync();
+    }
+
+    await tx.CommitAsync();
+}
+
+async Task<CatalogPackageSnapshot> LoadPackageFromDatabaseAsync(
+    int version, CancellationToken cancellationToken = default)
+{
+    var definitions = await loader.LoadAsync(
+        Schema(), version, "postgres_fixture", cancellationToken);
+    var relations = await loader.LoadAsync(
+        RelationSchema(), version, "postgres_relations", cancellationToken);
+    return CatalogPackageBuilder.Build(
+        version, [definitions, relations], [RelationRule()]);
+}
+
+CatalogReloadCoordinator? successfulRegistry = null;
+
+async Task PackageReloadAsync()
+{
+    await ResetAsync(dataVersion: 7);
+    await AddAsync("a", """{"id":"a","name":"first","amount":1}""");
+    await SetRelationAsync(7, "a");
+    var first = await LoadPackageFromDatabaseAsync(7);
+    Check(first.Catalogs.Count == 2 &&
+        first.Find("relations")?.Find("edge")?.Fields["target"].CanonicalText == "a",
+        "P16 cross-catalog relations must resolve in actual SQL data");
+
+    var registry = new CatalogReloadCoordinator(first, maximumHistory: 3);
+    successfulRegistry = registry;
+    using var pinned = registry.RegisterActiveDefinition(
+        Guid.NewGuid(), "fixture_catalog", "a", ActiveDefinitionPolicy.PinOldVersion);
+
+    await ResetAsync(dataVersion: 8);
+    await AddAsync("b", """{"id":"b","name":"second","amount":2}""", 8);
+    await SetRelationAsync(8, "b");
+    var ticket = await registry.PrepareAsync(
+        ct => LoadPackageFromDatabaseAsync(8, ct));
+    Check(ReferenceEquals(registry.Current, first),
+        "successfully prepared SQL bundle must not be prematurely published");
+
+    using var tick = registry.CaptureTick(1);
+    var sameTick = registry.CaptureTick(1);
+    Check(ReferenceEquals(tick.Package, sameTick.Package),
+        "same tick must observe exactly the same catalog package");
+    var blocked = false;
+    try
+    {
+        registry.CommitAtBoundary(1, ticket);
+    }
+    catch (CatalogReloadException ex) when (ex.Fault == CatalogReloadFault.TickActive)
+    {
+        blocked = true;
+    }
+
+    Check(blocked, "active tick should reject SQL bundle commit");
+    sameTick.Dispose();
+    tick.Dispose();
+    registry.CommitAtBoundary(1, ticket);
+    Check(registry.Current.Version == 8 &&
+        registry.Current.Find("fixture_catalog")?.Find("b") is not null &&
+        registry.Current.Find("relations")?.Find("edge")?.Fields["target"].CanonicalText == "b",
+        "SQL bundle must switch all related catalogs atomically");
+    Check(registry.FindRetained(7, first.ContentHash) is not null,
+        "old frozen bundle must remain available for replay while pinned");
+    using var newTick = registry.CaptureTick(2);
+    Check(ReferenceEquals(newTick.Package, registry.Current),
+        "next logical tick must see all of updated SQL bundle");
+    Check(ReferenceEquals(tick.Package, first),
+        "old completed tick must not switch to new catalog");
+}
+
+async Task PackageInvalidReferenceAsync()
+{
+    var registry = successfulRegistry ??
+        throw new InvalidOperationException("required SQL reload fixture was not initialized");
+    var current = registry.Current;
+    await ResetAsync(dataVersion: 9);
+    await AddAsync("c", """{"id":"c","name":"third","amount":3}""", 9);
+    await SetRelationAsync(9, "absent");
+    var rejected = false;
+    try
+    {
+        _ = await registry.PrepareAsync(ct => LoadPackageFromDatabaseAsync(9, ct));
+    }
+    catch (CatalogPackageException ex)
+        when (ex.Fault == CatalogPackageFault.MissingReference &&
+              ex.Catalog == "relations" && ex.RowIndex == 1 && ex.Field == "target")
+    {
+        Check(!ex.Message.Contains("absent", StringComparison.Ordinal),
+            "invalid SQL payload must not escape into diagnostics");
+        rejected = true;
+    }
+
+    Check(rejected, "cross-catalog missing SQL target must be rejected by P16.F");
+    Check(ReferenceEquals(registry.Current, current) &&
+        registry.Current.Version == 8 &&
+        registry.Current.Find("fixture_catalog")?.Find("b") is not null,
+        "failed SQL candidate must preserve current valid bundle");
 }
