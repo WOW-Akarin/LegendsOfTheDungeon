@@ -124,11 +124,12 @@ public sealed class RandomTests
             Probability.Resolution / 2,
             new Probability(0.5m).Units);
 
-        var halfUnit = 0.5m / Probability.Resolution;
-        var oneAndHalfUnits = 1.5m / Probability.Resolution;
-
-        Assert.Equal(0UL, new Probability(halfUnit).Units);
-        Assert.Equal(2UL, new Probability(oneAndHalfUnits).Units);
+        Assert.Equal(
+            429_496_730UL,
+            new Probability(0.1m).Units);
+        Assert.Equal(
+            858_993_459UL,
+            new Probability(0.2m).Units);
     }
 
     [Fact]
