@@ -16,11 +16,12 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [templates/](templates/)：CONTEXT、PROGRESS 与阶段归档模板
 - [RECOVERY_WORKFLOW.md](RECOVERY_WORKFLOW.md)：恢复顺序、状态迁移、更新触发点与 BLOCKED 规则
 - [operations/BUILD.md](operations/BUILD.md)：SDK、NuGet 锁文件与统一验证入口
+- [reviews/ARCHITECTURE_RESPONSIBILITY_REVIEW.md](reviews/ARCHITECTURE_RESPONSIBILITY_REVIEW.md)：高 fan-in / Common / Utils / Manager 类职责聚集人工审查
 
 ## 当前状态
 
 当前里程碑：M0 基线。  
-当前阶段：P03 — Architecture Tests 第一批，**IN_PROGRESS**。P00–P02 已 ACCEPTED；实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P03 — Architecture Tests 第一批，**REVIEW**。P00–P02 已 ACCEPTED；实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 

@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `6cbe721366901f61849f43d493b90c96a36eaa46` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P03 / Architecture Tests 第一批 / IN_PROGRESS / B（架构规则）
+阶段 / 任务 / 状态 / 目标完成度：P03 / Architecture Tests 第一批 / REVIEW / B（架构规则）
 
 ## 目标与成功条件
 
@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P03 补强 CI run #11 已全绿：Architecture 16/16。独立审查发现 Core Assembly 可承载 Domain/Application 时仍可能误依赖 PlatformAdapter 的语义漏洞，正在把 P03-002 收紧为 Domain/Core !→ PlatformAdapter/Host 并加负例。
+P03 最终实现 CI run #12 已全绿：Build、Unit 3/3、Architecture 16/16、build/unit/architecture 三类故意失败 Gate 全部通过。当前进入独立 REVIEW。
 
 ## 下一步（最多 5 项）
 
-1. 提交 P03-002 Core 边界修正并读取下一次 CI。
-2. 核对公共泛型约束/protected 构造扫描没有引入 Analyzer 或反射问题。
-3. 核对 Architecture test 新数量、三类负向 Gate 与 TRX artifact。
-4. 独立核对真实生产图、白名单、API/IVT、无环和无关键词误报原则。
-5. 全部出口证据满足后进入 REVIEW。
+1. 独立读取 REVIEW HEAD 的架构清单、RuleEngine、fixture、Assembly 扫描器与 CI 脚本。
+2. 核对 P03-001～008 都有正例/故意违规负例，且真实生产图检查不依赖关键词。
+3. 核对 REVIEW HEAD 自身 CI 全绿并上传 TRX。
+4. 核对 P03/ARCHITECTURE/CONTEXT/README 状态与链接一致。
+5. 无必需问题后将 P03 ACCEPTED，再进入 P04。
 
 ## 修改文件及原因
 
@@ -40,7 +40,7 @@ P03 补强 CI run #11 已全绿：Architecture 16/16。独立审查发现 Core A
 
 ## 契约、数据所有权与 ADR 变化
 
-P03 不改变业务状态所有权和公共业务契约。新增的是工程级架构元数据/测试契约；若规则需要改变既有架构设计，再单独记录 ADR。
+P03 不改变业务状态所有权和公共业务契约。新增工程级架构清单与测试 Gate：真实 ProjectReference 白名单、公共 API/IVT 扫描、无环和职责聚集审查。无需新增 ADR。
 
 ## AC 参考与已知差异（适用时）
 
@@ -52,7 +52,8 @@ P03 不改变业务状态所有权和公共业务契约。新增的是工程级�
 |---|---|---|---|
 | P02 依赖状态 | GitHub，2026-11-16 | PASS | progress/P02.md |
 | P03 run #8 build | GitHub Actions，2026-11-16 | FAIL：CA1854×1 / CA1859×4 | run 43803313873 |
-| P03 真实 Architecture Tests | build 未通过 | NOT_RUN | 待修复后 CI |
+| P03 真实 Architecture Tests | GitHub Actions，2026-11-16 | PASS：16/16 | run 43803757326 |
+| P03 三类负向 Gate | GitHub Actions，2026-11-16 | PASS：build/unit/architecture 故意失败均被检出 | run 43803757326 |
 | P03 故意违规负例 | 尚未实现 | NOT_RUN | 待 CI |
 
 ## 失败、阻塞、风险与未验证假设
@@ -67,7 +68,7 @@ P03 不改变业务状态所有权和公共业务契约。新增的是工程级�
 2. 核对 main HEAD 与 P03 起始 SHA `6cbe721366901f61849f43d493b90c96a36eaa46`。
 3. 打开 `eng/architecture/` 与 ArchitectureTests，确认真实项目清单和当前失败 fixture。
 4. 读取最新 GitHub Actions run；若失败，从第一个真实 architecture test 修复，不弱化规则。
-5. 所有正/负例、真实生产图和最终 HEAD CI 通过后进入 REVIEW。
+5. P03 已进入 REVIEW；按 progress/P03.md 的当前停点做独立审查。
 
 ## 不应重复执行的操作
 

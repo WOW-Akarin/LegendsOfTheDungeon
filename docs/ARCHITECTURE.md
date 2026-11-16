@@ -79,6 +79,8 @@ tests/{Unit,Integration,Architecture,Negative,Concurrency,Replay,Reference,Perfo
 
 检查 Assembly 引用、类型/命名空间依赖、公共 API 泄漏、允许的注册入口和依赖环。对每条规则提供合法样本和故意违规样本，证明检查能失败。名称/关键词扫描只辅助人工审查，不能用禁止 `Boss` 等单词替代真实依赖分析，也不能单靠类名判断是否“巨型”。
 
+P03 首批自动 Gate 已落地：生产项目显式清单位于 `eng/architecture/production-projects.json`；测试从真实 `.slnx/.csproj` 与 Release Assembly 读取 ProjectReference、公共 API 和 `InternalsVisibleTo`。P03-001～P03-008 的规则与正/负例位于 ArchitectureTests；Common/Utils/中心 Manager 风险使用跨模块 fan-in 触发显式职责审查，人工标准见 [架构职责聚集审查](reviews/ARCHITECTURE_RESPONSIBILITY_REVIEW.md)。
+
 ## 3. 标识、单位、时间和随机
 
 - EntityId 标识运行时实体；ActorId 标识可持续关联的行动主体；ItemInstanceId 与 ItemDefinitionId 分离；WorldId 与 WorldEpoch 分离。实体复用时带 EntityGeneration，防止旧异步结果命中新实例。
