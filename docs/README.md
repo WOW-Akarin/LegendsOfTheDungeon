@@ -26,6 +26,8 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [modules/NETWORKING.md](modules/NETWORKING.md)：P13 通用帧、TCP Loopback、安全边界契约
 - [progress/P13.md](progress/P13.md)：P13 网络传输阶段证据
 - [progress/P14.md](progress/P14.md)：P14 指标、诊断阶段证据
+- [modules/DIAGNOSTICS.md](modules/DIAGNOSTICS.md)：P14 固定维度指标、健康、Trace 与慢操作契约
+- [operations/P64_BASELINE.md](operations/P64_BASELINE.md)：P64.F 测试环境和负载准备清单（尚未测量）
 - [reviews/P13_NETWORKING_REVIEW.md](reviews/P13_NETWORKING_REVIEW.md)：P13 独立四视角审查
 - [reviews/P12_CONCURRENCY_REVIEW.md](reviews/P12_CONCURRENCY_REVIEW.md)：P12 独立四视角审查
 - [reviews/P11_PERSISTENCE_REVIEW.md](reviews/P11_PERSISTENCE_REVIEW.md)：P11 四视角独立代码审查
