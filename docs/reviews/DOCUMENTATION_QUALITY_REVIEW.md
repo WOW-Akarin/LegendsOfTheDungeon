@@ -5,7 +5,7 @@
 
 ## 1. 自动 Gate 与适用范围
 
-所有非 Test、非显式例外的项目都由中央 `Directory.Build.targets` 启用 XML documentation file。项目已经全局启用 `TreatWarningsAsErrors=true`，因此 C# 编译器的 `CS1591` 会让缺失公开 XML 注释的构建失败。
+所有项目由中央 `Directory.Build.props` 默认启用 XML documentation file；Test 项目在自身项目文件显式关闭，Generated/ThirdParty 例外项目也必须显式关闭并同时声明可审计例外。项目已经全局启用 `TreatWarningsAsErrors=true`，因此 C# 编译器的 `CS1591` 会让缺失公开 XML 注释的构建失败。
 
 自动 Gate 覆盖公开可见类型和成员，不只检查方法。Public 类型、构造函数、方法、属性、事件、字段等只要触发 `CS1591`，都必须补齐有意义的 XML 注释。
 
@@ -18,17 +18,18 @@ Test Assembly 不构成生产公共 API，因此不要求为每个测试类/测�
 - `Generated`：由工具/Source Generator/协议生成器生成，正常编辑流程不应手工维护的代码；
 - `ThirdParty`：按许可和来源规则原样纳入、由上游维护的第三方代码。
 
-例外项目必须同时设置：
+例外项目必须同时设置（其中关闭 XML 文档只对合法例外允许）：
 
 ```xml
 <LegendsOfTheDungeonDocumentationGateExempt>true</LegendsOfTheDungeonDocumentationGateExempt>
+<GenerateDocumentationFile>false</GenerateDocumentationFile>
 <LegendsOfTheDungeonDocumentationGateExemptionKind>Generated</LegendsOfTheDungeonDocumentationGateExemptionKind>
 <LegendsOfTheDungeonDocumentationGateExemptionReason>具体说明生成器/第三方来源以及为什么不应由本项目维护 XML 注释。</LegendsOfTheDungeonDocumentationGateExemptionReason>
 ```
 
 `Kind` 只允许 `Generated` 或 `ThirdParty`。理由不能为空。普通业务代码不得以“历史代码”“临时”“太多注释”等理由申请例外。
 
-非例外生产项目禁止通过 `NoWarn` 或 `WarningsNotAsErrors` 对 `CS1591` 做静默降级。
+非例外生产项目禁止通过 `NoWarn`、`WarningsNotAsErrors` 或直接设置 `GenerateDocumentationFile=false` 绕过 Gate。
 
 ## 3. 中文 XML 注释语义
 

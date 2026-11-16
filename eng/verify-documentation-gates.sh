@@ -58,7 +58,8 @@ expect_failure_with() {
   echo "PASS: $label（$expected）"
 }
 
-mkdir -p   "$FIXTURE_ROOT/positive"   "$FIXTURE_ROOT/missing"   "$FIXTURE_ROOT/generated-exempt"   "$FIXTURE_ROOT/thirdparty-exempt"   "$FIXTURE_ROOT/missing-reason"   "$FIXTURE_ROOT/invalid-kind"   "$FIXTURE_ROOT/no-warn-bypass"   "$FIXTURE_ROOT/not-as-error-bypass"
+mkdir -p   "$FIXTURE_ROOT/positive"   "$FIXTURE_ROOT/missing"   "$FIXTURE_ROOT/generated-exempt"   "$FIXTURE_ROOT/thirdparty-exempt"   "$FIXTURE_ROOT/missing-reason"   "$FIXTURE_ROOT/invalid-kind"   "$FIXTURE_ROOT/no-warn-bypass"   "$FIXTURE_ROOT/not-as-error-bypass" \
+  "$FIXTURE_ROOT/disable-without-exemption"
 
 cat >"$FIXTURE_ROOT/positive/Fixture.csproj" <<'EOF'
 <Project Sdk="Microsoft.NET.Sdk" />
@@ -105,6 +106,7 @@ cat >"$FIXTURE_ROOT/generated-exempt/Fixture.csproj" <<'EOF'
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <LegendsOfTheDungeonDocumentationGateExempt>true</LegendsOfTheDungeonDocumentationGateExempt>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <LegendsOfTheDungeonDocumentationGateExemptionKind>Generated</LegendsOfTheDungeonDocumentationGateExemptionKind>
     <LegendsOfTheDungeonDocumentationGateExemptionReason>P04 自测：模拟工具生成的公共代码。</LegendsOfTheDungeonDocumentationGateExemptionReason>
   </PropertyGroup>
@@ -126,6 +128,7 @@ cat >"$FIXTURE_ROOT/thirdparty-exempt/Fixture.csproj" <<'EOF'
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <LegendsOfTheDungeonDocumentationGateExempt>true</LegendsOfTheDungeonDocumentationGateExempt>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <LegendsOfTheDungeonDocumentationGateExemptionKind>ThirdParty</LegendsOfTheDungeonDocumentationGateExemptionKind>
     <LegendsOfTheDungeonDocumentationGateExemptionReason>P04 自测：模拟按原样纳入的第三方公共代码。</LegendsOfTheDungeonDocumentationGateExemptionReason>
   </PropertyGroup>
@@ -147,6 +150,7 @@ cat >"$FIXTURE_ROOT/missing-reason/Fixture.csproj" <<'EOF'
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <LegendsOfTheDungeonDocumentationGateExempt>true</LegendsOfTheDungeonDocumentationGateExempt>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <LegendsOfTheDungeonDocumentationGateExemptionKind>Generated</LegendsOfTheDungeonDocumentationGateExemptionKind>
   </PropertyGroup>
 </Project>
@@ -164,6 +168,7 @@ cat >"$FIXTURE_ROOT/invalid-kind/Fixture.csproj" <<'EOF'
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <LegendsOfTheDungeonDocumentationGateExempt>true</LegendsOfTheDungeonDocumentationGateExempt>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <LegendsOfTheDungeonDocumentationGateExemptionKind>Internal</LegendsOfTheDungeonDocumentationGateExemptionKind>
     <LegendsOfTheDungeonDocumentationGateExemptionReason>P04 自测：该例外类型必须被拒绝。</LegendsOfTheDungeonDocumentationGateExemptionReason>
   </PropertyGroup>
@@ -206,6 +211,22 @@ cat >"$FIXTURE_ROOT/not-as-error-bypass/Api.cs" <<'EOF'
 namespace LegendsOfTheDungeon.DocumentationFixtures;
 
 public static class WarningDowngradeBypassApi
+{
+}
+EOF
+
+cat >"$FIXTURE_ROOT/disable-without-exemption/Fixture.csproj" <<'EOF'
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>
+EOF
+
+cat >"$FIXTURE_ROOT/disable-without-exemption/Api.cs" <<'EOF'
+namespace LegendsOfTheDungeon.DocumentationFixtures;
+
+public static class DisabledDocumentationGateApi
 {
 }
 EOF

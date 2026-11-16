@@ -6,10 +6,6 @@
     - 生成/第三方代码只能通过有类型和理由的显式项目级例外退出 Gate；
     - 禁止在生产项目用 NoWarn / WarningsNotAsErrors 绕过 CS1591。
   -->
-  <PropertyGroup Condition="'$(IsTestProject)' != 'true' and '$(LegendsOfTheDungeonDocumentationGateExempt)' != 'true'">
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-
   <Target Name="ValidateLotdDocumentationGatePolicy" BeforeTargets="CoreCompile">
     <Error
       Code="LOTD0002"
@@ -23,6 +19,13 @@
       Condition="'$(LegendsOfTheDungeonDocumentationGateExempt)' == 'true'
         and '$(LegendsOfTheDungeonDocumentationGateExemptionReason)' == ''"
       Text="文档 Gate 例外必须填写 LegendsOfTheDungeonDocumentationGateExemptionReason。" />
+
+    <Error
+      Code="LOTD0005"
+      Condition="'$(IsTestProject)' != 'true'
+        and '$(LegendsOfTheDungeonDocumentationGateExempt)' != 'true'
+        and '$(GenerateDocumentationFile)' != 'true'"
+      Text="非 Test 的普通项目禁止关闭 GenerateDocumentationFile；需要退出文档 Gate 时必须使用显式 Generated/ThirdParty 例外。" />
 
     <Error
       Code="LOTD0004"

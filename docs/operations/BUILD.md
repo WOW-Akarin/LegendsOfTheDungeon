@@ -65,7 +65,7 @@ Gate 负向自测：
 
 ## 文档质量 Gate
 
-生产公共 API 缺失 XML 注释由中央 `Directory.Build.targets` 启用 `GenerateDocumentationFile` 后交给编译器 `CS1591` 检测；全局 `TreatWarningsAsErrors=true` 使其阻断构建。
+生产公共 API 缺失 XML 注释由中央 `Directory.Build.props` 默认启用 `GenerateDocumentationFile` 后交给编译器 `CS1591` 检测；全局 `TreatWarningsAsErrors=true` 使其阻断构建。
 
 自测入口：
 
@@ -73,7 +73,7 @@ Gate 负向自测：
 ./eng/verify-documentation-gates.sh
 ```
 
-脚本现场生成合规、缺失、Generated/ThirdParty 例外、非法例外以及 `NoWarn` / `WarningsNotAsErrors` 绕过样本。证据输出到 `artifacts/documentation-gate/`；中文语义与复杂逻辑说明按 [中文注释与文档质量 Review Checklist](../reviews/DOCUMENTATION_QUALITY_REVIEW.md) 人工审查。
+脚本现场生成合规、缺失、Generated/ThirdParty 例外、非法例外、`NoWarn` / `WarningsNotAsErrors` 绕过，以及普通项目直接关闭 `GenerateDocumentationFile` 的样本。证据输出到 `artifacts/documentation-gate/`；中文语义与复杂逻辑说明按 [中文注释与文档质量 Review Checklist](../reviews/DOCUMENTATION_QUALITY_REVIEW.md) 人工审查。
 
 ## CI 证据
 
