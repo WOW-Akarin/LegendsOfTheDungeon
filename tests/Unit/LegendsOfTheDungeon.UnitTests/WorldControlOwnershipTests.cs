@@ -50,16 +50,16 @@ public sealed class WorldControlOwnershipTests
         {
             Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(id)));
             Assert.Equal(WorldEntityResult.ControlGranted,
-                world.GrantControl(ctx, id, Source(1), EntityControlFlag.Stunned, out first));
+                world.GrantControl(ctx, id, Source(1), EntityControlEffects.Stunned, out first));
             Assert.Equal(WorldEntityResult.ControlGranted,
-                world.GrantControl(ctx, id, Source(2), EntityControlFlag.Stunned, out second));
+                world.GrantControl(ctx, id, Source(2), EntityControlEffects.Stunned, out second));
             Assert.Equal(WorldEntityResult.AlreadyExists,
-                world.GrantControl(ctx, id, Source(1), EntityControlFlag.Stunned, out var replay));
+                world.GrantControl(ctx, id, Source(1), EntityControlEffects.Stunned, out var replay));
             Assert.Equal(first, replay);
         });
         Assert.NotEqual(first, second);
         Assert.True(world.TryGetSnapshot(id.Id, out var snapshot));
-        Assert.Equal(EntityControlFlag.Stunned, snapshot.Control);
+        Assert.Equal(EntityControlEffects.Stunned, snapshot.Control);
 
         Run(executor, ctx =>
         {
@@ -67,12 +67,12 @@ public sealed class WorldControlOwnershipTests
             Assert.Equal(WorldEntityResult.AlreadyCompleted, world.RevokeControl(ctx, id, first));
         });
         Assert.True(world.TryGetSnapshot(id.Id, out snapshot));
-        Assert.Equal(EntityControlFlag.Stunned, snapshot.Control);
+        Assert.Equal(EntityControlEffects.Stunned, snapshot.Control);
 
         Run(executor, ctx => Assert.Equal(WorldEntityResult.ControlRevoked,
             world.RevokeControl(ctx, id, second)));
         Assert.True(world.TryGetSnapshot(id.Id, out snapshot));
-        Assert.Equal(EntityControlFlag.None, snapshot.Control);
+        Assert.Equal(EntityControlEffects.None, snapshot.Control);
     }
 
     [Fact]
@@ -84,14 +84,14 @@ public sealed class WorldControlOwnershipTests
         {
             Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(id)));
             Assert.Equal(WorldEntityResult.ControlGranted,
-                world.GrantControl(ctx, id, Source(4), EntityControlFlag.Rooted, out var rooted));
+                world.GrantControl(ctx, id, Source(4), EntityControlEffects.Rooted, out var rooted));
             Assert.Equal(WorldEntityResult.ControlGranted,
-                world.GrantControl(ctx, id, Source(4), EntityControlFlag.Silenced, out _));
-            Assert.Equal(EntityControlFlag.Rooted | EntityControlFlag.Silenced,
+                world.GrantControl(ctx, id, Source(4), EntityControlEffects.Silenced, out _));
+            Assert.Equal(EntityControlEffects.Rooted | EntityControlEffects.Silenced,
                 worldSnapshot().Control);
             Assert.Equal(WorldEntityResult.ControlRevoked, world.RevokeControl(ctx, id, rooted));
         });
-        Assert.Equal(EntityControlFlag.Silenced, worldSnapshot().Control);
+        Assert.Equal(EntityControlEffects.Silenced, worldSnapshot().Control);
 
         WorldEntitySnapshot worldSnapshot()
         {
@@ -148,14 +148,14 @@ public sealed class WorldControlOwnershipTests
         {
             Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(id)));
             Assert.Equal(WorldEntityResult.ControlGranted,
-                world.GrantControl(ctx, id, Source(1), EntityControlFlag.Stunned, out var c));
+                world.GrantControl(ctx, id, Source(1), EntityControlEffects.Stunned, out var c));
             Assert.Equal(WorldEntityResult.TagGranted, world.GrantTag(ctx, id, Source(1), "a", out var t));
             Assert.Equal(c.Sequence, t.Sequence);
             Assert.NotEqual(c, t);
             Assert.Equal(WorldEntityResult.AlreadyCompleted, world.RevokeControl(ctx, id, t));
             Assert.Equal(WorldEntityResult.AlreadyCompleted, world.RevokeTag(ctx, id, c));
             Assert.True(world.TryGetSnapshot(id.Id, out var snapshot));
-            Assert.Equal(EntityControlFlag.Stunned, snapshot.Control);
+            Assert.Equal(EntityControlEffects.Stunned, snapshot.Control);
             Assert.Equal(["a"], snapshot.Tags);
         });
     }
@@ -316,16 +316,16 @@ public sealed class WorldControlOwnershipTests
         {
             Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(first)));
             Assert.Equal(WorldEntityResult.ControlGranted,
-                world.GrantControl(ctx, first, Source(1), EntityControlFlag.Stunned, out previous));
+                world.GrantControl(ctx, first, Source(1), EntityControlEffects.Stunned, out previous));
             Assert.Equal(WorldEntityResult.Removed, world.Remove(ctx, first));
             Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(next)));
             Assert.Equal(WorldEntityResult.ControlGranted,
-                world.GrantControl(ctx, next, Source(1), EntityControlFlag.Stunned, out _));
+                world.GrantControl(ctx, next, Source(1), EntityControlEffects.Stunned, out _));
             Assert.Equal(WorldEntityResult.Stale, world.RevokeControl(ctx, next, previous));
             Assert.Equal(WorldEntityResult.Stale, world.RevokeControl(ctx, first, previous));
         });
         Assert.True(world.TryGetSnapshot(next.Id, out var result));
-        Assert.Equal(EntityControlFlag.Stunned, result.Control);
+        Assert.Equal(EntityControlEffects.Stunned, result.Control);
     }
 
     [Fact]
@@ -339,7 +339,7 @@ public sealed class WorldControlOwnershipTests
             Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(child)));
             Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(owner)));
             Assert.Equal(WorldEntityResult.ControlGranted,
-                world.GrantControl(ctx, child, Source(1), EntityControlFlag.Feared, out _));
+                world.GrantControl(ctx, child, Source(1), EntityControlEffects.Feared, out _));
             Assert.Equal(WorldEntityResult.TagGranted,
                 world.GrantTag(ctx, child, Source(2), "minion", out _));
             Assert.Equal(WorldEntityResult.RelationChanged,
@@ -349,7 +349,7 @@ public sealed class WorldControlOwnershipTests
         });
         Assert.True(world.TryGetSnapshot(child.Id, out var snapshot));
         Assert.Equal(WorldEntityLifecycle.Disposed, snapshot.Lifecycle);
-        Assert.Equal(EntityControlFlag.None, snapshot.Control);
+        Assert.Equal(EntityControlEffects.None, snapshot.Control);
         Assert.Empty(snapshot.Tags);
         Assert.Equal(default, snapshot.Relationships);
     }
@@ -365,17 +365,17 @@ public sealed class WorldControlOwnershipTests
             for (ulong i = 1; i <= 64; i++)
             {
                 Assert.Equal(WorldEntityResult.ControlGranted,
-                    world.GrantControl(ctx, id, Source(i), EntityControlFlag.Rooted, out _));
+                    world.GrantControl(ctx, id, Source(i), EntityControlEffects.Rooted, out _));
                 Assert.Equal(WorldEntityResult.TagGranted,
                     world.GrantTag(ctx, id, Source(i), "busy", out _));
             }
             Assert.Equal(WorldEntityResult.CapacityExceeded,
-                world.GrantControl(ctx, id, Source(65), EntityControlFlag.Rooted, out _));
+                world.GrantControl(ctx, id, Source(65), EntityControlEffects.Rooted, out _));
             Assert.Equal(WorldEntityResult.CapacityExceeded,
                 world.GrantTag(ctx, id, Source(65), "busy", out _));
         });
         Assert.True(world.TryGetSnapshot(id.Id, out var snapshot));
-        Assert.Equal(EntityControlFlag.Rooted, snapshot.Control);
+        Assert.Equal(EntityControlEffects.Rooted, snapshot.Control);
         Assert.Equal(["busy"], snapshot.Tags);
     }
 
@@ -405,7 +405,7 @@ public sealed class WorldControlOwnershipTests
         });
         Assert.Equal(WorldAccessFault.LeaseRequired,
             Assert.Throws<WorldAccessException>(() =>
-                world.GrantControl(captured!, id, Source(1), EntityControlFlag.Rooted, out _)).Fault);
+                world.GrantControl(captured!, id, Source(1), EntityControlEffects.Rooted, out _)).Fault);
         Assert.Equal(WorldAccessFault.LeaseRequired,
             Assert.Throws<WorldAccessException>(() =>
                 world.SetPermanentTag(captured!, id, "npc", true)).Fault);
@@ -432,7 +432,7 @@ public sealed class WorldControlOwnershipTests
         Run(executor, ctx => pipeline.Execute(ctx, new Tick(1)));
         var first = pipeline.LastStateHash;
         Run(executor, ctx => Assert.Equal(WorldEntityResult.ControlGranted,
-            world.GrantControl(ctx, id, Source(1), EntityControlFlag.Stunned, out _)));
+            world.GrantControl(ctx, id, Source(1), EntityControlEffects.Stunned, out _)));
         Run(executor, ctx => pipeline.Execute(ctx, new Tick(2)));
         var control = pipeline.LastStateHash;
         Run(executor, ctx => Assert.Equal(WorldEntityResult.TagChanged,

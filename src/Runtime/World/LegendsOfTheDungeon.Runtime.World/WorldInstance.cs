@@ -128,7 +128,7 @@ public readonly record struct WorldEntitySnapshot
 {
     internal WorldEntitySnapshot(EntityIdentity identity, WorldEntityLifecycle lifecycle,
         Transform transform, LifeState life, EntityIdentity? target,
-        EntityControlFlag control, IReadOnlyList<string> tags, EntityRelations relationships,
+        EntityControlEffects control, IReadOnlyList<string> tags, EntityRelations relationships,
         IReadOnlyList<EntityControlGrantSnapshot> controlGrants,
         IReadOnlyList<EntityTagGrantSnapshot> tagGrants,
         IReadOnlyList<string> permanentTags, ulong controlSequence, ulong tagSequence)
@@ -164,7 +164,7 @@ public readonly record struct WorldEntitySnapshot
     public EntityIdentity? Target { get; }
 
     /// <summary>按来源合并后的不可变控制位集合。</summary>
-    public EntityControlFlag Control { get; }
+    public EntityControlEffects Control { get; }
 
     /// <summary>按值冻结、Ordinal 升序的有效标签，不是任何内部集合。</summary>
     public IReadOnlyList<string> Tags { get; }
@@ -779,7 +779,7 @@ public sealed class WorldInstance
     /// <param name="handle">成功授予或重复时返回可精确撤销的句柄。</param>
     /// <returns>明确的授予、重复或配额状态。</returns>
     public WorldEntityResult GrantControl(IWorldWriteContext context, EntityIdentity identity,
-        EntityEffectSource source, EntityControlFlag flag, out EntityEffectHandle handle)
+        EntityEffectSource source, EntityControlEffects flag, out EntityEffectHandle handle)
     {
         Demand(context);
         lock (_gate)

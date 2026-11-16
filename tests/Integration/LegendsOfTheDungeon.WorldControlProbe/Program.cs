@@ -63,9 +63,9 @@ static void ControlAndTags()
     Run(executor, ctx =>
     {
         Spawn(world, ctx, entity);
-        Require(world.GrantControl(ctx, entity, first, EntityControlFlag.Stunned, out a) ==
+        Require(world.GrantControl(ctx, entity, first, EntityControlEffects.Stunned, out a) ==
             WorldEntityResult.ControlGranted, "first stun rejected");
-        Require(world.GrantControl(ctx, entity, second, EntityControlFlag.Stunned, out b) ==
+        Require(world.GrantControl(ctx, entity, second, EntityControlEffects.Stunned, out b) ==
             WorldEntityResult.ControlGranted, "second stun rejected");
         Require(world.GrantTag(ctx, entity, first, "npc.elite", out tag) ==
             WorldEntityResult.TagGranted, "temporary tag rejected");
@@ -73,7 +73,7 @@ static void ControlAndTags()
             WorldEntityResult.TagChanged, "permanent tag rejected");
     });
     Require(world.TryGetSnapshot(entity.Id, out var snapshot) &&
-        snapshot.Control == EntityControlFlag.Stunned &&
+        snapshot.Control == EntityControlEffects.Stunned &&
         snapshot.Tags.SequenceEqual(["npc", "npc.elite"]), "control/tag snapshot invalid");
     Run(executor, ctx =>
     {
@@ -83,12 +83,12 @@ static void ControlAndTags()
             "temporary tag revoke rejected");
     });
     Require(world.TryGetSnapshot(entity.Id, out snapshot) &&
-        snapshot.Control == EntityControlFlag.Stunned && snapshot.Tags.SequenceEqual(["npc"]),
+        snapshot.Control == EntityControlEffects.Stunned && snapshot.Tags.SequenceEqual(["npc"]),
         "one stun source or permanent tag was mistakenly removed");
     Run(executor, ctx => Require(world.RevokeControl(ctx, entity, b) ==
         WorldEntityResult.ControlRevoked, "second stun revoke rejected"));
     Require(world.TryGetSnapshot(entity.Id, out snapshot) &&
-        snapshot.Control == EntityControlFlag.None && snapshot.Tags.SequenceEqual(["npc"]),
+        snapshot.Control == EntityControlEffects.None && snapshot.Tags.SequenceEqual(["npc"]),
         "last stun source cleanup failed");
 }
 
@@ -143,19 +143,19 @@ static void StaleAndGuards()
     {
         Spawn(world, ctx, old);
         Require(world.GrantControl(ctx, old, new EntityEffectSource(1),
-            EntityControlFlag.Rooted, out expired) == WorldEntityResult.ControlGranted,
+            EntityControlEffects.Rooted, out expired) == WorldEntityResult.ControlGranted,
             "first generation failed grant");
         Require(world.Remove(ctx, old) == WorldEntityResult.Removed, "failed retirement");
         Spawn(world, ctx, current);
         Require(world.GrantControl(ctx, current, new EntityEffectSource(2),
-            EntityControlFlag.Rooted, out _) == WorldEntityResult.ControlGranted,
+            EntityControlEffects.Rooted, out _) == WorldEntityResult.ControlGranted,
             "new generation grant rejected");
         Require(world.RevokeControl(ctx, current, expired) == WorldEntityResult.Stale,
             "old generation handle revoked fresh control");
         captured = ctx;
     });
     Require(world.TryGetSnapshot(current.Id, out var state) &&
-        state.Control == EntityControlFlag.Rooted, "new root was revoked");
+        state.Control == EntityControlEffects.Rooted, "new root was revoked");
     try
     {
         world.GrantTag(captured!, current, new EntityEffectSource(8), "rooted", out _);
@@ -187,7 +187,7 @@ static void Replay()
         Run(executor, ctx => pipeline.Execute(ctx, new Tick(1)));
         hashes.Add(pipeline.LastStateHash);
         Run(executor, ctx => Require(world.GrantControl(ctx, entity, new EntityEffectSource(1),
-            EntityControlFlag.Stunned, out _) == WorldEntityResult.ControlGranted, "stun failed"));
+            EntityControlEffects.Stunned, out _) == WorldEntityResult.ControlGranted, "stun failed"));
         Run(executor, ctx => pipeline.Execute(ctx, new Tick(2)));
         hashes.Add(pipeline.LastStateHash);
         Run(executor, ctx => Require(world.SetPermanentTag(ctx, entity, "npc", true) ==

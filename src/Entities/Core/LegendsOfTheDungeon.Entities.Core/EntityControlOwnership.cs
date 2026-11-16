@@ -4,7 +4,7 @@ namespace LegendsOfTheDungeon.Entities.Core;
 
 /// <summary>同一实体可被多个独立来源叠加的控制标志；仅允许单项标志作为授予单位。</summary>
 [Flags]
-public enum EntityControlFlag
+public enum EntityControlEffects
 {
     /// <summary>没有控制状态。</summary>
     None = 0,
@@ -90,7 +90,7 @@ public enum EntityEffectGrantResult
 /// <param name="Source">非零业务来源。</param>
 /// <param name="Flag">单项控制标志。</param>
 public readonly record struct EntityControlGrantSnapshot(
-    ulong Sequence, EntityEffectSource Source, EntityControlFlag Flag);
+    ulong Sequence, EntityEffectSource Source, EntityControlEffects Flag);
 
 /// <summary>用于确定性状态回放的临时标签来源不可变快照。</summary>
 /// <param name="Sequence">此代际顺序号。</param>
@@ -105,19 +105,19 @@ public sealed class EntityControlCapability
     private const int Limit = 64;
     private readonly EntityIdentity _identity;
     private readonly object _gate = new();
-    private readonly Dictionary<ulong, (EntityEffectSource Source, EntityControlFlag Flag)> _grants = [];
+    private readonly Dictionary<ulong, (EntityEffectSource Source, EntityControlEffects Flag)> _grants = [];
     private ulong _sequence;
 
     internal EntityControlCapability(EntityIdentity identity) => _identity = identity;
 
     /// <summary>当前有效的控制标志按位或，按值读取。</summary>
-    public EntityControlFlag Effective
+    public EntityControlEffects Effective
     {
         get
         {
             lock (_gate)
             {
-                var flags = EntityControlFlag.None;
+                var flags = EntityControlEffects.None;
                 foreach (var grant in _grants.Values)
                 {
                     flags |= grant.Flag;
@@ -173,11 +173,11 @@ public sealed class EntityControlCapability
     /// <param name="handle">新或原有的带代际撤销凭据。</param>
     /// <returns>授予、幂等重复或配额不足。</returns>
     public EntityEffectGrantResult Grant(IWorldWriteContext context, EntityEffectSource source,
-        EntityControlFlag flag, out EntityEffectHandle handle)
+        EntityControlEffects flag, out EntityEffectHandle handle)
     {
         _identity.Demand(context);
-        if (source.IsEmpty || flag is not (EntityControlFlag.Stunned or EntityControlFlag.Rooted
-            or EntityControlFlag.Silenced or EntityControlFlag.Feared))
+        if (source.IsEmpty || flag is not (EntityControlEffects.Stunned or EntityControlEffects.Rooted
+            or EntityControlEffects.Silenced or EntityControlEffects.Feared))
         {
             throw new ArgumentException("Control grant requires a supported single flag and source.");
         }
