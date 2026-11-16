@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00
 分支：main（用户要求直接更新、不建立分支）
 当前里程碑：M1 基础 → M2 最小世界
-当前阶段：P24 — Entity Identity / Transform / Life（REVIEW，目标 B）
+当前阶段：P24 — Entity Identity / Transform / Life（ACCEPTED，目标 B）
 
 ## 不变的范围与架构
 
@@ -14,13 +14,13 @@
 
 ## 稳定的已验收阶段
 
-P00–P16 及 P18 已 ACCEPTED。P18 具有真实 WorldExecutor Guard、异步回执、故障与限额证据；最终归档 HEAD `1f1a01b` CI #162 六 Job 全绿。P17 WorldInstance 尚受 P24 阻塞，P19 WorldTick 受 P17 阻塞。
+P00–P16、P18 和 P24（B）已 ACCEPTED。P18 具有真实 WorldExecutor Guard、异步回执、故障与限额证据；最终归档 HEAD `1f1a01b` CI #162 六 Job 全绿。P17 WorldInstance 的 P24 前置条件已解除，可进入开发；P19 WorldTick 受 P17 阻塞。
 
 ## P24 当前进展和停点
 
-本次建立 `Entities.Core` 领域薄能力：四元组不可变身份、Transform 唯一位置真相、只读 LifeState、窄 TargetState、同步 World Demand Guard；固定组合容器不提供可变能力集合或服务定位。已编写 `EntityCapabilitiesTests`，并调整 Solution、P03 白名单、NuGet locked 图；**实现 HEAD 5208837 的 CI #163 六 Job SUCCESS（216 Unit、16 Architecture）**，目前处于独立 REVIEW HEAD 验证阶段。
+本次建立 `Entities.Core` 领域薄能力：四元组不可变身份、Transform 唯一位置真相、只读 LifeState、窄 TargetState、同步 World Demand Guard；固定组合容器不提供可变能力集合或服务定位。已编写 `EntityCapabilitiesTests`，并调整 Solution、P03 白名单、NuGet locked 图；实现 HEAD `5208837` CI #163 与独立 REVIEW HEAD `b5af3d4` CI #164 六 Job SUCCESS（216 Unit、16 Architecture）；P24(B) 正式 ACCEPTED。
 
-下一安全动作：核对 REVIEW HEAD CI 的全部六 Job，完整通过再标记 P24 ACCEPTED 并独立核验 ACCEPTED HEAD；失败必须修复，不能绕过现有 Gate。
+下一安全动作：核验 P24 正式 ACCEPTED HEAD CI；然后推进 P17 WorldInstance/Registry/Lifecycle，并在 P17 接线后补真实活跃目标 Generation 校验。
 
 仍未完成：P17 世界注册/实体生命周期、真实 Target 存在性、Transform/Spatial 原子协调、P19 Tick、P32 Health、生产授权 Host、P62 回放、P64/P66 性能长稳。
 

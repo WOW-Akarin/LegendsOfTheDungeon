@@ -1,6 +1,6 @@
 # P24 — Entity Identity / Transform / Life（基础能力）
 
-状态：IN_PROGRESS；目标 B。依赖 P05/P06/P09 已验收；P18 技术写租约已验收。P17 世界注册与生命周期尚未实施。
+状态：ACCEPTED；目标 B。依赖 P05/P06/P09 已验收；P18 技术写租约已验收。P17 世界注册与生命周期尚未实施。P24 的基础能力在实现 CI #163、独立 REVIEW CI #164 六 Job 全绿后正式接受。
 
 ## 所有权与能力边界
 
@@ -26,4 +26,4 @@
 ## 实现 Gate 证据
 
 - HEAD `52088378c23c320796e669760dfc1a1ffc4f350e`，GitHub Actions run #163 六 Job SUCCESS：216/216 Unit，16/16 Architecture，真实 WorldExecution/Persistence/StaticData/PostgreSQL/Diagnostics/Networking 集成正常；负向构建、测试、架构以及中文文档 Gate 均 PASS。
-- 独立四视角审查见 [P24_ENTITIES_REVIEW](../reviews/P24_ENTITIES_REVIEW.md)。P24 的正式 ACCEPTED 仍等待 REVIEW HEAD CI。
+- 独立四视角审查见 [P24_ENTITIES_REVIEW](../reviews/P24_ENTITIES_REVIEW.md)。独立 REVIEW HEAD CI #164 六 Job SUCCESS；P24(B) ACCEPTED，正式验收 HEAD CI 待核验。

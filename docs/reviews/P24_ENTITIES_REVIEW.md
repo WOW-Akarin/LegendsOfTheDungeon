@@ -1,9 +1,9 @@
 # P24 — Entity Identity / Transform / Life 独立四视角审查
 
-- 审查状态：REVIEW（正式 ACCEPTED 尚未给出）
+- 审查状态：ACCEPTED（P24 基础能力 B）
 - 实现提交：`52088378c23c320796e669760dfc1a1ffc4f350e`
 - 实现 CI：#163 https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43885627217
-- 本审查独立文档提交的六 Job CI：NOT_RUN；收到独立结果前不标记 ACCEPTED
+- 本审查独立 HEAD：`b5af3d4247645515d6f582110331d43edb9d7bd9`，CI #164 https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43886436240，六 Job SUCCESS
 - 阶段出口：P24 基础实体薄能力 B；不声称完成 P17 WorldInstance/P20 Spatial/P32 Health
 
 ## 1. 功能审查
@@ -38,11 +38,11 @@
 | P15/P16 PostgreSQL 静态数据与热重载 | PASS |
 | P14 诊断 Worker / P13 TCP Loopback | PASS |
 | 六 Job 汇总 | **6/6 SUCCESS** |
-| REVIEW HEAD 六 Job | NOT_RUN；本审查提交将触发 |
+| REVIEW HEAD 六 Job | **6/6 SUCCESS**，run #164，216 Unit / 16 Architecture |
 | ACCEPTED HEAD 六 Job | NOT_RUN |
 
 ## 范围限定与结论
 
 P24 B 技术出口所要求的基础能力、领域模块边界与现有 P18 同步世界写门禁的集成单测均有真实实现 CI 证据。没有把实体创建误说成世界注册、将目标四元组静态匹配误说成活动 Registry 校验、或将死亡标记冒充完整 Health/战斗结算。
 
-独立 REVIEW 文档与实现代码分离；等待本次 REVIEW HEAD 六 Job 全部成功后，才能把本阶段从 REVIEW 变更为 ACCEPTED。暂不开始依赖 P24 的 P17。
+独立 REVIEW 文档与实现代码分离；run #164 六 Job 全部 SUCCESS，P24 技术 B 必需未解决项为 0，正式 ACCEPTED。P17 的前置依赖已满足；P17 仍须独立实现与验证，P24 的验收不代表 P17 完成。
