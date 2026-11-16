@@ -145,9 +145,8 @@ public sealed class WorldExecutorTests
                 port.OfferReply(replyTickets[i], new Work(_ => order.Add(label))));
         }
 
-        Assert.Equal(WorldAdmissionStatus.Busy,
-            port.OfferReply(replyTickets[0], new Work(_ => { })) is WorldAdmissionStatus.Stale
-                ? WorldAdmissionStatus.Busy : WorldAdmissionStatus.Stale);
+        Assert.Equal(WorldAdmissionStatus.Stale,
+            port.OfferReply(replyTickets[0], new Work(_ => { })));
         var report = world.RunBatch(7);
         Assert.Equal(7, report.Executed);
         Assert.Equal(["c0", "c1", "n0", "c2", "n1", "n2", "n3"], order);
