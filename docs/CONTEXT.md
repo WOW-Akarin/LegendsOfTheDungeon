@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P05 — REVIEW
+当前阶段：P05 — ACCEPTED
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P00–P04 已 ACCEPTED。P05 Strong IDs、EntityGeneration/WorldEpoch 与 Result/KernelError/ValidationIssue 已实现并进入 REVIEW；首批真实 Public Kernel API 已通过 P04 XML Gate、Unit 与 compile-negative Gate。
+P00–P05 已 ACCEPTED。Kernel 已具备 9 个 Strong 身份/代际值、Result/KernelError/ValidationIssue、严格 canonical ID 文本边界和跨类型编译 Gate。P06 尚未开始。
 
 ## 阻塞与技术债
 
-当前无 P05 阻塞。Strong ID 的 CLR default 采用 empty sentinel + 构造/解析/Value/序列化边界拒绝；不同 ID 无转换运算符。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P05 阻塞。P06 将在现有 Kernel 基础值之上实现 Geometry；不得让纯数学类型依赖 Runtime/World。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 

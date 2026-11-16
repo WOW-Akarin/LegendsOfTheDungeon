@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `151c9fff55612df3e60411d796f740814c4eed69` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P05 / Kernel Strong IDs 与 Result / REVIEW / B
+阶段 / 任务 / 状态 / 目标完成度：P05 / Kernel Strong IDs 与 Result / ACCEPTED / B
 
 ## 目标与成功条件
 
@@ -25,15 +25,15 @@
 
 ## 当前停点
 
-P05 最终实现 CI run #27 已全绿：Unit 31/31、Architecture 16/16、P04 回归与 Strong ID CS1503 compile Gate 全部通过。当前进入独立 REVIEW。
+P05 已完成独立 Review 并 ACCEPTED；P06 尚未开始。
 
 ## 下一步（最多 5 项）
 
-1. 独立读取 REVIEW HEAD 的 StrongIds/Result/KernelError、Unit 与 compile Gate。
-2. 核对 REVIEW HEAD 自身 Unit 31+、Architecture、P04 和 compile Gate 全绿。
-3. 核对 Kernel 仍无高层依赖、无 ID 转换、无统一 ItemId。
-4. 核对 P05/KERNEL/CONTEXT/README 状态与相对链接一致。
-5. 无必需问题后将 P05 ACCEPTED，再进入 P06。
+1. 开始 P06 — Kernel Geometry。
+2. 实现 Position / Transform / Vector / Distance / Bounds 等纯数学值类型。
+3. 固定右手坐标、Z 轴向上、米/弧度、方向角归一和数值容差。
+4. 覆盖 NaN / Infinity / 零长度向量 / 边界距离 / 溢出与序列化回读。
+5. 保持 Geometry 纯数学，不依赖 Runtime/World；所有 Public API 继续受 P04 Gate 约束。
 
 ## 修改文件及原因
 
@@ -68,7 +68,7 @@ P05 最终实现 CI run #27 已全绿：Unit 31/31、Architecture 16/16、P04 �
 2. 核对 main HEAD 与 P05 起始 SHA `151c9fff55612df3e60411d796f740814c4eed69`。
 3. 打开 `src/Kernel`、P05 Unit 与 `eng/verify-kernel-contract-gates.sh`。
 4. 读取最新 CI；失败时从第一个真实编译/Analyzer/Test 诊断修复，不降低 P03/P04 Gate。
-5. P05 已进入 REVIEW；按 progress/P05.md 当前停点做独立审查。
+5. P05 已 ACCEPTED；下一任务从 DEVELOPMENT_ROADMAP 的 P06 开始。
 
 ## 不应重复执行的操作
 
