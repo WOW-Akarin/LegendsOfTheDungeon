@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P06 已启动，尚未提交 Geometry 实现。
+P06 Geometry 实现与确定性 Unit 已准备落库：Position/Vector/Distance/Angle/Transform/Bounds、有限数与溢出防护、右手坐标/Yaw 约定及 Adapter-style JSON 回读。
 
 ## 下一步（最多 5 项）
 
-1. 实现 Position / Vector / Distance / Angle / Transform / Bounds。
-2. 添加确定性 Unit：角度归一、距离/范围、Bounds、非法浮点、零向量与溢出。
-3. 添加 test-only JSON wire DTO 回读案例，不让 Kernel 依赖序列化框架。
-4. 运行 P03/P04 与完整 CI 回归，修复第一个真实诊断。
-5. 独立自审后进入 REVIEW。
+1. 提交 P06 Geometry 与 Unit。
+2. 读取首次 CI 的 Analyzer/P04/Unit/Architecture 真实结果。
+3. 若失败，从第一个真实诊断修复，不放宽非有限数或溢出规则。
+4. 核对角度归一、边界距离、零向量和 JSON wire 回读实际测试证据。
+5. 独立自审纯数学依赖与数值语义后进入 REVIEW。
 
 ## 修改文件及原因
 
