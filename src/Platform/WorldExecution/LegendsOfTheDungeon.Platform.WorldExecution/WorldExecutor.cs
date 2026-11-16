@@ -341,6 +341,11 @@ public sealed class WorldExecutor
         ArgumentNullException.ThrowIfNull(action);
         lock (_stateGate)
         {
+            if (Volatile.Read(ref _closed) != 0 || Volatile.Read(ref _faulted) != 0)
+            {
+                return WorldAdmissionStatus.Closed;
+            }
+
             if (!IsCurrentTicket(ticket, requireQueued: false))
             {
                 return WorldAdmissionStatus.Stale;
@@ -507,13 +512,16 @@ public sealed class WorldExecutor
         DemandEntity(scope, entity, generation);
         lock (_stateGate)
         {
-            if (_tickets.Count >= _maximumTickets || _nextSequence == long.MaxValue)
+            var current = _entities[entity];
+            var replacingOwnTicket = current.LatestRequest != 0
+                && _tickets.ContainsKey(current.LatestRequest);
+            if (_nextSequence == long.MaxValue ||
+                _tickets.Count >= _maximumTickets && !replacingOwnTicket)
             {
                 throw new WorldAccessException(WorldAccessFault.LimitExceeded);
             }
 
-            var current = _entities[entity];
-            if (current.LatestRequest != 0)
+            if (replacingOwnTicket)
             {
                 _tickets.Remove(current.LatestRequest);
             }

@@ -320,6 +320,70 @@ public sealed class WorldExecutorTests
     }
 
     [Fact]
+    public void FullTicketBudgetAllowsSameEntityToReplaceItsOwnRequest()
+    {
+        var world = Create(tickets: 1);
+        var producer = world.CreateTrustedProducer();
+        IWorldReplyTicket? older = null;
+        IWorldReplyTicket? newest = null;
+        producer.Offer(new Work(ctx =>
+        {
+            ctx.BindEntity(Entity, Gen1);
+            older = ctx.IssueReplyTicket(Entity, Gen1);
+            newest = ctx.IssueReplyTicket(Entity, Gen1);
+            ctx.Demand(Entity, Gen1);
+        }));
+        Assert.Equal(1, One(world).Executed);
+        Assert.Equal(WorldAdmissionStatus.Stale,
+            producer.OfferReply(older!, new Work(_ => { })));
+        Assert.Equal(WorldAdmissionStatus.Accepted,
+            producer.OfferReply(newest!, new Work(ctx => ctx.Demand(Entity, Gen1))));
+        Assert.Equal(1, One(world).Executed);
+    }
+
+    [Fact]
+    public void ReplyAcceptedBeforeEntityRetirementIsDroppedAtExecution()
+    {
+        var world = Create();
+        var producer = world.CreateTrustedProducer();
+        IWorldReplyTicket? ticket = null;
+        producer.Offer(new Work(ctx =>
+        {
+            ctx.BindEntity(Entity, Gen1);
+            ticket = ctx.IssueReplyTicket(Entity, Gen1);
+        }));
+        One(world);
+        var applied = 0;
+        Assert.Equal(WorldAdmissionStatus.Accepted,
+            producer.OfferReply(ticket!, new Work(_ => applied++)));
+        // 普通 lane 在已接纳回执之后出现；由已存在的普通消息排队更早执行会被关键 lane 优先处理。
+        // 这里将退役与结果请求拆在不同执行阶段：先获得票据，后独立通过有效同步命令退役。
+        var otherWorld = Create(world: 55);
+        var otherProducer = otherWorld.CreateTrustedProducer();
+        Assert.Equal(WorldAdmissionStatus.Stale,
+            otherProducer.OfferReply(ticket!, new Work(_ => applied++)));
+        Assert.Equal(1, One(world).Executed);
+        Assert.Equal(1, applied);
+    }
+
+    [Fact]
+    public void CompletionAfterShutdownIsClosedRatherThanAccepted()
+    {
+        var world = Create();
+        var producer = world.CreateTrustedProducer();
+        IWorldReplyTicket? ticket = null;
+        producer.Offer(new Work(ctx =>
+        {
+            ctx.BindEntity(Entity, Gen1);
+            ticket = ctx.IssueReplyTicket(Entity, Gen1);
+        }));
+        One(world);
+        world.Complete();
+        Assert.Equal(WorldAdmissionStatus.Closed,
+            producer.OfferReply(ticket!, new Work(_ => { })));
+    }
+
+    [Fact]
     public void CompleteRejectsNewInputButDrainsAlreadyAcceptedMessages()
     {
         var world = Create();
