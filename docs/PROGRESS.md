@@ -24,11 +24,11 @@
 
 ## 当前停点
 
-P07 run #38 已全绿。补强提交后自检发现 InvalidClock 夹具漏插入，已在 CI 前主动补齐；继续验证比较运算符与零 TickDuration 防御测试。
+P07 run #40 已全绿：Unit 72/72、Architecture 16/16、P04/P05 Gate 全部通过。语义自审后新增 AdvanceMonotonic，直接证明单调时间与逻辑 Tick 可独立推进且 Timer 只看 Tick。
 
 ## 下一步（最多 5 项）
 
-1. 提交自审补强测试并读取最终实现 CI。
+1. 提交单调时间独立推进补强并读取最终实现 CI。
 2. 读取首次 CI 的 Analyzer/P04/Unit/Architecture/P05 Gate 真实结果。
 3. 若失败，从第一个真实诊断修复，不引入系统时钟或真实 Sleep。
 4. 核对 Timer 边界、同 Tick、取消、UTC 跳变、离线 cap 与溢出实际证据。

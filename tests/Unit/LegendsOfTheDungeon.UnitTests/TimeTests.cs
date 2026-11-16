@@ -74,6 +74,25 @@ public sealed class TimeTests
     }
 
     [Fact]
+    public void FakeClockCanAdvanceMonotonicTimeIndependentlyOfLogicalTicks()
+    {
+        var clock = new FakeClock(new Duration(50), Epoch);
+        var timer = LogicalTimer.Start(clock, new Duration(100));
+
+        clock.AdvanceMonotonic(new Duration(1_000));
+
+        Assert.Equal(0UL, clock.CurrentTick.Value);
+        Assert.Equal(1_000, clock.MonotonicElapsed.Milliseconds);
+        Assert.False(timer.IsDue(clock));
+
+        clock.AdvanceTicks(2);
+
+        Assert.Equal(2UL, clock.CurrentTick.Value);
+        Assert.Equal(1_100, clock.MonotonicElapsed.Milliseconds);
+        Assert.True(timer.IsDue(clock));
+    }
+
+    [Fact]
     public void FakeClockNormalizesAuditUtcAndCanAdjustItIndependently()
     {
         var offsetTime = new DateTimeOffset(

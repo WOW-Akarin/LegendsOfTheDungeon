@@ -103,6 +103,16 @@ public sealed class FakeClock : IClock, IAuditClock
     }
 
     /// <summary>
+    /// 独立推进单调经过时间；不会改变逻辑 Tick 或审计 UTC。
+    /// </summary>
+    /// <param name="duration">要推进的非负持续时间。</param>
+    /// <exception cref="OverflowException">单调经过时间超出 Duration 支持范围时抛出。</exception>
+    public void AdvanceMonotonic(Duration duration)
+    {
+        MonotonicElapsed = MonotonicElapsed.Add(duration);
+    }
+
+    /// <summary>
     /// 独立设置审计 UTC，可用于模拟墙钟向前或向后调整；不会改变 Tick 或单调时间。
     /// </summary>
     /// <param name="utc">新的墙上时间；任何 Offset 都会规范化为 UTC。</param>

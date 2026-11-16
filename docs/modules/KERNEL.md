@@ -106,7 +106,7 @@ Kernel 时间契约把三类时间分开：
 
 `Duration` 使用非负整数毫秒，避免核心计时依赖浮点。零时长合法；负时长和算术溢出拒绝。Tick 从 0 开始，推进使用 checked 语义。
 
-`FakeClock` 由测试/模拟显式推进，不使用真实 Sleep。生产宿主后续可在 Platform/Host 适配系统单调时钟并把结果送入世界调度，但 Domain 只依赖 Kernel 的 `IClock` 抽象。
+`FakeClock` 由测试/模拟显式推进，不使用真实 Sleep。`AdvanceTicks` 推进逻辑 Tick 并累计对应单调时间，`AdvanceMonotonic` 可单独模拟单调时间前进；两者都不会读取或自动修改 UTC。生产宿主后续可在 Platform/Host 适配系统单调时钟并把结果送入世界调度，但 Domain 只依赖 Kernel 的 `IClock` 抽象。
 
 离线时间只使用持久化 UTC：若当前 UTC 早于保存 UTC，经过时间视为 0；否则按完整毫秒计算并按调用方给出的业务上限 clamp。Kernel 不替业务选择上限。
 
