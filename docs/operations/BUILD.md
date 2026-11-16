@@ -99,5 +99,7 @@ P05 使用独立编译夹具证明 Strong ID 的 CLR 类型隔离，而不是只
 - 构建命令：dotnet restore LegendsOfTheDungeon.slnx --locked-mode；真实数据库运行：dotnet run --project tests/Integration/LegendsOfTheDungeon.PersistenceProbe/LegendsOfTheDungeon.PersistenceProbe.csproj --configuration Release --no-restore。
 - CI Service 注入 LOTD_TEST_POSTGRES 专用临时连接串；不能在公共日志中输出原值。连接池上限为 1 以验证事务释放。
 - run #72（43824023757）完整成功：Unit 109/109、Architecture 16/16；真实数据库跑过回滚、Serializable、版本与幂等、Migration、BoundedBulkLoader、超时、故障回执未知、取消和连接释放。
+- 独立 REVIEW run #73（43824564517）SUCCESS，正式 ACCEPTED HEAD run #74（43824857942）SUCCESS；两次均为 build-test + persistence-integration 全绿。
+- 容器实际启动日志确认 PostgreSQL 18.7（Debian 18.7-1.pgdg13+2），并经 docker image inspect 验证 digest。
 - Integration Job 会上传 persistence-integration/report.txt artifact（保留 14 天）。该报告不含连接串和参数秘密；只记录通过探针组。
 - P65.F 仅初始确认丢失模拟，后续业务/断电/消息恢复需单独记录证据。

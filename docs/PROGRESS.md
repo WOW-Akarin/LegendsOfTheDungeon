@@ -21,16 +21,16 @@
 - #69：CA1822 构建 FAIL，已修复且未降低质量 Gate。
 - #70、#71、#72：代码与 PostgreSQL 集成 SUCCESS。
 - 实现 HEAD #72：Unit 109/109、Architecture 16/16，PG 集成 PASS、全部适用 Gate PASS。
-- 独立 REVIEW HEAD #73：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43824564517 — SUCCESS（build-test 和 persistence-integration 均成功）。
-- 四视角审查 PASS，P11 C 的必需未解决项 0。正式状态 ACCEPTED；本次 ACCEPTED HEAD CI 仍待最终确认。
+- 独立 REVIEW HEAD #73：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43824564517 — SUCCESS（两个 job）。
+- 正式 ACCEPTED HEAD #74：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43824857942 — SUCCESS（两个 job）。
+- 四视角审查 PASS，P11 C 的必需未解决项 0；正式 ACCEPTED HEAD b395553 的 CI run #74 完整 SUCCESS（build-test + PostgreSQL integration）。
 - 完整记录：[P11 阶段证据](progress/P11.md)、[Persistence 契约](modules/PERSISTENCE.md)、[代码 Review](reviews/P11_PERSISTENCE_REVIEW.md)。
 
 ## 当前停点与下一步
 
-1. 验证 ACCEPTED HEAD 完整 CI，再记录最终结果。
-2. 启动 P12 — Platform Concurrency，先从路线图/架构确认队列上界与关停语义（本次未实现 P12）。
-3. 保留 P65.F 基础故障点，在真实世界/经济落库时扩展场景。
-4. P64 阶段独立验证性能；不由本阶段推断。
+1. 从 P12 — Platform Concurrency 开始下一任务，先核对路线图、队列上界、Backpressure 与关闭语义（P12 当前 NOT_STARTED）。
+2. 保留 P65.F 基础故障点，在真实世界/经济落库时扩展场景。
+3. P64 阶段独立验证性能；不由本阶段推断。
 
 ## 风险与恢复
 

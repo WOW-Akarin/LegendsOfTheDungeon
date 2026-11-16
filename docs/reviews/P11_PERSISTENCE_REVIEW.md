@@ -32,4 +32,4 @@
 
 ## 独立 REVIEW 判定
 
-实现范围与路线图 P11 技术层目标一致；实际 PostgreSQL、事务和恢复语义有 CI 证据；自审未发现 P11 必需未解决缺陷（0）。独立 REVIEW HEAD 270022e 的 run #73 两个 Job 全绿，P11 技术层目标 C 的必需未解决项 0，正式转入 ACCEPTED。本次验收提交 HEAD 的最终 CI 仍需再确认。该结论不取代后续业务层、性能或安全验收。
+实现范围与路线图 P11 技术层目标一致；实际 PostgreSQL、事务和恢复语义有 CI 证据；自审未发现 P11 必需未解决缺陷（0）。独立 REVIEW HEAD 270022e 的 run #73 两个 Job 全绿，P11 技术层目标 C 的必需未解决项 0，正式转入 ACCEPTED。正式 ACCEPTED HEAD b395553 的 run #74 也已经全部 SUCCESS。该结论不取代后续业务层、性能或安全验收。
