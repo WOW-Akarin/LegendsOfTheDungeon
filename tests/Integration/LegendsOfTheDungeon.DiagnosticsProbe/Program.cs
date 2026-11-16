@@ -23,14 +23,12 @@ static void Check(bool condition, string reason)
     }
 }
 
-static readonlyProbeState Shared = new();
-
 static async Task WorkerDiagnosticsAsync()
 {
-    var metrics = Shared.Metrics;
-    var trace = Shared.Trace;
-    var slow = Shared.Slow;
-    var outbox = Shared.Outbox;
+    var metrics = ProbeState.Metrics;
+    var trace = ProbeState.Trace;
+    var slow = ProbeState.Slow;
+    var outbox = ProbeState.Outbox;
     var queue = new BoundedWorkChannel(256);
     var executed = 0;
     var failed = 0;
@@ -79,16 +77,16 @@ static async Task WorkerDiagnosticsAsync()
         "slow queue task was not locatable");
     Check(trace.Snapshot().Count <= 16 && outbox.Pending <= 2 && outbox.Dropped > 0,
         "observability caches exceeded configured limits");
-    Shared.ActualBusinessSuccess = executed;
+    ProbeState.ActualBusinessSuccess = executed;
 }
 
 static async Task SinkFailureAsync()
 {
-    var attempted = await Shared.Outbox.FlushAsync(new FailingExporter(), 4);
+    var attempted = await ProbeState.Outbox.FlushAsync(new FailingExporter(), 4);
     Check(attempted == 2, "expected two queued observations");
-    Check(Shared.Outbox.Pending == 0 && Shared.Outbox.FailedExports == 2,
+    Check(ProbeState.Outbox.Pending == 0 && ProbeState.Outbox.FailedExports == 2,
         "exporter failures were not bounded/recorded");
-    Check(Shared.ActualBusinessSuccess == 199,
+    Check(ProbeState.ActualBusinessSuccess == 199,
         "exporter exception mutated prior completed work");
 }
 
@@ -106,7 +104,7 @@ static async Task CancelledAsync()
                 token.ThrowIfCancellationRequested();
                 return ValueTask.CompletedTask;
             }, DiagnosticArea.Script, Guid.NewGuid(),
-            Shared.Metrics, Shared.Slow, Shared.Trace, Shared.Outbox,
+            ProbeState.Metrics, ProbeState.Slow, ProbeState.Trace, ProbeState.Outbox,
             cancelled.Token);
         throw new InvalidOperationException("cancelled task incorrectly succeeded");
     }
@@ -115,7 +113,7 @@ static async Task CancelledAsync()
         Check(observed, "actual cancellation pathway did not run");
     }
 
-    Check(Shared.Metrics.Snapshot().Single(x =>
+    Check(ProbeState.Metrics.Snapshot().Single(x =>
         x.Area == DiagnosticArea.Script && x.Outcome == DiagnosticOutcome.Cancelled).Count == 1,
         "cancelled status must be observed without replacing original exception");
 }
@@ -124,22 +122,22 @@ static Task CardinalityAsync()
 {
     for (var i = 0; i < 50_000; i++)
     {
-        Shared.Trace.Record(DiagnosticArea.Tick, DiagnosticTraceStage.Accepted, Guid.NewGuid());
-        Shared.Metrics.Record(DiagnosticArea.Tick, DiagnosticOutcome.Succeeded, i % 10);
-        Shared.Slow.Observe(DiagnosticArea.Tick, Guid.NewGuid(), 20);
+        ProbeState.Trace.Record(DiagnosticArea.Tick, DiagnosticTraceStage.Accepted, Guid.NewGuid());
+        ProbeState.Metrics.Record(DiagnosticArea.Tick, DiagnosticOutcome.Succeeded, i % 10);
+        ProbeState.Slow.Observe(DiagnosticArea.Tick, Guid.NewGuid(), 20);
     }
 
-    Check(Shared.Metrics.Snapshot().Count == 20, "metric labels grew with input count");
-    Check(Shared.Trace.Snapshot().Count == 16, "trace ring grew unbounded");
-    Check(Shared.Slow.Snapshot().Count == 4, "slow event ring grew unbounded");
-    Check(Shared.Slow.TotalSlowOperations >= 50_000,
+    Check(ProbeState.Metrics.Snapshot().Count == 20, "metric labels grew with input count");
+    Check(ProbeState.Trace.Snapshot().Count == 16, "trace ring grew unbounded");
+    Check(ProbeState.Slow.Snapshot().Count == 4, "slow event ring grew unbounded");
+    Check(ProbeState.Slow.TotalSlowOperations >= 50_000,
         "cumulative overflow-safe slow counter did not advance");
     return Task.CompletedTask;
 }
 
 static Task HealthAsync()
 {
-    var health = Shared.Health;
+    var health = ProbeState.Health;
     Check(!health.AllHealthy, "Unknown health must not mean Ready");
     foreach (var component in Enum.GetValues<HealthComponent>())
     {
@@ -156,7 +154,7 @@ static Task CrashContextAsync()
 {
     var correlation = Guid.NewGuid();
     var crash = new CrashContextCapture(
-        Shared.Metrics, Shared.Health, Shared.Trace, Shared.Slow, maximumEntries: 3)
+        ProbeState.Metrics, ProbeState.Health, ProbeState.Trace, ProbeState.Slow, maximumEntries: 3)
         .Capture(CrashCause.DependencyUnavailable, correlation);
     Check(crash.Cause == CrashCause.DependencyUnavailable
         && crash.Correlation == correlation, "crash context cause/correlation missing");
@@ -173,14 +171,14 @@ static Task CrashContextAsync()
     return Task.CompletedTask;
 }
 
-file sealed class readonlyProbeState
+file static class ProbeState
 {
-    internal readonly FixedMetricRecorder Metrics = new(10);
-    internal readonly DiagnosticTraceBuffer Trace = new(16);
-    internal readonly SlowOperationDetector Slow = new(4, 10);
-    internal readonly BoundedObservationOutbox Outbox = new(2);
-    internal readonly FixedHealthRegistry Health = new();
-    internal int ActualBusinessSuccess;
+    internal static readonly FixedMetricRecorder Metrics = new(10);
+    internal static readonly DiagnosticTraceBuffer Trace = new(16);
+    internal static readonly SlowOperationDetector Slow = new(4, 10);
+    internal static readonly BoundedObservationOutbox Outbox = new(2);
+    internal static readonly FixedHealthRegistry Health = new();
+    internal static int ActualBusinessSuccess;
 }
 
 file sealed class FailingExporter : IDiagnosticObservationSink
