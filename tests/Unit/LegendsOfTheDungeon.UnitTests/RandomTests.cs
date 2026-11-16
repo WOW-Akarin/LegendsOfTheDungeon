@@ -218,9 +218,13 @@ public sealed class RandomTests
         var loot = RandomStreams.Create(rootSeed, RandomStreamKind.Loot);
         var ai = RandomStreams.Create(rootSeed, RandomStreamKind.AI);
 
-        var combatFirst = ConsumeAsInjectedRandom(combat);
-        var lootFirst = ConsumeAsInjectedRandom(loot);
-        var aiFirst = ConsumeAsInjectedRandom(ai);
+        Assert.IsAssignableFrom<IRandom>(combat);
+        Assert.IsAssignableFrom<IRandom>(loot);
+        Assert.IsAssignableFrom<IRandom>(ai);
+
+        var combatFirst = combat.NextUInt64();
+        var lootFirst = loot.NextUInt64();
+        var aiFirst = ai.NextUInt64();
 
         Assert.NotEqual(combatFirst, lootFirst);
         Assert.NotEqual(combatFirst, aiFirst);
@@ -270,11 +274,6 @@ public sealed class RandomTests
             () => RandomStreams.Create(
                 1,
                 (RandomStreamKind)999));
-    }
-
-    private static ulong ConsumeAsInjectedRandom(IRandom random)
-    {
-        return random.NextUInt64();
     }
 
     private sealed class FixedBoundRandom(ulong value) : IRandom
