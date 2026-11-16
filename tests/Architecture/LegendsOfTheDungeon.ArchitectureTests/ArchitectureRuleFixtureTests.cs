@@ -35,6 +35,12 @@ public sealed class ArchitectureRuleFixtureTests
             ArchitectureRole.Domain,
             allowedReferences: [contract.Path, adapter.Path, host.Path]);
 
+        var core = Project(
+            "src/Modules/A/Core/A.csproj",
+            ArchitectureRole.Core,
+            module: "A",
+            allowedReferences: [adapter.Path]);
+
         var positive = Graph([domain, contract], [(domain.Path, contract.Path)]);
         Assert.DoesNotContain(
             ArchitectureRuleEngine.CheckForbiddenProjectReferences(positive),
@@ -48,6 +54,11 @@ public sealed class ArchitectureRuleFixtureTests
         var hostNegative = Graph([domain, contract, host], [(domain.Path, host.Path)]);
         Assert.Contains(
             ArchitectureRuleEngine.CheckForbiddenProjectReferences(hostNegative),
+            violation => violation.RuleId == ArchitectureRuleEngine.DomainIsolationRule);
+
+        var mixedCoreNegative = Graph([core, adapter], [(core.Path, adapter.Path)]);
+        Assert.Contains(
+            ArchitectureRuleEngine.CheckForbiddenProjectReferences(mixedCoreNegative),
             violation => violation.RuleId == ArchitectureRuleEngine.DomainIsolationRule);
     }
 

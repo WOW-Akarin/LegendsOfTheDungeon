@@ -95,14 +95,14 @@ internal static class ArchitectureRuleEngine
                     continue;
                 }
 
-                if (source.Role == ArchitectureRole.Domain
+                if (source.Role is ArchitectureRole.Domain or ArchitectureRole.Core
                     && target.Role is ArchitectureRole.PlatformAdapter or ArchitectureRole.Host)
                 {
                     violations.Add(new ArchitectureViolation(
                         DomainIsolationRule,
                         sourcePath,
                         targetPath,
-                        "Domain 不得依赖 Platform Adapter 或 Host。"));
+                        "Domain/Core 不得依赖 Platform Adapter 或 Host。"));
                 }
 
                 if (source.Module is not null

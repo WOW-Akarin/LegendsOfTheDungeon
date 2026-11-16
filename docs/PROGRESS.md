@@ -24,11 +24,11 @@
 
 ## 当前停点
 
-P03 CI run #10 已全绿：Unit 3/3、Architecture 15/15，build/unit/architecture 三类故意失败 Gate 全部被检出。自审后正在补强公共 API 扫描和规则分支/无关键词误报样本，再做最终 CI。
+P03 补强 CI run #11 已全绿：Architecture 16/16。独立审查发现 Core Assembly 可承载 Domain/Application 时仍可能误依赖 PlatformAdapter 的语义漏洞，正在把 P03-002 收紧为 Domain/Core !→ PlatformAdapter/Host 并加负例。
 
 ## 下一步（最多 5 项）
 
-1. 提交自审补强并读取下一次 CI。
+1. 提交 P03-002 Core 边界修正并读取下一次 CI。
 2. 核对公共泛型约束/protected 构造扫描没有引入 Analyzer 或反射问题。
 3. 核对 Architecture test 新数量、三类负向 Gate 与 TRX artifact。
 4. 独立核对真实生产图、白名单、API/IVT、无环和无关键词误报原则。
