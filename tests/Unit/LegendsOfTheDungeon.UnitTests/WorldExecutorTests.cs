@@ -346,24 +346,31 @@ public sealed class WorldExecutorTests
     {
         var world = Create();
         var producer = world.CreateTrustedProducer();
-        IWorldReplyTicket? ticket = null;
+        IWorldReplyTicket? retirementTicket = null;
+        IWorldReplyTicket? targetTicket = null;
+        var retiringEntity = new EntityId(200);
         producer.Offer(new Work(ctx =>
         {
             ctx.BindEntity(Entity, Gen1);
-            ticket = ctx.IssueReplyTicket(Entity, Gen1);
+            ctx.BindEntity(retiringEntity, Gen1);
+            retirementTicket = ctx.IssueReplyTicket(retiringEntity, Gen1);
+            targetTicket = ctx.IssueReplyTicket(Entity, Gen1);
         }));
         One(world);
+
         var applied = 0;
+        // 先排队的关键回执在世界租约内退休 Entity，后排队的旧回执必须在执行前复核。
         Assert.Equal(WorldAdmissionStatus.Accepted,
-            producer.OfferReply(ticket!, new Work(_ => applied++)));
-        // 普通 lane 在已接纳回执之后出现；由已存在的普通消息排队更早执行会被关键 lane 优先处理。
-        // 这里将退役与结果请求拆在不同执行阶段：先获得票据，后独立通过有效同步命令退役。
-        var otherWorld = Create(world: 55);
-        var otherProducer = otherWorld.CreateTrustedProducer();
+            producer.OfferReply(retirementTicket!, new Work(ctx =>
+                ctx.RetireEntity(Entity, Gen1))));
+        Assert.Equal(WorldAdmissionStatus.Accepted,
+            producer.OfferReply(targetTicket!, new Work(_ => applied++)));
+        var result = world.RunBatch(2);
+        Assert.Equal(1, result.Executed);
+        Assert.Equal(1, result.Stale);
+        Assert.Equal(0, applied);
         Assert.Equal(WorldAdmissionStatus.Stale,
-            otherProducer.OfferReply(ticket!, new Work(_ => applied++)));
-        Assert.Equal(1, One(world).Executed);
-        Assert.Equal(1, applied);
+            producer.OfferReply(targetTicket!, new Work(_ => applied++)));
     }
 
     [Fact]
