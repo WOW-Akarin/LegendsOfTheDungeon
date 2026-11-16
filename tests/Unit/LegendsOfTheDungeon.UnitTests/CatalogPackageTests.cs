@@ -170,6 +170,49 @@ public sealed class CatalogPackageTests
     }
 
     [Fact]
+    public void PackageRejectsCatalogAndRuleBudgetsInsteadOfAllocatingUnboundedGraphs()
+    {
+        var tooMany = Enumerable.Range(0, CatalogPackageBuilder.MaximumCatalogs + 1)
+            .Select(i => Catalog("catalog_" + i, 1, Row("id", "name"))).ToArray();
+        Assert.Equal(CatalogPackageFault.LimitExceeded,
+            Assert.Throws<CatalogPackageException>(() =>
+                CatalogPackageBuilder.Build(1, tooMany,
+                    Array.Empty<CatalogReferenceRule>())).Fault);
+
+        var catalogs = Enumerable.Range(0, CatalogPackageBuilder.MaximumCatalogs)
+            .Select(i => Catalog("catalog_" + i, 1, Row("id", "name"))).ToArray();
+        var rules = Enumerable.Range(0, CatalogPackageBuilder.MaximumReferenceRules + 1)
+            .Select(i => Rule("catalog_" + (i % CatalogPackageBuilder.MaximumCatalogs),
+                "ref", "catalog_" + (i / CatalogPackageBuilder.MaximumCatalogs))).ToArray();
+        Assert.Equal(CatalogPackageFault.LimitExceeded,
+            Assert.Throws<CatalogPackageException>(() =>
+                CatalogPackageBuilder.Build(1, catalogs, rules)).Fault);
+    }
+
+    [Fact]
+    public void EmptyReferencedCatalogDoesNotCrashCycleDetector()
+    {
+        var empty = Catalog("nodes", 1);
+        var package = CatalogPackageBuilder.Build(1, [empty], [Rule()]);
+        Assert.Empty(package.Find("nodes")!.Records);
+        Assert.Equal(64, package.ContentHash.Length);
+    }
+
+    [Fact]
+    public void UnpinnedOldSnapshotsAreEvictedAtBoundedHistoryLimit()
+    {
+        var original = Package(1, Row("a", "first"));
+        var registry = new CatalogReloadCoordinator(original, maximumHistory: 2);
+        using (var tick = registry.CaptureTick(1)) { }
+        registry.CommitAtBoundary(1, registry.Stage(Package(2, Row("a", "second"))));
+        Assert.Same(original, registry.FindRetained(1, original.ContentHash));
+        using (var tick = registry.CaptureTick(2)) { }
+        registry.CommitAtBoundary(2, registry.Stage(Package(3, Row("a", "third"))));
+        Assert.Null(registry.FindRetained(1, original.ContentHash));
+        Assert.Equal([2, 3], registry.RetainedSnapshots().Select(x => x.Version));
+    }
+
+    [Fact]
     public void AllViewsOfTickKeepSamePackageUntilBoundaryCommit()
     {
         var first = Package(1, Row("a", "original"));
