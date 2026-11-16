@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P07 已启动，尚未提交 Time 实现。
+P07 Time 实现与确定性 Unit 已准备落库：Duration/Tick、IClock/IAuditClock/FakeClock、LogicalTimer 与 OfflineTime；测试全部显式推进，不使用真实 Sleep。
 
 ## 下一步（最多 5 项）
 
-1. 实现 Duration / Tick / IClock / IAuditClock / FakeClock / LogicalTimer / OfflineTime。
-2. 添加确定性 Unit，全部通过显式 AdvanceTicks/SetUtc 驱动，不使用真实 Sleep。
-3. 覆盖零时长、向上取整、同 Tick 到期、取消、Tick/Duration/Timer 溢出。
-4. 覆盖 UTC 向前/向后调整不影响 Timer，以及离线回拨→0/cap。
-5. 运行 P03/P04/P05/P06 回归并独立 Review。
+1. 提交 P07 Time 与 Unit。
+2. 读取首次 CI 的 Analyzer/P04/Unit/Architecture/P05 Gate 真实结果。
+3. 若失败，从第一个真实诊断修复，不引入系统时钟或真实 Sleep。
+4. 核对 Timer 边界、同 Tick、取消、UTC 跳变、离线 cap 与溢出实际证据。
+5. 独立自审后进入 REVIEW。
 
 ## 修改文件及原因
 
