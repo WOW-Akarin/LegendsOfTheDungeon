@@ -2,6 +2,8 @@
   <Project Path="src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj" />
   <Project Path="src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj" />
   <Project Path="src/Runtime/Core/LegendsOfTheDungeon.Runtime.Core/LegendsOfTheDungeon.Runtime.Core.csproj" />
+  <Project Path="src/Platform/LegendsOfTheDungeon.Platform/LegendsOfTheDungeon.Platform.csproj" />
+  <Project Path="src/Security/Contracts/LegendsOfTheDungeon.Security.Contracts/LegendsOfTheDungeon.Security.Contracts.csproj" />
   <Project Path="tests/Unit/LegendsOfTheDungeon.UnitTests/LegendsOfTheDungeon.UnitTests.csproj" />
   <Project Path="tests/Architecture/LegendsOfTheDungeon.ArchitectureTests/LegendsOfTheDungeon.ArchitectureTests.csproj" />
 </Solution>

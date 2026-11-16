@@ -11,7 +11,7 @@
 - 用户要求只更新 main，不建分支。
 
 ## 当前停点
-P10 已启动。下一步实现独立 Options/验证/安全配置指纹、结构化日志、身份绑定与默认拒绝；同步项目图、locked restore 与测试。
+P10 第一批实现已落地：Platform 技术 Options/启动门禁/安全指纹/结构化日志，Security.Contracts 默认拒绝身份端口与本地测试身份；同步 P03 manifest、Solution、锁文件与 Unit。待 CI 验证。
 
 ## 下一步
 1. 创建 Platform 与 Security.Contracts 项目，并同步 P03 白名单、Solution 与 lock graph。
