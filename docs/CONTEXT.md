@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P01 — IN_PROGRESS
+当前阶段：P01 — REVIEW
 
 ## 当前范围
 
@@ -39,7 +39,7 @@ LegendsOfTheDungeon 是通用 C# / .NET 10 游戏服务器核心。研究 Azerot
 
 ## 当前任务与下一步
 
-P01 已启动：正在正式落地 CONTEXT、PROGRESS、阶段归档模板、状态迁移和恢复检查。P01 未通过 Review 前不进入 P02。
+P01 实现已完成并进入 REVIEW：已落地 CONTEXT/PROGRESS/阶段归档模板、合法状态、更新触发点和恢复流程。当前只剩独立链接/围栏/恢复可执行性检查；通过前不进入 P02。
 
 ## 阻塞与技术债
 
@@ -53,5 +53,7 @@ P01 已启动：正在正式落地 CONTEXT、PROGRESS、阶段归档模板、状
 - [PROGRESS](PROGRESS.md)
 - [P00 证据](progress/P00.md)
 - [P01 当前进度](PROGRESS.md)
+- [恢复工作流](RECOVERY_WORKFLOW.md)
+- [P01 证据](progress/P01.md)
 - [UPSTREAM](UPSTREAM.md)
 - [AC 研究模板](research/azerothcore/REFERENCE_TEMPLATE.md)

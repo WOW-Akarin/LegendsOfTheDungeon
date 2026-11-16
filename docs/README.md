@@ -13,11 +13,13 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [decisions/](decisions/)：架构与范围决策记录
 - [research/azerothcore/](research/azerothcore/)：AzerothCore 研究记录与模板
 - [progress/](progress/)：阶段验收证据
+- [templates/](templates/)：CONTEXT、PROGRESS 与阶段归档模板
+- [RECOVERY_WORKFLOW.md](RECOVERY_WORKFLOW.md)：恢复顺序、状态迁移、更新触发点与 BLOCKED 规则
 
 ## 当前状态
 
 当前里程碑：M0 基线。  
-当前阶段：P01 — 开发规范、上下文与断线恢复制度，**IN_PROGRESS**。P00 已 ACCEPTED；实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P01 — 开发规范、上下文与断线恢复制度，**REVIEW**。P00 已 ACCEPTED；实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 

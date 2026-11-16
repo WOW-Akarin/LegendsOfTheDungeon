@@ -174,6 +174,8 @@ BLOCKED 模板：阻塞原因、缺失契约/数据/决定、影响阶段、可�
 
 ## 9. CONTEXT 与 PROGRESS 恢复制度
 
+> P01 落库入口：模板统一位于 [templates/](templates/)，恢复操作顺序见 [RECOVERY_WORKFLOW.md](RECOVERY_WORKFLOW.md)。模板是可复制的结构基线；当前事实仍只写入 `CONTEXT.md`、`PROGRESS.md` 与 `progress/Pxx.md`。
+
 ### 9.1 当前摘要
 
 `docs/CONTEXT.md` 只保留当前范围、架构不变量、当前里程碑、已具备能力、当前任务/下一步、阻塞、关键契约/所有权入口、Accepted ADR、AC 基线、技术债和重要文件链接。标注更新时间与对应代码基线。
@@ -211,7 +213,33 @@ BLOCKED 模板：阻塞原因、缺失契约/数据/决定、影响阶段、可�
 
 恢复时先读 PROJECT_SPEC、CONTEXT、PROGRESS 定位，再打开其链接指向的架构、阶段和模块资料；三份文档是恢复索引，不承诺足够替代全部设计。用真实工作区和测试核对摘要，不能盲信过期状态。
 
-开始任务、重要子任务完成、契约变化、测试结果改变、出现阻塞、重构前后、进入 REVIEW 和验收后更新进度。阶段历史归档 `docs/progress/Pxx.md`，不要在路线图重复维护完成勾选状态。
+### 9.3 状态、更新触发点与基线核验
+
+阶段/任务状态只允许使用：`NOT_STARTED`、`IN_PROGRESS`、`BLOCKED`、`REVIEW`、`ACCEPTED`、`DEFERRED`。不得自造 `DONE`、`PARTIAL`、`PAUSED` 等状态。状态语义与迁移仍以第 8 节为准。
+
+以下事件发生时必须在同一工作批次更新 `PROGRESS.md`，必要时同步 `CONTEXT.md`：
+
+1. 开始阶段或任务；
+2. 重要子任务完成；
+3. 公共契约、状态所有权、ADR 或关键依赖变化；
+4. 测试/检查结果从 PASS↔FAIL、NOT_RUN→执行结果等发生变化；
+5. 出现/解除 BLOCKED；
+6. 大规模重构前后；
+7. 进入 REVIEW；
+8. 最终验收 ACCEPTED / DEFERRED；
+9. 工作结束或当前摘要已失真。
+
+`CONTEXT.md` 只保留恢复所需的当前事实；历史细节移入 `progress/Pxx.md`。所谓“压缩上下文”是仓库文档维护动作：删除已失效的临时叙述、保留当前约束和稳定入口，不复制聊天全文，也不依赖任何对话产品自动保存状态。
+
+每次恢复必须核对真实代码基线：当前 Branch、HEAD、任务起始 SHA，以及可获得时的工作区差异。若摘要记录与仓库不一致，以真实仓库/测试为准并先修正摘要。恢复者必须能定位当前失败测试或未执行检查、继续修改的文件/方法/设计问题，以及“下一步成功”的可验证条件。
+
+模板：
+- [CONTEXT_TEMPLATE.md](templates/CONTEXT_TEMPLATE.md)
+- [PROGRESS_TEMPLATE.md](templates/PROGRESS_TEMPLATE.md)
+- [STAGE_PROGRESS_TEMPLATE.md](templates/STAGE_PROGRESS_TEMPLATE.md)
+- [RECOVERY_WORKFLOW.md](RECOVERY_WORKFLOW.md)
+
+阶段历史归档 `docs/progress/Pxx.md`，不要在路线图重复维护完成勾选状态。
 
 ## 10. 规范和设计变更
 
