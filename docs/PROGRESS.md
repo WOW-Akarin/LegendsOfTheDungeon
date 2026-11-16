@@ -1,73 +1,74 @@
 # 当前进度
 
 更新时间（含时区）：2026-11-16 +08:00  
-代码基线 / Branch / 工作区：任务开始 `34446eb8aec0a57fcfa4f0aa1ea68dc1d15eea08` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P06 / Kernel Geometry / ACCEPTED / B
+代码基线 / Branch / 工作区：任务开始 `b3ab23eb0ef302d51cca1ad97bf45fc0f37b0927` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
+阶段 / 任务 / 状态 / 目标完成度：P07 / Kernel Time / IN_PROGRESS / B
 
 ## 目标与成功条件
 
-实现 Position / Transform / Vector / Distance / Bounds 和方向角值契约；固定右手坐标、Z 向上、米/弧度、Yaw canonical 范围，覆盖距离/范围、NaN/Infinity、零长度向量、算术溢出、边界距离和 Adapter 风格序列化回读，同时保持 Geometry 纯数学、无 Runtime/World 依赖。
+实现 IClock/IAuditClock/FakeClock/Duration/Tick/LogicalTimer，区分逻辑 Tick、单调经过时间和审计 UTC；所有核心 Timer 由 FakeClock 可重复推进，不依赖真实 Sleep 或 UTC，并覆盖同 Tick 到期、零时长、取消、溢出和离线时间回拨/cap。
 
 ## 开始前状态与已有未提交修改
 
-- P00–P05 已 ACCEPTED。
-- P06 开始 HEAD：`34446eb8aec0a57fcfa4f0aa1ea68dc1d15eea08`。
-- Kernel 已有 Strong IDs 与 Result/KernelError/ValidationIssue。
+- P00–P06 已 ACCEPTED。
+- P07 开始 HEAD：`b3ab23eb0ef302d51cca1ad97bf45fc0f37b0927`。
+- Kernel 已具备 primitives 与 Geometry；无系统计时依赖。
 - 当前执行容器无 dotnet；GitHub Actions .NET 10.0.404 runner 继续作为真实编译/测试环境。
 - 用户要求直接更新 `main`，不创建任务分支。
 
 ## 已完成与证据链接
 
-- [P05 证据](progress/P05.md) 已验收 Kernel primitives。
-- [Kernel 基础值契约](modules/KERNEL.md) 已加入 `kernel.geometry.v1` 约定。
-- [P06 阶段证据](progress/P06.md) 已建立。
+- [P06 证据](progress/P06.md) 已验收 Geometry。
+- [Kernel 基础值契约](modules/KERNEL.md) 已加入 `kernel.time.v1` 语义。
+- [P07 阶段证据](progress/P07.md) 已建立。
 
 ## 当前停点
 
-P06 已完成独立 Review 并 ACCEPTED；P07 尚未开始。
+P07 已启动，尚未提交 Time 实现。
 
 ## 下一步（最多 5 项）
 
-1. 开始 P07 — Kernel Time。
-2. 实现 IClock / FakeClock / Duration / Tick / Timer 基础值与可控逻辑时间。
-3. 区分逻辑 Tick、单调经过时间和审计 UTC，Domain 不直接依赖系统时钟。
-4. 覆盖同 Tick 到期、零时长、取消、溢出与无真实 Sleep 的确定性测试。
-5. 所有新 Public API 继续受 P04 XML Gate 与 P03 Architecture Gate 约束。
+1. 实现 Duration / Tick / IClock / IAuditClock / FakeClock / LogicalTimer / OfflineTime。
+2. 添加确定性 Unit，全部通过显式 AdvanceTicks/SetUtc 驱动，不使用真实 Sleep。
+3. 覆盖零时长、向上取整、同 Tick 到期、取消、Tick/Duration/Timer 溢出。
+4. 覆盖 UTC 向前/向后调整不影响 Timer，以及离线回拨→0/cap。
+5. 运行 P03/P04/P05/P06 回归并独立 Review。
 
 ## 修改文件及原因
 
-启动 P06 阶段证据与 Geometry 契约说明；业务实现将在下一提交落库。
+启动 P07 阶段证据与 `kernel.time.v1` 契约说明；业务实现将在下一提交落库。
 
 ## 契约、数据所有权与 ADR 变化
 
-新增 A1 公共纯值契约 `kernel.geometry.v1`；无可变状态所有权变化、无跨模块依赖变化，不新增 ADR。
+新增 A1 公共时间值契约 `kernel.time.v1`；不改变世界业务状态所有权，不新增 ADR。
 
 ## AC 参考与已知差异（适用时）
 
-不适用。P06 使用通用欧氏几何和项目坐标约定，不复制 AzerothCore 公式或代码。
+不适用。P07 使用项目自己的逻辑 Tick/单调时间抽象，不复制 AzerothCore 定时器实现。
 
 ## 验证
 
 | 命令/检查 | 环境与时间 | 结果 | 报告 |
 |---|---|---|---|
-| P05 依赖状态 | GitHub Actions，2026-11-16 | PASS | progress/P05.md |
-| P06 Unit | GitHub Actions，2026-11-16 | PASS：48/48 | run 43807655292 / artifact 14198659326 |
-| P03/P04/P05 回归 | GitHub Actions，2026-11-16 | PASS：Architecture 16/16 + 文档/Strong ID Gate | run 43807655292 |
+| P06 依赖状态 | GitHub Actions，2026-11-16 | PASS | progress/P06.md |
+| P07 Unit | 尚未实现 | NOT_RUN | 待 CI |
+| P03/P04/P05/P06 回归 | 尚未执行 P07 HEAD | NOT_RUN | 待 CI |
 
 ## 失败、阻塞、风险与未验证假设
 
-- 不给世界范围拍脑袋设置任意最大坐标；只拒绝非有限输入，并对有限算术产生的非有限结果显式报 OverflowException。
-- default 几何值是合法零值，不套用 Strong ID 的 empty 规则。
-- JSON 只作为测试中的 Adapter 回读手段，不把 System.Text.Json 特性引入 Kernel。
+- 不在 Kernel 实现真实系统时钟适配；生产宿主/Platform 后续负责把系统单调时间适配到抽象。
+- 不让 UTC 参与核心 Timer 到期判断。
+- 不使用 Task.Delay/Thread.Sleep 证明逻辑计时正确性。
+- 同 Tick 多 Timer 的“到期顺序”不由单个 LogicalTimer 决定；P07 只保证同一 Tick 的到期判定一致，后续 Scheduler 负责稳定排序。
 
 ## 恢复步骤
 
-1. 读取 PROJECT_SPEC、ARCHITECTURE §3、CONTEXT、PROGRESS、modules/KERNEL.md 和 progress/P06.md。
-2. 核对 main HEAD 与 P06 起始 SHA `34446eb8aec0a57fcfa4f0aa1ea68dc1d15eea08`。
-3. 打开 `src/Kernel` Geometry 文件和对应 Unit。
-4. 读取最新 CI；失败时从第一个真实编译/Analyzer/Test 诊断修复，不 suppress P04/Analyzer。
-5. P06 已 ACCEPTED；下一任务从 DEVELOPMENT_ROADMAP 的 P07 开始。
+1. 读取 ARCHITECTURE §3、CONTEXT、PROGRESS、modules/KERNEL.md 和 progress/P07.md。
+2. 核对 main HEAD 与 P07 起始 SHA `b3ab23eb0ef302d51cca1ad97bf45fc0f37b0927`。
+3. 打开 Kernel Time 源码与 `TimeTests.cs`。
+4. 读取最新 CI；失败时从第一个真实 Analyzer/Compiler/Test 诊断修复，不引入真实 Sleep。
+5. 出口证据满足后进入 REVIEW。
 
 ## 不应重复执行的操作
 
-不要把 Runtime/World 查询加入 Geometry；不要在 Kernel 添加 JSON/DB 序列化属性；不要用过大容差掩盖数学错误。
+不要在 Domain/Kernel 中调用 DateTime.UtcNow、DateTimeOffset.UtcNow、Stopwatch、Task.Delay、Thread.Sleep 或 System.Threading.Timer 来驱动核心逻辑。

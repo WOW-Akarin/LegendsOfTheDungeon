@@ -92,3 +92,26 @@ Geometry 是纯数学值契约，不拥有世界状态，也不查询 Runtime：
 同步或异步 / 合法执行上下文：纯值，无线程亲和性  
 持久化与传输：Adapter 负责格式；回到 Kernel 时重新执行有限数、范围与 Bounds 不变量校验  
 相关测试 / ADR / AC 参考：P06 Unit + P03/P04 持续 Gate；不参考 AzerothCore 专有公式
+
+
+## Time（P07）
+
+Kernel 时间契约把三类时间分开：
+
+- `Tick`：整数逻辑步；
+- `IClock.MonotonicElapsed`：从时钟起点累计的单调经过时间；
+- `IAuditClock.UtcNow`：审计/运维/离线规则使用的 UTC 墙上时间。
+
+核心定时和超时不得读取 UTC。`LogicalTimer` 只根据 `IClock.CurrentTick` 与固定 `TickDuration` 计算到期；墙上时间即使被向前或向后调整，也不会改变已建立 Timer 的到期 Tick。
+
+`Duration` 使用非负整数毫秒，避免核心计时依赖浮点。零时长合法；负时长和算术溢出拒绝。Tick 从 0 开始，推进使用 checked 语义。
+
+`FakeClock` 由测试/模拟显式推进，不使用真实 Sleep。生产宿主后续可在 Platform/Host 适配系统单调时钟并把结果送入世界调度，但 Domain 只依赖 Kernel 的 `IClock` 抽象。
+
+离线时间只使用持久化 UTC：若当前 UTC 早于保存 UTC，经过时间视为 0；否则按完整毫秒计算并按调用方给出的业务上限 clamp。Kernel 不替业务选择上限。
+
+契约 ID / 版本：`kernel.time.v1`  
+提供模块 / 状态所有者：Kernel / 时间值与测试时钟；不拥有世界业务状态  
+核心执行语义：逻辑 Timer 基于 Tick；UTC 不能驱动核心超时  
+持久化：绝对时间 UTC；离线补偿上限由业务模块显式提供  
+相关测试 / ADR / AC 参考：P07 Unit + P03/P04 持续 Gate；不参考 AzerothCore 专有计时实现

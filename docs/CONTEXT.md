@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P06 — ACCEPTED
+当前阶段：P07 — IN_PROGRESS
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P00–P06 已 ACCEPTED。Kernel Geometry 已具备 Position/Vector/Distance/Angle/Transform/Bounds，右手坐标、+Z 向上、米/弧度、Yaw 归一、非有限数/溢出防护和 Adapter-style 回读测试。P07 尚未开始。
+P00–P06 已 ACCEPTED。P07 已启动：正在实现 Tick/Duration、IClock/IAuditClock、FakeClock、LogicalTimer 与离线 UTC 规则；核心 Timer 只依赖逻辑 Tick，不依赖墙上时间。
 
 ## 阻塞与技术债
 
-当前无 P06 阻塞。P07 将建立可控逻辑时间；Domain 不得直接依赖真实系统时钟或真实 Sleep。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P07 阻塞。逻辑时间必须由 FakeClock 可重复推进；生产系统时钟适配留给 Platform/Host，Domain 不直接读取系统时钟。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
@@ -60,6 +60,7 @@ P00–P06 已 ACCEPTED。Kernel Geometry 已具备 Position/Vector/Distance/Angl
 - [P04 证据](progress/P04.md)
 - [P05 证据](progress/P05.md)
 - [P06 证据](progress/P06.md)
+- [P07 证据](progress/P07.md)
 - [Kernel 基础值契约](modules/KERNEL.md)
 - [架构职责审查](reviews/ARCHITECTURE_RESPONSIBILITY_REVIEW.md)
 - [文档质量审查](reviews/DOCUMENTATION_QUALITY_REVIEW.md)
