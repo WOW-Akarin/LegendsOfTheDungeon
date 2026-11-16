@@ -159,6 +159,9 @@ public sealed class WorldExecutor
         }
 
         ArgumentNullException.ThrowIfNull(authorizer);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(normalCapacity, 4096);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(criticalCapacity, 1024);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(maximumCriticalBurst, 64);
         ArgumentOutOfRangeException.ThrowIfLessThan(maximumTickets, 1);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(maximumTickets, 4096);
         _world = world;
@@ -242,6 +245,7 @@ public sealed class WorldExecutor
     public WorldRunReport RunBatch(int maximumItems)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumItems);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(maximumItems, 1024);
         if (Interlocked.CompareExchange(ref _running, 1, 0) != 0)
         {
             return Report(WorldRunStatus.Busy, 0, 0, 0);
@@ -594,8 +598,17 @@ public sealed class WorldExecutor
 
         public WorldId World => _owner._world;
         public WorldEpoch Epoch => _scope.Epoch;
-        public void Demand(EntityId entity, EntityGeneration generation) =>
+        public void Demand(
+            WorldId world, WorldEpoch epoch, EntityId entity, EntityGeneration generation)
+        {
+            if (world != _owner._world || epoch != _scope.Epoch
+                || world.IsEmpty || epoch.IsEmpty)
+            {
+                throw new WorldAccessException(WorldAccessFault.InvalidGeneration);
+            }
+
             _owner.DemandEntity(_scope, entity, generation);
+        }
         public void BindEntity(EntityId entity, EntityGeneration generation) =>
             _owner.Bind(_scope, entity, generation);
         public void RetireEntity(EntityId entity, EntityGeneration generation) =>

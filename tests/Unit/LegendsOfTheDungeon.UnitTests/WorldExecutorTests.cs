@@ -21,11 +21,63 @@ public sealed class WorldExecutorTests
     private static WorldRunReport One(WorldExecutor executor) => executor.RunBatch(1);
 
     [Fact]
+    public void ExplicitEntityWorldAndEpochRejectCrossWorldContextMixup()
+    {
+        var foreignWorld = Create(world: 2);
+        var foreignProducer = foreignWorld.CreateTrustedProducer();
+        var originalOwnerModel = new GuardedModel(new WorldId(1), new WorldEpoch(1));
+        WorldAccessFault? wrongWorld = null;
+        foreignProducer.Offer(new Work(ctx =>
+        {
+            ctx.BindEntity(Entity, Gen1);
+            try
+            {
+                originalOwnerModel.Change(ctx, Entity, Gen1, 5);
+            }
+            catch (WorldAccessException ex)
+            {
+                wrongWorld = ex.Fault;
+            }
+        }));
+        Assert.Equal(1, One(foreignWorld).Executed);
+        Assert.Equal(WorldAccessFault.InvalidGeneration, wrongWorld);
+        Assert.Equal(0, originalOwnerModel.Value);
+
+        var restarted = Create(world: 1, epoch: 2);
+        WorldAccessFault? wrongEpoch = null;
+        restarted.CreateTrustedProducer().Offer(new Work(ctx =>
+        {
+            ctx.BindEntity(Entity, Gen1);
+            try
+            {
+                originalOwnerModel.Change(ctx, Entity, Gen1, 5);
+            }
+            catch (WorldAccessException ex)
+            {
+                wrongEpoch = ex.Fault;
+            }
+        }));
+        Assert.Equal(1, One(restarted).Executed);
+        Assert.Equal(WorldAccessFault.InvalidGeneration, wrongEpoch);
+        Assert.Equal(0, originalOwnerModel.Value);
+    }
+
+    [Fact]
+    public void WorldAndBatchBudgetsHaveHardUpperLimits()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Create(normal: 4097));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Create(critical: 1025));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Create(burst: 65));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Create(tickets: 4097));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Create().RunBatch(1025));
+    }
+
+    [Fact]
     public void SynchronousScopeProtectsEntityWritesAndExpiresAfterCallback()
     {
         var world = Create();
         var port = world.CreateTrustedProducer();
-        var model = new GuardedModel();
+        var model = new GuardedModel(new WorldId(1), new WorldEpoch(1));
         IWorldWriteContext? captured = null;
 
         Assert.Equal(WorldAdmissionStatus.Accepted, port.Offer(new Work(ctx =>
@@ -47,7 +99,7 @@ public sealed class WorldExecutorTests
     public void TaskRunInheritedAsyncLocalCannotWriteWhileScopeStillValid()
     {
         var world = Create();
-        var model = new GuardedModel();
+        var model = new GuardedModel(new WorldId(1), new WorldEpoch(1));
         var attempted = false;
         using var observed = new ManualResetEventSlim();
         Assert.Equal(WorldAdmissionStatus.Accepted,
@@ -191,7 +243,7 @@ public sealed class WorldExecutorTests
         Assert.Equal(WorldAdmissionStatus.Stale,
             port.OfferReply(old!, new Work(_ => { })));
         Assert.Equal(WorldAdmissionStatus.Accepted,
-            port.OfferReply(newer!, new Work(ctx => ctx.Demand(Entity, Gen1))));
+            port.OfferReply(newer!, new Work(ctx => ctx.Demand(ctx.World, ctx.Epoch, Entity, Gen1))));
         Assert.Equal(WorldAdmissionStatus.Stale,
             port.OfferReply(newer!, new Work(_ => { })));
         Assert.Equal(1, One(world).Executed);
@@ -331,13 +383,13 @@ public sealed class WorldExecutorTests
             ctx.BindEntity(Entity, Gen1);
             older = ctx.IssueReplyTicket(Entity, Gen1);
             newest = ctx.IssueReplyTicket(Entity, Gen1);
-            ctx.Demand(Entity, Gen1);
+            ctx.Demand(ctx.World, ctx.Epoch, Entity, Gen1);
         }));
         Assert.Equal(1, One(world).Executed);
         Assert.Equal(WorldAdmissionStatus.Stale,
             producer.OfferReply(older!, new Work(_ => { })));
         Assert.Equal(WorldAdmissionStatus.Accepted,
-            producer.OfferReply(newest!, new Work(ctx => ctx.Demand(Entity, Gen1))));
+            producer.OfferReply(newest!, new Work(ctx => ctx.Demand(ctx.World, ctx.Epoch, Entity, Gen1))));
         Assert.Equal(1, One(world).Executed);
     }
 
@@ -410,13 +462,16 @@ public sealed class WorldExecutorTests
         public void Execute(IWorldWriteContext context) => act(context);
     }
 
-    private sealed class GuardedModel
+    private sealed class GuardedModel(WorldId world, WorldEpoch epoch)
     {
+        private readonly WorldId _world = world;
+        private readonly WorldEpoch _epoch = epoch;
+
         public int Value { get; private set; }
 
         public void Change(IWorldWriteContext context, EntityId entity, EntityGeneration generation, int value)
         {
-            context.Demand(entity, generation);
+            context.Demand(_world, _epoch, entity, generation);
             Value = value;
         }
     }

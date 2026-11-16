@@ -68,7 +68,7 @@ static async Task WorkerReturnAsync()
             try
             {
                 // 即便持有遗留 Context，P12 Worker 仍不具任何有效的写入权。
-                staleContext!.Demand(stamp.Entity, stamp.Generation);
+                staleContext!.Demand(stamp.World, stamp.Epoch, stamp.Entity, stamp.Generation);
                 throw new InvalidOperationException("background worker mutated world");
             }
             catch (WorldAccessException ex) when (ex.Fault == WorldAccessFault.LeaseRequired)
@@ -78,7 +78,7 @@ static async Task WorkerReturnAsync()
 
             var result = trusted.OfferReply(stamp, new ProbeAction(ctx =>
             {
-                ctx.Demand(stamp.Entity, stamp.Generation);
+                ctx.Demand(stamp.World, stamp.Epoch, stamp.Entity, stamp.Generation);
                 values[index]++;
             }));
             Check(result == WorldAdmissionStatus.Accepted,
