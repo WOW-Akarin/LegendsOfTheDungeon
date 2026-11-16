@@ -15,15 +15,21 @@ P00–P20、P24(B)、P26(C) 已正式 ACCEPTED。最新 P26 归档 HEAD `58e8443
 - 查询从 P20 Nearby 空间候选按距离闭区间筛选，P26 Required/Excluded Tags、Life 与 Control 状态后按 EntityId 排序；观察者本人永不属于自身列表。
 - 每次成功 Refresh 获得连续 per-observer SnapshotVersion 和 World/Epoch/Observer；重复刷新不重复 Enter/Leave。目标销毁或旧代际被替换、观察者退出/死亡、Tag/Control/位置跨界在下次 Refresh 输出正确 Delta；历史视图不被原地修改。
 - 最多 1024 Visible、半径最大 4096m，容量溢出不会发布部分版本；Faulted 世界拒绝刷新，P18 过期租约不能写。
-- 新增 Unit、真实独立 WorldVisibilityProbe、第 11 个阻断 Job。实现 #197、独立 REVIEW #198 均 11 Job SUCCESS，正式 ACCEPTED HEAD 需独立十一个 Job CI。
+- 新增 Unit、真实独立 WorldVisibilityProbe、第 11 个阻断 Job。实现 #197、独立 REVIEW #198 均 11 Job SUCCESS，正式 ACCEPTED HEAD #199 也 11/11 SUCCESS，P21 C 完整验收。
 
 ## 当前审查与下一安全动作
 
 - 初次 CI #196 CS0165/CA1859 编译 FAIL 已修复，稳定实现 #197 11 Job 全绿，相关记录保留于 [P21](progress/P21.md)。
-- 独立四视角审查：[P21 Review](reviews/P21_VISIBILITY_REVIEW.md)。独立 REVIEW HEAD 已 #198 十一 Job SUCCESS，正式 ACCEPTED，状态提交 HEAD CI 尚需单独核验。
+- 独立四视角审查：[P21 Review](reviews/P21_VISIBILITY_REVIEW.md)。独立 REVIEW HEAD 已 #198 十一 Job SUCCESS，正式 ACCEPTED，状态提交 HEAD #199 十一 Job SUCCESS。
 
 ## 不属于 P21 验收
 
-目前只实现 Pull + Refresh，不是即时网络推送。P23 Packet/客户端编码、P27 Movement、P60 Host 授权、P62 Replay 和 P64 高负载尚未通过。P21 独立审查 #198 已 11 Job 全绿，P21 正式 ACCEPTED；P21 完成后按路线图推进后续已满足依赖的阶段。
+目前只实现 Pull + Refresh，不是即时网络推送。后续 Packet/客户端编码、P27 Movement、P60 Host 授权、P62 Replay 和 P64 高负载尚未通过。P21 独立审查 #198 已 11 Job 全绿，P21 正式 ACCEPTED；P21 完成后按路线图推进后续已满足依赖的阶段。
 
 入口：[PROGRESS](PROGRESS.md)、[P21](progress/P21.md)、[WORLD_VISIBILITY](modules/WORLD_VISIBILITY.md)、[DEVELOPMENT_ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)。
+
+## P21 正式收口与下一安全动作
+
+- #197 稳定实现 11/11 SUCCESS；#198 独立 REVIEW 11/11 SUCCESS；#199 正式 ACCEPTED HEAD 11/11 SUCCESS（290 Unit/16 Architecture）。
+- 下一阶段 **P22 Spawn / Respawn**，直接依赖 P16.F/P19/P20/P24 已全部 ACCEPTED，需实现 SpawnRegistry、RespawnTimer、LinkedRespawn、防重复 Grid 加载与崩溃恢复对照。
+- P23 实际路线图是 Terrain / Collision / Navigation Ports，**不是网络 Packet 阶段**；P21 历史记录中的误写已纠正。

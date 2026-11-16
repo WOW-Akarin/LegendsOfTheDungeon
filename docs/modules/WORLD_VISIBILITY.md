@@ -1,6 +1,6 @@
 # P21 — Visibility / Relevance 技术契约
 
-状态：ACCEPTED（目标 C）。直接依赖 P20 Spatial 和 P26 Control/Tags 均已正式 ACCEPTED。实现 #197、独立 REVIEW HEAD `fe790ec26a11699e38e2b54f917268faf3dd5c98` CI #198 均 11/11 SUCCESS；正式 ACCEPTED HEAD CI 待核验。
+状态：ACCEPTED（目标 C）。直接依赖 P20 Spatial 和 P26 Control/Tags 均已正式 ACCEPTED。实现 #197、独立 REVIEW HEAD `fe790ec26a11699e38e2b54f917268faf3dd5c98` CI #198 均 11/11 SUCCESS；正式 ACCEPTED HEAD `b16fa376bc1a323e18b2fd16bf841128f553cb3c` CI #199 11/11 SUCCESS。
 
 ## WorldVisibilitySet 的读取边界
 
@@ -18,7 +18,7 @@
 - 进入定义：旧视图没有该完整身份、当前 P20 距离和 P26 过滤均允许；离开定义：旧有身份不再满足（包括超出边界、标签/控制/生命状态改变、实体销毁、Observer 死亡、Epoch/Generation 失效）。重复 Refresh 同一集合不会重复 Enter 或 Leave，短时间反复进出边界按真实变更次数分别输出。
 - 当已可见实体只是移动位置但仍满足过滤，更新完整 View 的 Transform，而不会产生重复 Enter/Leave。旧 View/Delta 内的 Tags 列表通过拷贝与 `Array.AsReadOnly` 冻结，旧客户端快照不会随 P24/P26 状态变化原地修改。
 - P20 Grid 的 QueryNearby 提供候选排序和精确距离计算；P21 过滤只读取世界快照，成员 Identity 含 Generation。旧实体销毁后同 EntityId 新 Generation 在**一次** Refresh 中可同时得到旧身份 Leave 与新身份 Enter。
-- P21 不创建 WoW 3.3.5a UpdateObject、UpdateMask、Packet、广播服务、Player Session。P23 网络编码以及 P60 Host 的授权/协议设计必须另行实现。
+- P21 不创建 WoW 3.3.5a UpdateObject、UpdateMask、Packet、广播服务、Player Session。后续网络输出编码以及 P60 Host 的授权/协议设计必须另行实现。
 
 ## 出口和证据要求
 
@@ -30,7 +30,7 @@
 
 - 当前 View/Delta 是 **Pull + Refresh**，并非实体移动或销毁时立即推送。必须由未来世界 Tick/Visibility 编排在生命周期变更后调用 Refresh，才能将 Enter/Leave 输出给下一层；未建立真正的连接会话或带宽调度，不能称为网络广播方案。
 - 视图按观察者缓存，不带全局世界 SnapshotRevision；将来引入网络包流水序号时需显式组合 World/Epoch/Observer/Version 和收敛逻辑。单次 Refresh 的 P17/P20/P26 快照在 P18 单写范围内采集，不跨多个并发世界。
-- P21 C 没有 P23 真正网络消息、P25 Stats、P27 Movement、P58/P60 Host、P62 全链路 Replay 或 P64 多观察者性能预算验收。1024 可见实体和 4096 m 属于当前有界策略，不应伪称生产扩展性已验证。
+- P21 C 没有 后续真正网络消息、P25 Stats、P27 Movement、P58/P60 Host、P62 全链路 Replay 或 P64 多观察者性能预算验收。1024 可见实体和 4096 m 属于当前有界策略，不应伪称生产扩展性已验证。
 
 ## 初次真实验证
 
@@ -40,4 +40,9 @@
 
 ## 独立审查与正式 C 验收
 
-[P21 四视角审查](../reviews/P21_VISIBILITY_REVIEW.md) 的独立 REVIEW HEAD `fe790ec26a11699e38e2b54f917268faf3dd5c98` CI #198 十一 Job 全绿，确认当前 C 必需阻塞 0，P21 正式 ACCEPTED。状态提交本身仍要独立 11 Job 核验。P23 网络广播、P60 Host 和 P64 规模负载不在此结论内。
+[P21 四视角审查](../reviews/P21_VISIBILITY_REVIEW.md) 的独立 REVIEW HEAD `fe790ec26a11699e38e2b54f917268faf3dd5c98` CI #198 十一 Job 全绿，确认当前 C 必需阻塞 0，P21 正式 ACCEPTED。正式 ACCEPTED HEAD #199 也 11 Job SUCCESS，P21 C 完整收口。P23 网络广播、P60 Host 和 P64 规模负载不在此结论内。
+
+## 正式三阶段验证
+
+- 实现 HEAD #197、独立 REVIEW HEAD #198、正式 ACCEPTED HEAD #199 各自均 11/11 SUCCESS，290 Unit、16 Architecture。
+- 正式归档 P21 C 的技术边界：仅实现 P18 Scope 认可的 Pull + Refresh 可见集合和只读 Delta，没有网络 Packet/UpdateMask、全世界版本或大规模 N×Observer 性能达标结论。

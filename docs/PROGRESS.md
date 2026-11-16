@@ -23,8 +23,16 @@
 
 - 初始 P21 HEAD `34fbcb0` CI #196（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43915892879）在编译阶段 FAIL：CS0165 观察者快照局部变量 definite assignment、CA1859 私有 Normalize 具体返回类型。均已修复且保留失败记录。
 - 稳定实现 HEAD `0af03e5a96b743e2ecce85dcc6335e9d95fa2901` CI #197（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43916141338）**11/11 SUCCESS**，290/290 Unit、16/16 Architecture、P02–P05 Gate 与真实 P21 WorldVisibilityProbe 五类场景成功，原有十项 Job 均 SUCCESS。
-- 新增独立四视角审查：[P21 Review](reviews/P21_VISIBILITY_REVIEW.md)，独立 REVIEW HEAD `fe790ec26a11699e38e2b54f917268faf3dd5c98` CI #198（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43916929617）11/11 SUCCESS，P21 C 正式 ACCEPTED；本次 ACCEPTED HEAD CI 尚待独立核验。
+- 新增独立四视角审查：[P21 Review](reviews/P21_VISIBILITY_REVIEW.md)，独立 REVIEW HEAD `fe790ec26a11699e38e2b54f917268faf3dd5c98` CI #198（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43916929617）11/11 SUCCESS，P21 C 正式 ACCEPTED；正式 ACCEPTED HEAD `b16fa376bc1a323e18b2fd16bf841128f553cb3c` CI #199（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43917430402）**11/11 SUCCESS**，P21 C 正式收口。
 
 ## 下一安全动作
 
-核验本次正式 P21 ACCEPTED HEAD 全部 11 Job CI，之后归档实现/独立审查/正式验收的三轮真实证据。P21 Pull+Refresh 完成度 C 已接受，不代表网络推送或 P64 性能达标。
+P21 实现 #197、独立 REVIEW #198、正式 ACCEPTED #199 各自 11/11 SUCCESS。下一按路线图启动 P22 — Spawn / Respawn（P16.F/P19/P20/P24 前置已 ACCEPTED）；P21 Pull+Refresh 不代表网络推送或 P64 性能达标。
+
+## P21 三阶段真实验收归档
+
+- 稳定实现 HEAD `0af03e5a96b743e2ecce85dcc6335e9d95fa2901`：CI #197 11/11 SUCCESS。
+- 独立 REVIEW HEAD `fe790ec26a11699e38e2b54f917268faf3dd5c98`：CI #198 11/11 SUCCESS。
+- 正式 ACCEPTED HEAD `b16fa376bc1a323e18b2fd16bf841128f553cb3c`：CI #199 11/11 SUCCESS，290 Unit、16 Architecture，P21 五类真实 Probe 和原有十项回归全绿。
+- 初次 #196 CS0165/CA1859 编译 FAIL 均已保留并严格修复；未降低分析/架构/负向 Gate。
+- 本次归档 HEAD 提交自身 CI 尚待独立核验，不影响前三轮实际验收结果。下一 P22 尚未实施。

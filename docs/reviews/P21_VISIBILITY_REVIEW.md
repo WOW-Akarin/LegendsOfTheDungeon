@@ -4,7 +4,7 @@
 - 稳定实现 HEAD：`0af03e5a96b743e2ecce85dcc6335e9d95fa2901`
 - 实现 CI #197：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43916141338，11/11 SUCCESS
 - 独立 REVIEW HEAD：`fe790ec26a11699e38e2b54f917268faf3dd5c98`，CI #198（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43916929617）11/11 SUCCESS
-- 正式 ACCEPTED HEAD：本次状态提交，CI NOT_RUN
+- 正式 ACCEPTED HEAD：`b16fa376bc1a323e18b2fd16bf841128f553cb3c`，CI #199（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43917430402）11/11 SUCCESS
 - 直接依赖 P20 Spatial / P26 Control+Tags 已 ACCEPTED；P17 世界生命周期、P18 同步租约、P19 Tick 亦已验收。保持 main 直推、无分支。
 
 ## 1. 功能与确定性视图
@@ -28,7 +28,7 @@
 - WorldInstance 进入 Faulted 时拒绝新的视图计算；旧 View 可供诊断但**必须视为历史版本**。观察者/目标死亡或销毁后在**下一次合法 Refresh** 发出 Leave，而不是立即从所有观察者 View 里原位删除。该 Pull + Refresh 语义需要 P19 Tick/后续 Host 定期驱动；未接入真实推送和流量规划，不能承诺即时网络广播。
 - WorldVisibilitySet 的 SnapshotVersion 是**每观察者/每 Set**私有单调序号，必须与 World/Epoch/Observer 联合使用；它**不**是 P19 Tick、P17 世界写入次数或全世界全局 SnapshotRevision。未来如果实现网络重连、视图持久化、Packet 序号需另起阶段设计。
 - 重算每次需要 P20 QueryNearby 候选与集合差分；P20 当前可能扫描已分配 Cell 桶，因此很多观察者/大范围时 CPU/分配压力尚未经过 P64。不能从功能 Unit 成功推导 10,000 Entities × N observers/50ms 达标。
-- 后续 P23 网络协议、P27 Movement 输入与事件采样、P60 Host 认证、P62 全链路回放、P64 性能/长稳仍各有单独验收范围。
+- 后续 后续网络协议、P27 Movement 输入与事件采样、P60 Host 认证、P62 全链路回放、P64 性能/长稳仍各有单独验收范围。
 
 ## 4. 真实验证和证据留存
 
@@ -46,7 +46,7 @@
 | 原有 10 Job（P17–P20/P26 + 网络/DB/诊断） | PASS |
 | 实现 HEAD 完整 CI | **11/11 SUCCESS** |
 | 独立 REVIEW HEAD | **11/11 SUCCESS**，run #198，290 Unit/16 Architecture |
-| 正式 ACCEPTED HEAD | NOT_RUN |
+| 正式 ACCEPTED HEAD | **11/11 SUCCESS**，run #199，290 Unit / 16 Architecture |
 
 失败透明保留：#196 初始实现 CS0165 观察者 definite assignment、CA1859 具体返回类型要求，构建 FAIL；严格修复后 #197 十一 Job 全绿，没有关闭或放宽任何 Gate。
 
@@ -54,4 +54,4 @@
 
 P21 C 路线图要求的 VisibilitySet、Distance/Tag/State Filter、Enter/Leave Delta、只读 View、World/Epoch/快照版本与边界重复/状态变化/实体销毁/快照不原位变更均由真实 CI 验证，未发现当前 C 出口必需修复的代码阻塞。
 
-独立 REVIEW HEAD run #198 十一 Job 全部 SUCCESS，P21 C 必需出口阻塞 0，**正式 ACCEPTED**；正式验收状态 HEAD 本身仍需独立 11 Job 复核。此结论不代表客户端 Packet、网络推送或 P64 性能已经实现。
+独立 REVIEW HEAD run #198 十一 Job 全部 SUCCESS，P21 C 必需出口阻塞 0，**正式 ACCEPTED**；正式验收状态 HEAD `b16fa376bc1a323e18b2fd16bf841128f553cb3c` 的 run #199 也十一 Job 全绿，P21 C 结论完整收口。此结论不代表客户端 Packet、网络推送或 P64 性能已经实现。
