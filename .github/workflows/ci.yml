@@ -457,3 +457,38 @@ jobs:
           path: artifacts/world-visibility/report.txt
           if-no-files-found: warn
           retention-days: 14
+
+  world-spawn:
+    needs: build-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      CI: 'true'
+      DOTNET_NOLOGO: '1'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET 10.0.404
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.404'
+
+      - name: Locked restore P22 world spawn graph
+        run: dotnet restore tests/Integration/LegendsOfTheDungeon.WorldSpawnProbe/LegendsOfTheDungeon.WorldSpawnProbe.csproj --locked-mode
+
+      - name: Verify real spawn respawn grid loading and crash recovery
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/world-spawn
+          dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldSpawnProbe/LegendsOfTheDungeon.WorldSpawnProbe.csproj --configuration Release --no-restore | tee artifacts/world-spawn/report.txt
+
+      - name: Upload P22 spawn respawn evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: world-spawn
+          path: artifacts/world-spawn/report.txt
+          if-no-files-found: warn
+          retention-days: 14

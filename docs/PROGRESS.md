@@ -2,8 +2,8 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：P21 — Visibility / Relevance（ACCEPTED，目标 C）
-正式 ACCEPTED：P00–P20、P24(B)、P26(C)。P21(C) 已正式 ACCEPTED。
+当前阶段：P22 — Spawn / Respawn（IN_PROGRESS，目标 C）
+正式 ACCEPTED：P00–P21、P24(B)、P26(C)。P22 尚未验收。
 
 ## 基线真实证据
 
@@ -35,4 +35,15 @@ P21 实现 #197、独立 REVIEW #198、正式 ACCEPTED #199 各自 11/11 SUCCESS
 - 独立 REVIEW HEAD `fe790ec26a11699e38e2b54f917268faf3dd5c98`：CI #198 11/11 SUCCESS。
 - 正式 ACCEPTED HEAD `b16fa376bc1a323e18b2fd16bf841128f553cb3c`：CI #199 11/11 SUCCESS，290 Unit、16 Architecture，P21 五类真实 Probe 和原有十项回归全绿。
 - 初次 #196 CS0165/CA1859 编译 FAIL 均已保留并严格修复；未降低分析/架构/负向 Gate。
-- 本次归档 HEAD 提交自身 CI 尚待独立核验，不影响前三轮实际验收结果。下一 P22 尚未实施。
+- 归档 HEAD `c4fdab6fa3dee94f4eb3d0c26d899982ad3e1bc8` CI #200 11/11 SUCCESS，P21 四轮 CI 验证完整通过；P22 进入实现阶段。
+
+## P22 首次实现（尚未验证）
+
+- `WorldSpawnRegistry` 绑定 P17/P20 唯一真相、P18 同步租约、P19 Timers Phase 和 FakeClock；登记/生成/退休/重生使用非零唯一 SpawnKey/EntityId 和不可回退 Generation。
+- 已添加 LinkedRespawn 循环检测、Grid 加载/卸载受管实体、动态一次性生成、绝对 DueTick 持久快照与 `RecoveryHold` 防重复策略。
+- 新增 Unit 与真实 `WorldSpawnProbe` 五场景，CI 新增 `world-spawn`，总 **12 个阻断 Job**。首次代码 HEAD CI 尚未运行，不能称为成功。
+- 详见 [P22 进度](progress/P22.md) 与 [WORLD_SPAWN 技术契约](modules/WORLD_SPAWN.md)。
+
+## 下一阶段安全动作
+
+P22 初始实现 HEAD 的 12 Job CI 需实际通过，出现失败先修复；随后独立四视角 REVIEW 和 ACCEPTED HEAD 各自跑全量 CI，不提前推进 P23。

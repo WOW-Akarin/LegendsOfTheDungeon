@@ -33,3 +33,14 @@ P00–P20、P24(B)、P26(C) 已正式 ACCEPTED。最新 P26 归档 HEAD `58e8443
 - #197 稳定实现 11/11 SUCCESS；#198 独立 REVIEW 11/11 SUCCESS；#199 正式 ACCEPTED HEAD 11/11 SUCCESS（290 Unit/16 Architecture）。
 - 下一阶段 **P22 Spawn / Respawn**，直接依赖 P16.F/P19/P20/P24 已全部 ACCEPTED，需实现 SpawnRegistry、RespawnTimer、LinkedRespawn、防重复 Grid 加载与崩溃恢复对照。
 - P23 实际路线图是 Terrain / Collision / Navigation Ports，**不是网络 Packet 阶段**；P21 历史记录中的误写已纠正。
+
+## 2026-11-17：P22 当前实施边界
+
+- P21 归档 HEAD `c4fdab6fa3dee94f4eb3d0c26d899982ad3e1bc8` 的 CI #200 11/11 SUCCESS；此前 P00–P21、P24(B)、P26(C) 均已验收。
+- 当前转入 **P22 Spawn / Respawn（IN_PROGRESS，目标 C）**；直接依赖 P16.F、P19、P20、P24 均满足。
+- 新 P22 单世界 `WorldSpawnRegistry`：唯一 SpawnKey 与 EntityId、单调 Generation、静态/动态 Spawn、P19 Timers Phase/LogicalTimer + FakeClock、关联环检测、P20 Grid Active/Unloaded 与防非受管占用。
+- 崩溃恢复只接受外部已确认 Checkpoint：Active 实体若未由 P17 恢复为完全相同 Generation，则 `RecoveryHold` 阻止自动复制；定时器使用绝对 DueTick。此阶段没有真正 PostgreSQL 持久事务、跨进程完整 Replay 或 Spawn 业务 Catalog Adapter 绑定，不可冒充全部实现。
+- 已新增 Unit 与独立真实 P22 WorldSpawnProbe，第 12 个 CI Job。**初始实现 HEAD 的 CI 未运行**；保持 main 直推，不创建分支。必须等完整实现、独立 REVIEW 和 ACCEPTED 各自 12/12 SUCCESS 才正式验收。
+- P21 旧章节中 Pending REVIEW 的说明以此 P22 更新和 docs/progress/P21.md 的最新正式归档为准。
+
+入口：[P22 进度](progress/P22.md)、[WORLD_SPAWN](modules/WORLD_SPAWN.md)、[PROGRESS](PROGRESS.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)。
