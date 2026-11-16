@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P02 — IN_PROGRESS
+当前阶段：P02 — REVIEW
 
 ## 当前范围
 
@@ -26,7 +26,7 @@ LegendsOfTheDungeon 是通用 C# / .NET 10 游戏服务器核心。研究 Azerot
 
 ## 当前工程决策
 
-- 目标框架：.NET 10；P02 按实际验证 SDK 写入 global.json。
+- 目标框架：.NET 10；SDK `10.0.404` 已由 GitHub Actions Linux x64 runner 实际验证并写入 global.json。
 - 首个真实 DB：PostgreSQL 18。
 - 初始发布环境：Linux x64 容器、服务器 4 vCPU / 8 GiB。
 - 发布目标档位：10 World / 总计 10,000 实体。
@@ -35,15 +35,15 @@ LegendsOfTheDungeon 是通用 C# / .NET 10 游戏服务器核心。研究 Azerot
 
 ## 已具备能力
 
-仅文档基线与 P00 研究/范围制度。尚无 Solution、生产代码、数据库集成、网络集成或性能通过证据。
+P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Kernel 与 Runtime.Abstractions 两个生产 Assembly、Unit/Architecture 测试入口、NuGet lock file 与 CI Gate，并已由 locked-mode CI run #4 全绿验证。尚无业务功能、数据库集成、网络集成或性能通过证据。
 
 ## 当前任务与下一步
 
-P02 已启动。当前执行容器没有 dotnet，因此使用 GitHub Actions 作为真实验证环境；候选 SDK 为官方当前 .NET 10 SDK 10.0.404，只有 CI 实际安装并输出 dotnet --info 后才视为已验证。
+P02 工程实现和完整 CI 验证已完成，当前处于 REVIEW。下一步只做独立工程/证据审查；Review 通过后 ACCEPTED，再进入 P03。
 
 ## 阻塞与技术债
 
-当前无 P01 阻塞。后续必须实测的事项：P02 SDK patch、P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P02 阻塞。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值；P03 仍需实现真正的架构依赖规则与正/负例。
 
 ## 关键入口
 
@@ -56,5 +56,6 @@ P02 已启动。当前执行容器没有 dotnet，因此使用 GitHub Actions �
 - [恢复工作流](RECOVERY_WORKFLOW.md)
 - [P01 证据](progress/P01.md)
 - [P02 证据](progress/P02.md)
+- [构建基线](operations/BUILD.md)
 - [UPSTREAM](UPSTREAM.md)
 - [AC 研究模板](research/azerothcore/REFERENCE_TEMPLATE.md)
