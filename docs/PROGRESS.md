@@ -25,11 +25,11 @@
 
 ## 当前停点
 
-P05 run #25 复现同一 NU1005；确认上一轮正则替换未命中实际单行脚本。现已精确删除正/负例两条 build 命令上的 RestorePackagesWithLockFile=false。
+P05 run #26 已全绿：Unit 30/30、Architecture 16/16、P04 回归和 Strong ID CS1503 compile Gate 全部通过。自审后补 9 个 Strong 类型逐一 canonical round-trip，再做最终 CI。
 
 ## 下一步（最多 5 项）
 
-1. 提交 compile Gate restore 属性修复并读取下一次 CI。
+1. 提交 9 类型 canonical round-trip 补强并读取最终实现 CI。
 2. 读取下一次 CI；从新的第一个真实编译/测试错误继续修。
 3. CI 通过 build 后核对 Unit、Architecture、P04 与 Strong ID CS1503 Gate。
 4. 记录 kernel-contract-gate artifact 与测试数量。

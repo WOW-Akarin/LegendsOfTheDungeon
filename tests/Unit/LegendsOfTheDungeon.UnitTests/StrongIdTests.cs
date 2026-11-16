@@ -73,6 +73,20 @@ public sealed class StrongIdTests
     }
 
     [Fact]
+    public void AllStrongValuesRoundTripTheirOwnCanonicalText()
+    {
+        Assert.Equal(new EntityId(1), EntityId.Parse(new EntityId(1).ToString()));
+        Assert.Equal(new ActorId(2), ActorId.Parse(new ActorId(2).ToString()));
+        Assert.Equal(new WorldId(3), WorldId.Parse(new WorldId(3).ToString()));
+        Assert.Equal(new AbilityId(4), AbilityId.Parse(new AbilityId(4).ToString()));
+        Assert.Equal(new ItemDefinitionId(5), ItemDefinitionId.Parse(new ItemDefinitionId(5).ToString()));
+        Assert.Equal(new ItemInstanceId(6), ItemInstanceId.Parse(new ItemInstanceId(6).ToString()));
+        Assert.Equal(new TaskId(7), TaskId.Parse(new TaskId(7).ToString()));
+        Assert.Equal(new EntityGeneration(8), EntityGeneration.Parse(new EntityGeneration(8).ToString()));
+        Assert.Equal(new WorldEpoch(9), WorldEpoch.Parse(new WorldEpoch(9).ToString()));
+    }
+
+    [Fact]
     public void DefinitionInstanceGenerationAndEpochAreDistinctClrTypes()
     {
         Assert.NotEqual(typeof(ItemDefinitionId), typeof(ItemInstanceId));
