@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P02 — ACCEPTED
+当前阶段：P03 — IN_PROGRESS
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P02 已完成独立 Review 并 ACCEPTED。下一阶段是 P03 — Architecture Tests 第一批，但尚未开始。
+P03 已启动：正在把 ARCHITECTURE 2.3/2.4 的项目依赖、公共 API 泄漏、IVT 与无环规则转换成真实 Architecture Tests；不为测试提前创建空生产模块。
 
 ## 阻塞与技术债
 
-当前无 P02 阻塞；P03 尚未开始。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值；P03 仍需实现真正的架构依赖规则与正/负例。
+当前无 P03 阻塞。当前只有两个生产项目，跨模块/Host 违规通过测试 fixture 验证，真实图继续只使用实际存在项目。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值；P03 仍需实现真正的架构依赖规则与正/负例。
 
 ## 关键入口
 
@@ -56,6 +56,7 @@ P02 已完成独立 Review 并 ACCEPTED。下一阶段是 P03 — Architecture T
 - [恢复工作流](RECOVERY_WORKFLOW.md)
 - [P01 证据](progress/P01.md)
 - [P02 证据](progress/P02.md)
+- [P03 证据](progress/P03.md)
 - [构建基线](operations/BUILD.md)
 - [UPSTREAM](UPSTREAM.md)
 - [AC 研究模板](research/azerothcore/REFERENCE_TEMPLATE.md)
