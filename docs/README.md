@@ -18,12 +18,12 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [operations/BUILD.md](operations/BUILD.md)：SDK、NuGet 锁文件与统一验证入口
 - [reviews/ARCHITECTURE_RESPONSIBILITY_REVIEW.md](reviews/ARCHITECTURE_RESPONSIBILITY_REVIEW.md)：高 fan-in / Common / Utils / Manager 类职责聚集人工审查
 - [reviews/DOCUMENTATION_QUALITY_REVIEW.md](reviews/DOCUMENTATION_QUALITY_REVIEW.md)：Public XML、中文语义、复杂逻辑与 AC 来源审查
-- [modules/KERNEL.md](modules/KERNEL.md)：Strong IDs、Result/Error 与基础序列化边界
+- [modules/KERNEL.md](modules/KERNEL.md)：Strong IDs、Result/KernelError 与基础序列化边界
 
 ## 当前状态
 
 当前里程碑：M0 基线。  
-当前阶段：P05 — Kernel Strong IDs 与 Result，**IN_PROGRESS**。P00–P04 已 ACCEPTED；实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P05 — Kernel Strong IDs 与 Result，**REVIEW**。P00–P04 已 ACCEPTED；实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 

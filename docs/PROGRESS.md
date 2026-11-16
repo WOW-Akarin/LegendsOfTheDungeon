@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `151c9fff55612df3e60411d796f740814c4eed69` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P05 / Kernel Strong IDs 与 Result / IN_PROGRESS / B
+阶段 / 任务 / 状态 / 目标完成度：P05 / Kernel Strong IDs 与 Result / REVIEW / B
 
 ## 目标与成功条件
 
@@ -25,15 +25,15 @@
 
 ## 当前停点
 
-P05 run #26 已全绿：Unit 30/30、Architecture 16/16、P04 回归和 Strong ID CS1503 compile Gate 全部通过。自审后补 9 个 Strong 类型逐一 canonical round-trip，再做最终 CI。
+P05 最终实现 CI run #27 已全绿：Unit 31/31、Architecture 16/16、P04 回归与 Strong ID CS1503 compile Gate 全部通过。当前进入独立 REVIEW。
 
 ## 下一步（最多 5 项）
 
-1. 提交 9 类型 canonical round-trip 补强并读取最终实现 CI。
-2. 读取下一次 CI；从新的第一个真实编译/测试错误继续修。
-3. CI 通过 build 后核对 Unit、Architecture、P04 与 Strong ID CS1503 Gate。
-4. 记录 kernel-contract-gate artifact 与测试数量。
-5. 独立自审契约/default/序列化语义后进入 REVIEW。
+1. 独立读取 REVIEW HEAD 的 StrongIds/Result/KernelError、Unit 与 compile Gate。
+2. 核对 REVIEW HEAD 自身 Unit 31+、Architecture、P04 和 compile Gate 全绿。
+3. 核对 Kernel 仍无高层依赖、无 ID 转换、无统一 ItemId。
+4. 核对 P05/KERNEL/CONTEXT/README 状态与相对链接一致。
+5. 无必需问题后将 P05 ACCEPTED，再进入 P06。
 
 ## 修改文件及原因
 
@@ -52,9 +52,9 @@ P05 run #26 已全绿：Unit 30/30、Architecture 16/16、P04 回归和 Strong I
 | 命令/检查 | 环境与时间 | 结果 | 报告 |
 |---|---|---|---|
 | P04 依赖状态 | GitHub Actions，2026-11-16 | PASS | progress/P04.md |
-| P05 Unit | 尚未实现 | NOT_RUN | 待 CI |
-| P05 compile-negative | 尚未实现 | NOT_RUN | 待 CI |
-| P03/P04 回归 | 尚未执行 P05 HEAD | NOT_RUN | 待 CI |
+| P05 Unit | GitHub Actions，2026-11-16 | PASS：31/31 | run 43806473466 |
+| P05 compile-negative | GitHub Actions，2026-11-16 | PASS：3 类跨 ID 误用均 CS1503 | run 43806473466 / artifact 14198138894 |
+| P03/P04 回归 | GitHub Actions，2026-11-16 | PASS：Architecture 16/16 + P04 九组 Gate | run 43806473466 |
 
 ## 失败、阻塞、风险与未验证假设
 
@@ -68,7 +68,7 @@ P05 run #26 已全绿：Unit 30/30、Architecture 16/16、P04 回归和 Strong I
 2. 核对 main HEAD 与 P05 起始 SHA `151c9fff55612df3e60411d796f740814c4eed69`。
 3. 打开 `src/Kernel`、P05 Unit 与 `eng/verify-kernel-contract-gates.sh`。
 4. 读取最新 CI；失败时从第一个真实编译/Analyzer/Test 诊断修复，不降低 P03/P04 Gate。
-5. 所有出口证据满足后进入 REVIEW。
+5. P05 已进入 REVIEW；按 progress/P05.md 当前停点做独立审查。
 
 ## 不应重复执行的操作
 
