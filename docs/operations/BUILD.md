@@ -28,6 +28,7 @@ SDK 10.0.404 已在 P02 GitHub Actions Linux x64 runner 通过 `dotnet --info` �
 | Microsoft.NET.Test.Sdk | 18.11.0 |
 | xunit | 2.9.3 |
 | xunit.runner.visualstudio | 4.0.1 |
+| Npgsql（P11 Integration Probe） | 10.0.3 |
 
 每个项目提交 `packages.lock.json`。正常验证必须执行：
 
@@ -89,3 +90,7 @@ P05 使用独立编译夹具证明 Strong ID 的 CLR 类型隔离，而不是只
 ```
 
 正例必须成功编译；负例同时尝试 `EntityId → ActorId`、`ItemDefinitionId → ItemInstanceId`、`WorldId → WorldEpoch`，要求至少出现 3 个 `CS1503`。日志与摘要输出到 `artifacts/kernel-contract-gate/` 并由 CI 保存 14 天。
+
+## P11 PostgreSQL Integration
+
+独立 Probe 在 tests/Integration/LegendsOfTheDungeon.PersistenceProbe，使用 Npgsql 10.0.3、postgres:18 service。实际依赖锁文件已由 run #67 非 locked bootstrap 生成并检入；后续必须执行 dotnet restore <Probe.csproj> --locked-mode。run #67 已 PASS 真实回滚、Serializable、条件版本更新、重复幂等、提交前取消与 statement_timeout；Migration、BulkLoader、提交结果未知故障及镜像 digest 仍待验收。

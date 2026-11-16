@@ -104,17 +104,11 @@ jobs:
         with:
           dotnet-version: '10.0.404'
 
-      - name: Bootstrap locked Npgsql integration dependency graph
-        run: dotnet restore tests/Integration/LegendsOfTheDungeon.PersistenceProbe/LegendsOfTheDungeon.PersistenceProbe.csproj --force-evaluate
+      - name: Restore pinned Npgsql integration package graph
+        run: dotnet restore tests/Integration/LegendsOfTheDungeon.PersistenceProbe/LegendsOfTheDungeon.PersistenceProbe.csproj --locked-mode
 
       - name: Run real PostgreSQL 18 persistence probes
         run: dotnet run --project tests/Integration/LegendsOfTheDungeon.PersistenceProbe/LegendsOfTheDungeon.PersistenceProbe.csproj --configuration Release --no-restore
 
-      - name: Capture generated NuGet lock for repository review
-        if: always()
-        run: |
-          if [ -f tests/Integration/LegendsOfTheDungeon.PersistenceProbe/packages.lock.json ]; then
-            echo 'LOTDP11_LOCK_BEGIN'
-            cat tests/Integration/LegendsOfTheDungeon.PersistenceProbe/packages.lock.json
-            echo 'LOTDP11_LOCK_END'
-          fi
+      - name: Record actual PostgreSQL image digest
+        run: docker image inspect postgres:18 --format '{{json .RepoDigests}}'

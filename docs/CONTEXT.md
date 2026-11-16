@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 建立 .NET 10 Solution；截至 P10 已验�
 
 ## 当前任务与下一步
 
-P00–P10 已 ACCEPTED，P10 最终 CI run #64 SUCCESS。P11 现为 IN_PROGRESS；第一批 ADO.NET 连接工厂、参数化命令、事务 Unknown 基础已提交 b1dc27c，P11 首批 CI run #65 待确认。真实 PostgreSQL 18 Integration、Migration/BulkLoader、P65.F 和阶段 C 出口尚未完成。
+P00–P10 已 ACCEPTED，P10 最终 CI run #64 SUCCESS。P11 现为 IN_PROGRESS；第一批 ADO.NET 连接工厂、参数化命令、事务 Unknown 基础已提交 b1dc27c，P11 首批 CI run #65、#66 SUCCESS，run #67 真实 postgres:18 / Npgsql 10.0.3 Integration SUCCESS（rollback、Serializable、版本、幂等、取消、statement_timeout）。Migration/BulkLoader、未知提交回执、digest 冻结、P65.F 与阶段 C 出口尚未完成。
 
 ## 阻塞与技术债
 
-P11 尚未确认新的必须阻塞；当前代码检查等待真实 CI。Platform 不包含游戏业务规则；无真实认证 Adapter，生产身份绑定/授权保持默认拒绝。必须实测：P11 PostgreSQL 18 版本/digest、隔离/事务/幂等/故障语义，P64.F 绝对性能阈值。
+P11 当前已获得初始真实数据库证据；仍缺 Migration/BulkLoader 和 Unknown/恢复测试，不能验收 C。Platform 不包含游戏业务规则；无真实认证 Adapter，生产身份绑定/授权保持默认拒绝。必须实测：P11 PostgreSQL 18 版本/digest、隔离/事务/幂等/故障语义，P64.F 绝对性能阈值。
 
 ## 关键入口
 

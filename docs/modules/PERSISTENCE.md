@@ -2,7 +2,7 @@
 
 ## 范围与依赖
 
-P11 直接依赖 P10（已 ACCEPTED），目标完成度 C：在真实 PostgreSQL 18 上提供数据库基础技术设施。新项目 LegendsOfTheDungeon.Platform.Persistence 使用 ADO.NET 抽象，不拥有游戏业务表、领域 SQL 或游戏状态；业务 SQL 必须位于各业务模块 Infrastructure。计划采用 Npgsql，并在真实集成批次中显式固定 Provider 版本、NuGet lock 和 PostgreSQL 镜像 digest。
+P11 直接依赖 P10（已 ACCEPTED），目标完成度 C：在真实 PostgreSQL 18 上提供数据库基础技术设施。新项目 LegendsOfTheDungeon.Platform.Persistence 使用 ADO.NET 抽象，不拥有游戏业务表、领域 SQL 或游戏状态；业务 SQL 必须位于各业务模块 Infrastructure。已新增专用 Npgsql 10.0.3 Integration Probe（非生产依赖），在 postgres:18 service 实测；真实 NuGet lock 已从 runner 生成并入库。PostgreSQL image digest 尚待固定。
 
 ## 已实现基础契约
 
@@ -10,7 +10,7 @@ P11 直接依赖 P10（已 ACCEPTED），目标完成度 C：在真实 PostgreSQ
 - SqlParameterValue / ParameterizedCommand：固定命令和参数快照，校验参数名与类型，拒绝重复名；以 DbParameter 真正绑定值，null 转为 DBNull.Value。
 - SQL 文本只能由模块 Infrastructure 静态持有。此 API 不能在运行时自动识别调用方是否在 SQL 字符串中拼接了不可信值，后续需要审查规则和使用方测试。
 - PersistenceTransaction：显式隔离级别；Active 状态下离开作用域尝试回滚；提交成功才返回 Committed。提交过程中发生 DbException、TimeoutException 或 OperationCanceledException 则返回 Unknown，禁止将结果视为已回滚并盲目重试。
-- 现有 API 尚无真实 PostgreSQL 集成，当前成果属于基础实现，不意味着 P11 已达到 C。
+- 上述 API 已在 GitHub Actions run #67 使用真实 PostgreSQL 18 + Npgsql 验证连接、Rollback、隔离、条件版本写、幂等键、取消与 statement_timeout。但 Migration/BulkLoader、提交 Unknown 故障点及 Provider 失联测试未完成，不意味着 P11 已达到 C。
 
 ## 目标完成度 C 的真实出口
 

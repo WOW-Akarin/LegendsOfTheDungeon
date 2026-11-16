@@ -6,5 +6,6 @@
   <Project Path="src/Platform/Persistence/LegendsOfTheDungeon.Platform.Persistence/LegendsOfTheDungeon.Platform.Persistence.csproj" />
   <Project Path="src/Security/Contracts/LegendsOfTheDungeon.Security.Contracts/LegendsOfTheDungeon.Security.Contracts.csproj" />
   <Project Path="tests/Unit/LegendsOfTheDungeon.UnitTests/LegendsOfTheDungeon.UnitTests.csproj" />
+  <Project Path="tests/Integration/LegendsOfTheDungeon.PersistenceProbe/LegendsOfTheDungeon.PersistenceProbe.csproj" />
   <Project Path="tests/Architecture/LegendsOfTheDungeon.ArchitectureTests/LegendsOfTheDungeon.ArchitectureTests.csproj" />
 </Solution>
