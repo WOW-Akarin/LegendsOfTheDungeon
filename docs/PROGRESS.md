@@ -29,7 +29,7 @@ P05 首次实现 CI run #22 在 build 被 CA1716/CA1000×2 阻断；按 Analyzer
 
 ## 下一步（最多 5 项）
 
-1. 提交 CA1716/CA1000 API 修复。
+1. 已提交并自检 CA1716/CA1000 API 修复；等待下一次 CI。
 2. 读取下一次 CI；从新的第一个真实编译/测试错误继续修。
 3. CI 通过 build 后核对 Unit、Architecture、P04 与 Strong ID CS1503 Gate。
 4. 记录 kernel-contract-gate artifact 与测试数量。

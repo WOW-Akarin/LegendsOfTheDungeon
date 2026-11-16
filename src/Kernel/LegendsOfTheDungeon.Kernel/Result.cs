@@ -5,11 +5,8 @@ namespace LegendsOfTheDungeon.Kernel;
 /// </summary>
 public readonly record struct Result
 {
-    internal const byte SuccessStateValue = 1;
-    internal const byte FailureStateValue = 2;
-
-    private const byte SuccessState = SuccessStateValue;
-    private const byte FailureState = FailureStateValue;
+    internal const byte SuccessState = 1;
+    internal const byte FailureState = 2;
 
     private readonly byte _state;
     private readonly KernelError? _error;
@@ -18,32 +15,6 @@ public readonly record struct Result
     {
         _state = state;
         _error = error;
-    }
-
-    /// <summary>
-    /// 创建携带非 null 成功值的泛型结果。
-    /// </summary>
-    /// <typeparam name="T">成功值类型。</typeparam>
-    /// <param name="value">非 null 成功值。</param>
-    /// <returns>已初始化的成功结果。</returns>
-    /// <exception cref="ArgumentNullException">成功值为 null 时抛出。</exception>
-    public static Result<T> Success<T>(T value)
-    {
-        ArgumentNullException.ThrowIfNull(value);
-        return new Result<T>(Result<T>.SuccessStateValue, value, null);
-    }
-
-    /// <summary>
-    /// 创建携带错误的泛型失败结果。
-    /// </summary>
-    /// <typeparam name="T">成功值类型。</typeparam>
-    /// <param name="error">稳定 Kernel 错误对象。</param>
-    /// <returns>已初始化的失败结果。</returns>
-    /// <exception cref="ArgumentNullException">错误对象为 null 时抛出。</exception>
-    public static Result<T> Failure<T>(KernelError error)
-    {
-        ArgumentNullException.ThrowIfNull(error);
-        return new Result<T>(Result<T>.FailureStateValue, default, error);
     }
 
     /// <summary>
@@ -86,7 +57,7 @@ public readonly record struct Result
     }
 
     /// <summary>
-    /// 创建成功结果。
+    /// 创建不携带值的成功结果。
     /// </summary>
     /// <returns>已初始化的成功结果。</returns>
     public static Result Success()
@@ -95,7 +66,7 @@ public readonly record struct Result
     }
 
     /// <summary>
-    /// 创建失败结果。
+    /// 创建不携带值的失败结果。
     /// </summary>
     /// <param name="error">稳定 Kernel 错误对象。</param>
     /// <returns>已初始化的失败结果。</returns>
@@ -105,6 +76,32 @@ public readonly record struct Result
         ArgumentNullException.ThrowIfNull(error);
         return new Result(FailureState, error);
     }
+
+    /// <summary>
+    /// 创建携带非 null 成功值的泛型结果。
+    /// </summary>
+    /// <typeparam name="T">成功值类型。</typeparam>
+    /// <param name="value">非 null 成功值。</param>
+    /// <returns>已初始化的成功结果。</returns>
+    /// <exception cref="ArgumentNullException">成功值为 null 时抛出。</exception>
+    public static Result<T> Success<T>(T value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        return new Result<T>(SuccessState, value, null);
+    }
+
+    /// <summary>
+    /// 创建携带错误的泛型失败结果。
+    /// </summary>
+    /// <typeparam name="T">成功值类型。</typeparam>
+    /// <param name="error">稳定 Kernel 错误对象。</param>
+    /// <returns>已初始化的失败结果。</returns>
+    /// <exception cref="ArgumentNullException">错误对象为 null 时抛出。</exception>
+    public static Result<T> Failure<T>(KernelError error)
+    {
+        ArgumentNullException.ThrowIfNull(error);
+        return new Result<T>(FailureState, default, error);
+    }
 }
 
 /// <summary>
@@ -113,9 +110,6 @@ public readonly record struct Result
 /// <typeparam name="T">成功值类型。</typeparam>
 public readonly record struct Result<T>
 {
-    private const byte SuccessState = 1;
-    private const byte FailureState = 2;
-
     private readonly byte _state;
     private readonly T? _value;
     private readonly KernelError? _error;
@@ -133,8 +127,8 @@ public readonly record struct Result<T>
     /// <exception cref="InvalidOperationException">结果未初始化时抛出。</exception>
     public bool IsSuccess => _state switch
     {
-        SuccessState => true,
-        FailureState => false,
+        Result.SuccessState => true,
+        Result.FailureState => false,
         _ => throw new InvalidOperationException("Result 未初始化。")
     };
 
@@ -157,7 +151,7 @@ public readonly record struct Result<T>
                 throw new InvalidOperationException("Result 未初始化。");
             }
 
-            if (_state != SuccessState)
+            if (_state != Result.SuccessState)
             {
                 throw new InvalidOperationException("失败 Result 没有成功值。");
             }
@@ -179,36 +173,12 @@ public readonly record struct Result<T>
                 throw new InvalidOperationException("Result 未初始化。");
             }
 
-            if (_state != FailureState)
+            if (_state != Result.FailureState)
             {
                 throw new InvalidOperationException("成功 Result 没有 Error。");
             }
 
             return _error!;
         }
-    }
-
-    /// <summary>
-    /// 创建成功结果。
-    /// </summary>
-    /// <param name="value">非 null 成功值。</param>
-    /// <returns>已初始化的成功结果。</returns>
-    /// <exception cref="ArgumentNullException">成功值为 null 时抛出。</exception>
-    public static Result<T> Success(T value)
-    {
-        ArgumentNullException.ThrowIfNull(value);
-        return new Result<T>(SuccessState, value, null);
-    }
-
-    /// <summary>
-    /// 创建失败结果。
-    /// </summary>
-    /// <param name="error">稳定 Kernel 错误对象。</param>
-    /// <returns>已初始化的失败结果。</returns>
-    /// <exception cref="ArgumentNullException">错误对象为 null 时抛出。</exception>
-    public static Result<T> Failure(Error error)
-    {
-        ArgumentNullException.ThrowIfNull(error);
-        return new Result<T>(FailureState, default, error);
     }
 }
