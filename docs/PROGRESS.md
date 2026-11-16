@@ -24,11 +24,11 @@
 
 ## 当前停点
 
-P09 run #53 locked restore 已通过，但 Runtime.Core 两个相对 ProjectReference 层级错误导致类型缺失；另有 CA1711 要求公共 DeferredEventQueue 改名。正在修引用并命名为 DeferredEventBuffer，不 suppress。
+P09 run #54 已成功 restore/build 三个生产项目；唯一失败是测试夹具 RecordingPublisher.Batches 的 CA1859。正在改为具体 List 类型，生产契约不变。
 
 ## 下一步（最多 5 项）
 
-1. 提交 Runtime.Core 引用路径与 DeferredEventBuffer 命名修复。
+1. 提交测试夹具 CA1859 修复并读取下一次 CI。
 2. 读取 locked restore/build/Analyzer/Unit/Architecture 的第一个真实诊断。
 3. 若失败，修实现/锁图/测试，不绕过 P03/P04。
 4. 核对 Demo Command→Result、Query Snapshot、DeferredEvent、上限/注册/未知消息实际证据。

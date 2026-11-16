@@ -405,7 +405,7 @@ public sealed class MessagingTests
     {
         private readonly List<DeferredEventBatch> _batches = [];
 
-        public IReadOnlyList<DeferredEventBatch> Batches => _batches;
+        public List<DeferredEventBatch> Batches => _batches;
 
         public ValueTask PublishAsync(
             DeferredEventBatch batch,
