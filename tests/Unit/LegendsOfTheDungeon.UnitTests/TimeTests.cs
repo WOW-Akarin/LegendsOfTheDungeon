@@ -271,4 +271,13 @@ public sealed class TimeTests
         Assert.Equal(3_600_000, capped.Milliseconds);
         Assert.Equal(0, uncappedSubMillisecond.Milliseconds);
     }
+
+    private sealed class InvalidClock : IClock
+    {
+        public Tick CurrentTick => default;
+
+        public Duration TickDuration => default;
+
+        public Duration MonotonicElapsed => default;
+    }
 }

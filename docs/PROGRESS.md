@@ -24,7 +24,7 @@
 
 ## 当前停点
 
-P07 run #38 已全绿：Unit 69/69、Architecture 16/16、P04/P05 Gate 全部通过。独立源码审查确认无系统时钟/Sleep/System Timer；进入 REVIEW 前补比较运算符与零 TickDuration 防御测试。
+P07 run #38 已全绿。补强提交后自检发现 InvalidClock 夹具漏插入，已在 CI 前主动补齐；继续验证比较运算符与零 TickDuration 防御测试。
 
 ## 下一步（最多 5 项）
 
