@@ -73,6 +73,15 @@
       "allowedProjectReferences": [],
       "allowedPublicApiReferences": [],
       "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/Platform/Concurrency/LegendsOfTheDungeon.Platform.Concurrency/LegendsOfTheDungeon.Platform.Concurrency.csproj",
+      "assemblyName": "LegendsOfTheDungeon.Platform.Concurrency",
+      "role": "PlatformAdapter",
+      "module": null,
+      "allowedProjectReferences": [],
+      "allowedPublicApiReferences": [],
+      "allowedInternalsVisibleTo": []
     }
   ]
 }

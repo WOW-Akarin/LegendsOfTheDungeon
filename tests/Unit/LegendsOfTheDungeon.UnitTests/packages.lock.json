@@ -117,6 +117,9 @@
       },
       "legendsofthedungeon.platform.persistence": {
         "type": "Project"
+      },
+      "legendsofthedungeon.platform.concurrency": {
+        "type": "Project"
       }
     }
   }
