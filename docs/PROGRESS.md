@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `f4da375411e827bab07f23f134ddf1124be01e1b` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P04 / 中文注释与文档质量 Gate / IN_PROGRESS / 文档基线+B（检查器）
+阶段 / 任务 / 状态 / 目标完成度：P04 / 中文注释与文档质量 Gate / REVIEW / 文档基线+B（检查器）
 
 ## 目标与成功条件
 
@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P04 run #17 已证明 CS1591、Generated/ThirdParty 例外、LOTD0002/3/4 全部有效；自审发现 LOTD0005 夹具创建后漏调用，正在补齐第 9 个负例。
+P04 最终实现 CI run #18 已全绿：九组文档 Gate、Solution build、Unit 3/3、Architecture 16/16 和既有三类负向 Gate 全部通过；当前进入独立 REVIEW。
 
 ## 下一步（最多 5 项）
 
-1. 提交 LOTD0005 负例实际调用。
-2. 读取下一次 CI，确认九组文档 Gate 全部按预期通过/失败。
-3. 记录新的 documentation-gate artifact。
-4. 独立核对中文语义 Review、AC 来源规则、新增说明文档中文和 N/A 理由。
-5. 全部出口证据满足后进入 REVIEW。
+1. 独立读取 REVIEW HEAD 的 Directory.Build.props/targets、文档 Gate 脚本、CI 和 Review Checklist。
+2. 核对 REVIEW HEAD 自身九组文档 Gate、Unit/Architecture 和旧负向 Gate 全绿。
+3. 核对 P04/BUILD/CONTEXT/README 状态与相对链接一致。
+4. 确认当前真实 Public 业务 API 抽查仍为有理由的 N/A，而不是漏检。
+5. 无必需问题后将 P04 ACCEPTED，再进入 P05。
 
 ## 修改文件及原因
 
@@ -53,7 +53,8 @@ P04 不改变业务公共契约和状态所有权。新增工程级文档质量 
 | P03 依赖状态 | GitHub，2026-11-16 | PASS | progress/P03.md |
 | P04 run #16 主 Solution | GitHub Actions，2026-11-16 | PASS | run 43804622279 |
 | P04 run #16 缺失 XML 负例 | GitHub Actions，2026-11-16 | FAIL：未触发 CS1591，已定位 targets 设置过晚 | run 43804622279 |
-| P04 run #17 文档 Gate | GitHub Actions，2026-11-16 | PASS（8 项已执行）；自审发现 LOTD0005 未调用，最终证据仍待补 | run 43804767321 / artifact 14196769817 |
+| P04 run #17 文档 Gate | GitHub Actions，2026-11-16 | PASS（8 项已执行）；自审发现 LOTD0005 未调用 | run 43804767321 / artifact 14196769817 |
+| P04 run #18 完整文档 Gate | GitHub Actions，2026-11-16 | PASS：九组 Gate 全部按预期 | run 43804912801 / artifact 14198335563 |
 | 合规/缺失/例外自测夹具 | 尚未实现 | NOT_RUN | 待 CI |
 | 中文语义与复杂逻辑人工 Checklist | 尚未建立 | NOT_RUN | 待 Review |
 
@@ -69,7 +70,7 @@ P04 不改变业务公共契约和状态所有权。新增工程级文档质量 
 2. 核对 main HEAD 与 P04 起始 SHA `f4da375411e827bab07f23f134ddf1124be01e1b`。
 3. 打开 `Directory.Build.targets`、`eng/verify-documentation-gates.sh` 与 CI workflow。
 4. 若 CI 失败，从第一个真实 compiler/MSBuild/脚本失败修复，不 suppress CS1591、不降低 WarningsAsErrors。
-5. 自动 Gate、负例和人工 Review 都满足后进入 REVIEW。
+5. P04 已进入 REVIEW；按 progress/P04.md 当前停点做独立审查。
 
 ## 不应重复执行的操作
 

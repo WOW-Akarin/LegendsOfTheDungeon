@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P04 — IN_PROGRESS
+当前阶段：P04 — REVIEW
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P03 已 ACCEPTED。P04 已启动：正在建立公共 XML 注释编译 Gate、生成/第三方例外校验、中文语义/复杂逻辑/AC 来源人工 Review Checklist。
+P03 已 ACCEPTED。P04 公共 XML 注释编译 Gate、Generated/ThirdParty 例外校验、中文语义/复杂逻辑/AC 来源 Review Checklist 已实现并进入 REVIEW；九组自动 Gate 已由 CI run #18 验证。
 
 ## 阻塞与技术债
 
-当前无 P04 阻塞。真实生产代码目前没有公共业务 API，因此 P04 不人为制造假接口；首批真实 API 注释抽查将在 P05 适用。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P04 阻塞。真实生产代码目前没有公共业务 API，因此核心业务 API 注释抽查为有理由的 N/A；首批真实 API 将在 P05 自动受 P04 Gate 与人工 Checklist 约束。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
