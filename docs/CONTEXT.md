@@ -44,3 +44,8 @@ P00–P20、P24(B)、P26(C) 已正式 ACCEPTED。最新 P26 归档 HEAD `58e8443
 - P21 旧章节中 Pending REVIEW 的说明以此 P22 更新和 docs/progress/P21.md 的最新正式归档为准。
 
 入口：[P22 进度](progress/P22.md)、[WORLD_SPAWN](modules/WORLD_SPAWN.md)、[PROGRESS](PROGRESS.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)。
+
+## P22 初次真实 CI
+
+- 初次代码 HEAD `2b02cde` CI #201 12/12 SUCCESS，307 Unit、16 Architecture、P22 真实五场景 Probe。
+- 已加强 Timers Tick 连续性/过期拒绝、4096 定义上限、旧 Checkpoint 冻结及恢复 Generation 隔离；新的代码 HEAD CI 尚待重跑。

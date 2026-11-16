@@ -469,9 +469,16 @@ public sealed class WorldSpawnRegistry : IWorldTickStep
         Demand(context);
         lock (_gate)
         {
-            if (tick.Value <= _lastTick.Value)
+            if (tick == _lastTick)
             {
                 return Array.AsReadOnly(Array.Empty<WorldSpawnActivation>());
+            }
+
+            // Never accept historical or skipped ticks, even through the direct test/host API.
+            // Otherwise a caller could jump over an observed lifecycle transition or due timer.
+            if (tick < _lastTick || tick != _lastTick.Add(1))
+            {
+                throw new InvalidOperationException("Spawn Timers requires exactly the next logical Tick.");
             }
 
             if (tick > _clock.CurrentTick)

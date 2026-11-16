@@ -47,3 +47,8 @@ P21 实现 #197、独立 REVIEW #198、正式 ACCEPTED #199 各自 11/11 SUCCESS
 ## 下一阶段安全动作
 
 P22 初始实现 HEAD 的 12 Job CI 需实际通过，出现失败先修复；随后独立四视角 REVIEW 和 ACCEPTED HEAD 各自跑全量 CI，不提前推进 P23。
+
+## P22 实现 HEAD 首次真实验证与加固
+
+- 初始 HEAD `2b02cde97635bc0e1943ead2987e3c691e5b0169` CI #201 **12/12 SUCCESS**，307 Unit/16 Architecture、真实 WorldSpawnProbe 五场景全部 PASS。
+- 新增持续开发修正：拒绝定时器 Tick 跳号/回拨、每 World 4096 定义预算、已确认 checkpoint 冻结和不可信 Generation 恢复负向验证。新 HEAD CI 尚未完成，不能用 #201 代替。

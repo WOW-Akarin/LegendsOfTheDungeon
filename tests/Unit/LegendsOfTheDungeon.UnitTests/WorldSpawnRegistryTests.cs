@@ -477,6 +477,122 @@ public sealed class WorldSpawnRegistryTests
                 registry.Capture(captured!)).Fault);
     }
 
+    [Fact]
+    public void SkippedAndHistoricalTimersTicksAreRejectedButDuplicateTickIsIdempotent()
+    {
+        var (world, executor, clock, registry) = Create();
+        RegisterAndLoad(world, executor, registry, Def(1, 10));
+        clock.AdvanceTicks(4);
+        Run(executor, ctx =>
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+                registry.Advance(ctx, new Tick(3)));
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                registry.Advance(ctx, new Tick(5)));
+            Assert.Equal((ulong)0, registry.LastProcessedTick.Value);
+            Assert.Single(registry.Advance(ctx, new Tick(1)));
+            Assert.Empty(registry.Advance(ctx, new Tick(1)));
+            Assert.Throws<InvalidOperationException>(() =>
+                registry.Advance(ctx, new Tick(0)));
+            Assert.Throws<InvalidOperationException>(() =>
+                registry.Advance(ctx, new Tick(4)));
+        });
+        Assert.Equal((ulong)1, registry.LastProcessedTick.Value);
+        Assert.Equal(1, world.LiveCount);
+    }
+
+    [Fact]
+    public void RegistryBudgetIsBoundedWithoutSpawningAnyEntities()
+    {
+        var (world, executor, _, registry) = Create();
+        Run(executor, ctx =>
+        {
+            for (ulong i = 1; i <= 4096; i++)
+            {
+                Assert.Equal(WorldSpawnResult.Registered,
+                    registry.RegisterStatic(ctx, Def(i, i + 10)));
+            }
+            Assert.Equal(WorldSpawnResult.CapacityExceeded,
+                registry.RegisterStatic(ctx, Def(4097, 4107)));
+        });
+        Assert.Equal(4096, registry.Count);
+        Assert.Equal(0, world.LiveCount);
+        Assert.Equal(0, world.SpatialCellCount);
+    }
+
+    [Fact]
+    public void CapturedCheckpointRemainsImmutableWhenTimerStateChanges()
+    {
+        var (world, executor, clock, registry) = Create();
+        RegisterAndLoad(world, executor, registry, Def(1, 10, delay: 150));
+        var first = Assert.Single(Step(executor, clock, registry));
+        WorldSpawnCheckpoint? before = null;
+        WorldSpawnCheckpoint? after = null;
+        Run(executor, ctx =>
+        {
+            before = registry.Capture(ctx);
+            Assert.Equal(WorldSpawnResult.Despawned, registry.Despawn(ctx, Key(1)));
+            after = registry.Capture(ctx);
+        });
+        Assert.NotNull(before);
+        Assert.NotNull(after);
+        Assert.Equal(WorldSpawnStatus.Active, before.Entries[0].Status);
+        Assert.Equal(first.Identity, before.Entries[0].Current);
+        Assert.Null(before.Entries[0].DueTick);
+        Assert.Equal(WorldSpawnStatus.Waiting, after.Entries[0].Status);
+        Assert.Equal(new Tick(4), after.Entries[0].DueTick);
+        Assert.Null(after.Entries[0].Current);
+        Assert.True(after.Version > before.Version);
+        Assert.Equal(0, world.LiveCount);
+    }
+
+    [Fact]
+    public void RecoveryRefusesUnverifiedNewGenerationAndRetainsExactlyOneLiveInstance()
+    {
+        var (world, executor, clock, registry) = Create();
+        RegisterAndLoad(world, executor, registry, Def(1, 10));
+        var first = Assert.Single(Step(executor, clock, registry));
+        WorldSpawnCheckpoint? checkpoint = null;
+        Run(executor, ctx => checkpoint = registry.Capture(ctx));
+        var (freshWorld, freshExecutor, freshClock, _) = Create(initialTick: 1);
+        var unrelated = new EntityIdentity(freshWorld.World, freshWorld.Epoch,
+            first.Identity.Id, new EntityGeneration(2));
+        Run(freshExecutor, ctx =>
+        {
+            Assert.Equal(WorldEntityResult.Spawned, freshWorld.Spawn(ctx,
+                new WorldEntitySeed(unrelated, Def(1, 10).Transform)));
+        });
+        WorldSpawnRegistry? restored = null;
+        Run(freshExecutor, ctx =>
+        {
+            restored = WorldSpawnRegistry.Restore(ctx, freshWorld, freshClock, checkpoint!);
+            Assert.Equal(WorldSpawnResult.RecoveryPending,
+                restored.ConfirmRecovered(ctx, Key(1), first.Identity));
+            Assert.Equal(WorldSpawnResult.RecoveryPending,
+                restored.ConfirmRecovered(ctx, Key(1), unrelated));
+        });
+        Assert.True(restored!.TryGet(Key(1), out var held));
+        Assert.Equal(WorldSpawnStatus.RecoveryHold, held.Status);
+        Assert.Empty(Step(freshExecutor, freshClock, restored));
+        Assert.Equal(1, freshWorld.LiveCount);
+        Assert.True(freshWorld.TryGetSnapshot(unrelated.Id, out var canonical));
+        Assert.Equal(unrelated, canonical.Identity);
+    }
+
+    [Fact]
+    public void RestoreWithOlderClockThanCheckpointFailsBeforePublishingRegistry()
+    {
+        var (world, executor, clock, registry) = Create();
+        RegisterAndLoad(world, executor, registry, Def(1, 10));
+        Assert.Single(Step(executor, clock, registry));
+        WorldSpawnCheckpoint? checkpoint = null;
+        Run(executor, ctx => checkpoint = registry.Capture(ctx));
+        var (freshWorld, freshExecutor, freshClock, _) = Create();
+        Run(freshExecutor, ctx => Assert.Throws<InvalidOperationException>(() =>
+            WorldSpawnRegistry.Restore(ctx, freshWorld, freshClock, checkpoint!)));
+        Assert.Equal(0, freshWorld.LiveCount);
+    }
+
     private sealed class Work(Action<IWorldWriteContext> action) : IWorldAction
     {
         public void Execute(IWorldWriteContext context) => action(context);

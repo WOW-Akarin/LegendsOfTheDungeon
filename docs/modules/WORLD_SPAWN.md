@@ -14,7 +14,7 @@
 ## RespawnTimer 与 LinkedRespawn
 
 - `WorldSpawnRegistry` 实现 `IWorldTickStep`，固定 `Phase = Timers`、`Key = world.spawn-respawn`，被 P19 `WorldTickPipeline` 以固定 Phase/Key 次序调度。无系统 `Timer`、真实 DateTime 或后台写入。
-- 静态实体退休时由 `LogicalTimer.Start(IClock,RespawnDelay)` 计算单调到期逻辑 Tick，时长向上对齐至固定 TickDuration；在此之前不会重生，到期仍需 Cell Active。0 延迟也不会在**同一个已处理 Tick**重复生成，每次成功 `Advance` 只处理一次 Tick。
+- 静态实体退休时由 `LogicalTimer.Start(IClock,RespawnDelay)` 计算单调到期逻辑 Tick，时长向上对齐至固定 TickDuration；在此之前不会重生，到期仍需 Cell Active。Ticker 必须严格逐 Tick 连续，重复同 Tick 幂等，跳号与历史 Tick 拒绝（不发布部分结果）。0 延迟也不会在**同一个已处理 Tick**重复生成，每次成功 `Advance` 只处理一次 Tick。
 - 对不经 Registry、直接通过 P17 销毁的已确认实例，下一次 Timers 阶段核对到它已退休，再新建完整 Timer；如果 P17 EntityId 被其它活跃 Generation 占据，进入 `RecoveryHold` 而不试图抢占或重复创建。
 - `SetLinkedRespawn(child,parent)` 只允许存在的静态 Spawn Key，形成父子有向关系：**子节点必须等其父 Spawn 对应实体真实 Active 后才能生成**。自环、两节点环和任意跨链环均用有界图遍历拒绝。执行顺序按依赖深度、再按稳定 SpawnKey 排序，避免随机字典顺序导致子节点先于父节点。
 - 当前 LinkedRespawn 是确定性父活动门槛，不主动级联杀死存活的子实例。完整 AI/战斗联动待后续阶段；不能将本阶段解释为通用群组战斗机制。
@@ -33,3 +33,8 @@
 - 独立 `WorldSpawnProbe` 使用真实 WorldExecutor、WorldInstance、WorldSpatialIndex 与 FakeClock，覆盖防重复、LinkedRespawn、Cell 卸载、动态一次性和崩溃恢复，共 5 个场景；通过时输出 `P22_WORLD_SPAWN_INTEGRATION_PASS`。
 - CI 新增第 12 个阻断 `world-spawn` Job：.NET 10.0.404、locked restore、Release Probe 和 Artifact；此前 11 个阻断集成与单元、架构、P02–P05 全部持续有效。
 - C 级正式验收需**实现 HEAD、独立 REVIEW HEAD、正式 ACCEPTED HEAD** 分别运行 12/12 SUCCESS，再归档真实记录；任何失败先修复不得削弱质量 Gate。
+
+## 初次代码 HEAD 的真实 CI
+
+- 实现 `2b02cde` CI #201：12/12 SUCCESS，307 Unit / 16 Architecture；独立 WorldSpawnProbe 验证唯一注册、FakeClock、关联环、Grid 卸载、动态点和崩溃防副本。
+- 首次成功后审查补强了跳 Tick 拒绝、4096 条定义预算、Checkpoint 旧快照冻结和完整 Generation 恢复防冒认，新 HEAD 尚需再跑全部 12 Job，**不可提前 ACCEPTED**。
