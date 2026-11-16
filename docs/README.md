@@ -29,6 +29,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [progress/P15.md](progress/P15.md)：P15 JSON/SQL 数据加载阶段记录
 - [progress/P16.md](progress/P16.md)：P16 验证、冻结、受控 Reload 阶段记录
 - [modules/CATALOG_RELOAD.md](modules/CATALOG_RELOAD.md)：P16 整包引用、Tick 边界替换及版本 Pin/Replay 契约
+- [reviews/P16_CATALOG_REVIEW.md](reviews/P16_CATALOG_REVIEW.md)：P16 四视角独立审查
 - [modules/STATIC_DATA.md](modules/STATIC_DATA.md)：P15 通用 Schema、JSON/SQL 来源、版本 Hash 与冻结索引契约
 - [reviews/P15_STATIC_DATA_REVIEW.md](reviews/P15_STATIC_DATA_REVIEW.md)：P15 JSON/SQL 独立四视角审查
 - [modules/DIAGNOSTICS.md](modules/DIAGNOSTICS.md)：P14 固定维度指标、健康、Trace 与慢操作契约
@@ -41,7 +42,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M1 基础。  
-当前阶段：P16 — Catalog Validator / Freeze / Reload，**IN_PROGRESS**。P00–P15 已验收；P16.F/P16.R 已启动，尚无验收证据，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P16 — Catalog Validator / Freeze / Reload，**REVIEW**。P00–P15 已验收；P16 实现 #144 五 Job 全绿，独立 REVIEW/ACCEPTED HEAD 尚待 CI，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 
