@@ -24,11 +24,11 @@
 
 ## 当前停点
 
-P09 run #54 已成功 restore/build 三个生产项目；唯一失败是测试夹具 RecordingPublisher.Batches 的 CA1859。正在改为具体 List 类型，生产契约不变。
+P09 run #55 已全绿：Unit 97/97、Architecture 16/16、P04/P05 Gate 全部通过。Review 发现取消测试只覆盖预取消，正在补 Handler enqueue 后取消的 discard 证据。
 
 ## 下一步（最多 5 项）
 
-1. 提交测试夹具 CA1859 修复并读取下一次 CI。
+1. 提交取消后 discard 行为补强并读取最终实现 CI。
 2. 读取 locked restore/build/Analyzer/Unit/Architecture 的第一个真实诊断。
 3. 若失败，修实现/锁图/测试，不绕过 P03/P04。
 4. 核对 Demo Command→Result、Query Snapshot、DeferredEvent、上限/注册/未知消息实际证据。

@@ -81,12 +81,13 @@ public sealed class MessagingTests
     {
         var cancellationPublisher = new RecordingPublisher();
         var cancellationDispatcher = new CommandDispatcher(cancellationPublisher);
-        cancellationDispatcher.Register(new CancellingHandler());
+        using var cancellationSource = new CancellationTokenSource();
+        cancellationDispatcher.Register(new CancellingHandler(cancellationSource));
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
             async () => await cancellationDispatcher.DispatchAsync(
                 new CancellingCommand(new CommandId(21), V1),
-                new CancellationToken(canceled: true)));
+                cancellationSource.Token));
 
         Assert.Empty(cancellationPublisher.Batches);
 
@@ -345,7 +346,7 @@ public sealed class MessagingTests
         MessageVersion Version)
         : ICommand<DemoRenameResult>;
 
-    private sealed class CancellingHandler
+    private sealed class CancellingHandler(CancellationTokenSource cancellationSource)
         : ICommandHandler<CancellingCommand, DemoRenameResult>
     {
         public ValueTask<Result<DemoRenameResult>> HandleAsync(
@@ -356,6 +357,7 @@ public sealed class MessagingTests
             _ = deferredEvents.EnqueueRoot(
                 new DemoSignalEvent(V1, "must-discard"));
 
+            cancellationSource.Cancel();
             cancellationToken.ThrowIfCancellationRequested();
             throw new InvalidOperationException("取消测试应先抛 OperationCanceledException。");
         }
