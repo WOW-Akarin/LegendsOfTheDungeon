@@ -33,6 +33,16 @@
         "dependencies": {
           "LegendsOfTheDungeon.Kernel": "[1.0.0, )"
         }
+      },
+      "legendsofthedungeon.entities.core": {
+        "type": "Project",
+        "dependencies": {
+          "LegendsOfTheDungeon.Kernel": "[1.0.0, )",
+          "LegendsOfTheDungeon.Runtime.Abstractions": "[1.0.0, )"
+        }
+      },
+      "legendsofthedungeon.platform.concurrency": {
+        "type": "Project"
       }
     }
   }
