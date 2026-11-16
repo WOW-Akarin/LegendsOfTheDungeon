@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P09 — IN_PROGRESS
+当前阶段：P09 — REVIEW
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P00–P08 已 ACCEPTED。P09 已启动：正在建立 Kernel 消息/DeferredEvent 契约、Runtime Handler/Dispatcher 端口与 Runtime.Core 显式注册/分发；禁止全局 Service Locator。
+P00–P08 已 ACCEPTED。P09 Command/Query/Event 已实现并进入 REVIEW：Kernel 消息与 DeferredEventBuffer、Runtime Handler/Dispatcher 端口、Runtime.Core 显式注册/分发，以及 test-only 示例链路均已由 CI 验证。
 
 ## 阻塞与技术债
 
-当前无 P09 阻塞。Query 必须返回与可变领域状态断开的 Snapshot；事件发布只发生在 Command Handler 成功返回之后。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P09 阻塞。Runtime.Core 不提供 Service Locator；Query Snapshot 示例无 public setter/field；失败/取消/异常不发布 DeferredEvent，成功提交后才 publish。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 

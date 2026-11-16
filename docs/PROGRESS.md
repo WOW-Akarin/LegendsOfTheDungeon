@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `8bbedd6bf96a224317b032d802d11e774fca1ff7` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P09 / Command / Query / Event / IN_PROGRESS / B
+阶段 / 任务 / 状态 / 目标完成度：P09 / Command / Query / Event / REVIEW / B
 
 ## 目标与成功条件
 
@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P09 run #55 已全绿：Unit 97/97、Architecture 16/16、P04/P05 Gate 全部通过。Review 发现取消测试只覆盖预取消，正在补 Handler enqueue 后取消的 discard 证据。
+P09 最终实现 CI run #56 已全绿：Unit 97/97、Architecture 16/16、P04/P05 Gate 全部通过；取消 enqueue 后 discard、Service Locator 搜索和 Runtime.Core 架构/lock 自审通过，当前进入独立 REVIEW。
 
 ## 下一步（最多 5 项）
 
-1. 提交取消后 discard 行为补强并读取最终实现 CI。
-2. 读取 locked restore/build/Analyzer/Unit/Architecture 的第一个真实诊断。
-3. 若失败，修实现/锁图/测试，不绕过 P03/P04。
-4. 核对 Demo Command→Result、Query Snapshot、DeferredEvent、上限/注册/未知消息实际证据。
-5. 独立自审无 Service Locator、Query 不泄漏可变对象后进入 REVIEW。
+1. 独立读取 REVIEW HEAD 的 Kernel Messaging、Runtime 端口/dispatcher 与 MessagingTests。
+2. 核对 REVIEW HEAD 自身 Unit 97+、Architecture、P04/P05 Gate 全绿。
+3. 核对 Runtime.Core P03 白名单、Solution、lock graph 与真实引用一致。
+4. 重查无 Service Locator、Kernel 无 Handler registry、Query Snapshot 无可变公开成员。
+5. 无必需问题后将 P09 ACCEPTED，再进入 P10。
 
 ## 契约、数据所有权与 ADR 变化
 
@@ -47,8 +47,8 @@ P09 run #55 已全绿：Unit 97/97、Architecture 16/16、P04/P05 Gate 全部通
 | 命令/检查 | 环境与时间 | 结果 | 报告 |
 |---|---|---|---|
 | P08 依赖状态 | GitHub Actions，2026-11-16 | PASS | progress/P08.md |
-| P09 Unit | 尚未实现 | NOT_RUN | 待 CI |
-| Architecture/P04/P05 回归 | 尚未执行 P09 HEAD | NOT_RUN | 待 CI |
+| P09 Unit | GitHub Actions，2026-11-16 | PASS：97/97 | run 43813919670 / artifact 14201089332 |
+| Architecture/P04/P05 回归 | GitHub Actions，2026-11-16 | PASS：Architecture 16/16 + 文档/Strong ID Gate | run 43813919670 |
 
 ## 风险与未验证假设
 
