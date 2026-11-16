@@ -1,0 +1,6 @@
+<Project>
+  <!-- 仅用于 P02 CI Gate 自测；正常构建不触发。 -->
+  <Target Name="LotdInjectedBuildFailure" BeforeTargets="CoreCompile" Condition="'$(LOTD_INJECT_BUILD_FAILURE)' == 'true'">
+    <Error Text="P02 intentional build failure gate." />
+  </Target>
+</Project>

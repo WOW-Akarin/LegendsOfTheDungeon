@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj" />
+  <Project Path="src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj" />
+  <Project Path="tests/Unit/LegendsOfTheDungeon.UnitTests/LegendsOfTheDungeon.UnitTests.csproj" />
+  <Project Path="tests/Architecture/LegendsOfTheDungeon.ArchitectureTests/LegendsOfTheDungeon.ArchitectureTests.csproj" />
+</Solution>

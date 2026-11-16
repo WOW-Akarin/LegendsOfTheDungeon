@@ -23,19 +23,19 @@
 
 ## 当前停点
 
-P02 已启动。下一步创建工程骨架与 CI，让 CI 首次实际验证 SDK 10.0.404 和构建链路。
+P02 工程骨架与 CI 已落库，正在读取 GitHub Actions 的首次真实验证结果；当前仍为 IN_PROGRESS。
 
 ## 下一步（最多 5 项）
 
-1. 创建 global.json、Solution、Directory.Build.props、Directory.Packages.props、NuGet.config。
-2. 仅创建 Kernel、Runtime.Abstractions 和必要测试项目，避免空项目泛滥。
-3. 创建统一验证脚本与 GitHub Actions CI。
-4. 推送后读取实际 workflow run、日志和测试产物结论。
-5. 通过独立 Review 与负向 Gate 后再将 P02 ACCEPTED。
+1. 读取本次 push 触发的 GitHub Actions workflow run。
+2. 若失败，从第一个真实失败修复，不弱化 Gate。
+3. CI 通过后记录 dotnet --info、restore/build/test/architecture-test 和负向 Gate 结果。
+4. 更新 ADR-0002 的精确 SDK 验证事实。
+5. 独立 Review 通过后将 P02 ACCEPTED。
 
 ## 修改文件及原因
 
-本次启动提交仅更新进度/上下文并创建 P02 阶段证据；工程文件在下一实现提交落库。
+已创建工程基线、2 个生产项目、2 个测试项目、统一验证脚本与 GitHub Actions CI。
 
 ## 契约、数据所有权与 ADR 变化
 

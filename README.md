@@ -15,3 +15,10 @@ LegendsOfTheDungeon（副本霸主）服务端项目。
 Phase 0：源码盘点、架构设计、依赖分析与首批 Task Card。
 
 > 当前仅完成仓库初始化，尚未迁移源码或建立可运行的服务端。
+
+## 开发验证
+
+- SDK：由 `global.json` 固定；P02 使用 GitHub Actions 实际验证。
+- 统一正向验证：`./eng/verify.sh`
+- CI Gate 负向自测：`./eng/verify-negative-gates.sh`
+- 工程与阶段证据：[docs/PROGRESS.md](docs/PROGRESS.md)
