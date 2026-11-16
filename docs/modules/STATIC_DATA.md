@@ -27,7 +27,7 @@
 ```
 
 - 元数据只允许 `catalog`、`schemaVersion`、`dataVersion`、`records`。JSON `schemaVersion` 与领域 Schema 必须相等，`dataVersion` 与调用方预期版本必须相等；不得静默升级/降级。
-- 每条记录必须有非空字符串 `id`（NFC、最多 64 字符）；Schema 显式声明其它字段及必填、标量类型与最大文本长度。字段最多 64 个；所有重复字段、重复 ID、未知字段、错误类型/范围和显式 null 均拒绝。可选字段未出现时保持缺失，不隐式填入默认值。
+- 每条记录必须有非空字符串 `id`（NFC、最多 64 UTF-16 字符、禁止控制字符）；Schema 显式声明其它字段及必填、标量类型与最大文本长度。字段最多 64 个；所有重复字段、重复 ID、未知字段、错误类型/范围和显式 null 均拒绝。可选字段未出现时保持缺失，不隐式填入默认值。
 - Text 统一 Unicode NFC；WholeNumber 使用 Int64，FixedPoint 使用 .NET decimal 的文化无关规范字符串（1.00、1e0 → 1）；Boolean 为 true/false。拒绝 JSON 数字串伪装整数，不将浮点近似当作 decimal。
 - 整个 JSON 文档最大 4 MiB、Catalog 最多 10,000 条记录；解析嵌套深度固定上限，禁止注释/尾随逗号。加载中任何错误都不会返回部分 Catalog。
 - `StaticCatalogException` 的稳定字段：`Fault`、`SourceName`（受检安全标识）、`RowIndex`（1-based，文档级为 0）、`FieldName`。异常 `Message` 只有稳定错误码，不包含输入值、文件路径、SQL/连接串/凭证原文。
@@ -60,7 +60,7 @@ CREATE TABLE public.lotd_static_catalog_rows (
 
 - 使用 P11 的 `ParameterizedCommand/SqlParameterValue` 绑定 `@catalog`、`@schema_version`、`@data_version`、`@max_bytes` 与 `@record_limit`；查询文本固定、排序 `COLLATE "C"`，无用户拼接表名、列名、where SQL。
 - 一个 `RepeatableRead` 事务完成版本头和多行内容读取，构建冻结成功且读事务成功提交后才向调用者返回。数据库出错或版本不匹配则不发布部分目录。
-- 记录只读取 `最多 10,001` 条哨兵记录，超过 10,000 直接拒绝；SQL 先以 `octet_length(payload_json::text)` 限制超大单行，读取时累计限制整个 JSONB 行 payload 为 4 MiB，避免巨量结果集无限积压。SQL `record_id` 必须与 JSONB payload 的规范化 `id` 完全一致。
+- 记录只读取 `最多 10,001` 条哨兵记录，超过 10,000 直接拒绝；SQL 先以 `octet_length(payload_json::text)` 限制超大单行，读取时累计限制整个 JSONB 行 payload 为 4 MiB，避免巨量结果集无限积压。SQL `record_id` 最多读取 64 个 Unicode 字符，先规范化 NFC，再与 JSONB payload 的规范化 `id` 比较；超过硬长度或包含控制字符会被拒绝。
 - JSONB 对象交给相同的 `JsonStaticCatalogLoader.ParseRecord`；再经相同 `StaticCatalogBuilder` 冻结。错误定位来源、行号、字段，但不会返回原始 PostgreSQL 异常文本或 JSONB 内容。
 - 目前 SQL 表结构由真实 PostgreSQL Integration Probe 建立；本阶段**不**宣称生产业务迁移已接线，不包括跨目录事务重载/P16。
 

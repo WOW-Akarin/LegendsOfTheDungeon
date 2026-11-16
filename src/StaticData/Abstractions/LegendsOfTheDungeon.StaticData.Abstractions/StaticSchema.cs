@@ -275,6 +275,11 @@ public sealed class StaticDataRow
             }
 
             ArgumentNullException.ThrowIfNull(pair.Value);
+            if (fields.Count >= StaticCatalogLimits.MaximumFields)
+            {
+                throw new ArgumentException("中立行字段数量超出硬上限。", nameof(values));
+            }
+
             if (!fields.TryAdd(pair.Key, pair.Value))
             {
                 throw new ArgumentException("重复字段。", nameof(values));

@@ -161,6 +161,17 @@ public sealed class StaticDataTests
     }
 
     [Fact]
+    public void NeutralRowCannotAcceptMoreThanMaximumFields()
+    {
+        var untrusted = Enumerable.Range(0, StaticCatalogLimits.MaximumFields + 1)
+            .Select(static i => new KeyValuePair<string, StaticScalar>(
+                "field_" + i, StaticScalar.FromText("x")));
+        Assert.Throws<ArgumentException>(() => new StaticDataRow("safe", untrusted));
+        Assert.Throws<ArgumentException>(() => new StaticDataRow("bad\nid",
+            Array.Empty<KeyValuePair<string, StaticScalar>>()));
+    }
+
+    [Fact]
     public void EmptyCatalogProducesStableHashAndMissingRecord()
     {
         var empty = Load(Envelope(""));
