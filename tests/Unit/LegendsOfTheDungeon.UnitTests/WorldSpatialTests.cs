@@ -328,8 +328,13 @@ public sealed class WorldSpatialTests
     private static Position RandomPosition(Random random) =>
         new(random.Next(-300, 301), random.Next(-300, 301), random.Next(-120, 121));
 
-    private static double DistanceBetween(Position one, Position other) =>
-        Math.Hypot(Math.Hypot(one.X - other.X, one.Y - other.Y), one.Z - other.Z);
+    private static double DistanceBetween(Position one, Position other)
+    {
+        var dx = one.X - other.X;
+        var dy = one.Y - other.Y;
+        var dz = one.Z - other.Z;
+        return Math.Sqrt(dx * dx + dy * dy + dz * dz);
+    }
 
     private sealed class Work(Action<IWorldWriteContext> action) : IWorldAction
     {

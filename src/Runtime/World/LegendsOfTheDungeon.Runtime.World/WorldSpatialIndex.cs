@@ -315,7 +315,24 @@ internal sealed class WorldSpatialIndex
         var dx = AxisDistance(center.X, x, x + _size);
         var dy = AxisDistance(center.Y, y, y + _size);
         var dz = AxisDistance(center.Z, z, z + _size);
-        return Math.Hypot(Math.Hypot(dx, dy), dz) <= radius.Meters;
+        return Within(dx, dy, dz, radius.Meters);
+    }
+
+    // Scale by radius before squaring to avoid overflow for large but finite coordinates.
+    internal static bool IsWithin(Position point, Position center, double radius) =>
+        Within(point.X - center.X, point.Y - center.Y, point.Z - center.Z, radius);
+
+    private static bool Within(double dx, double dy, double dz, double radius)
+    {
+        if (radius == 0)
+        {
+            return dx == 0 && dy == 0 && dz == 0;
+        }
+
+        var x = dx / radius;
+        var y = dy / radius;
+        var z = dz / radius;
+        return x * x + y * y + z * z <= 1;
     }
 
     private static double AxisDistance(double value, double min, double max) =>

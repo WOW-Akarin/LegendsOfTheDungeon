@@ -380,13 +380,8 @@ public sealed class WorldInstance
         new(entry.Identity, entry.State, entry.Capabilities.Transform.Value,
             entry.Capabilities.Life.State, entry.Capabilities.Target.State.Selected);
 
-    private static bool IsWithin(Position point, Position center, double radius)
-    {
-        var dx = point.X - center.X;
-        var dy = point.Y - center.Y;
-        var dz = point.Z - center.Z;
-        return Math.Hypot(Math.Hypot(dx, dy), dz) <= radius;
-    }
+    private static bool IsWithin(Position point, Position center, double radius) =>
+        WorldSpatialIndex.IsWithin(point, center, radius);
 
     /// <summary>只在有效 P18 Scope 内复制完整代际墓碑并按 EntityId 固定排序。</summary>
     internal IReadOnlyList<WorldEntitySnapshot> SnapshotForTick(IWorldWriteContext context)

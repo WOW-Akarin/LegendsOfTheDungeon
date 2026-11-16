@@ -279,8 +279,13 @@ static double Percentile(double[] samples, double quantile)
 static Position RandomPosition(Random random) =>
     new(random.Next(-400, 401), random.Next(-400, 401), random.Next(-150, 151));
 
-static double DistanceTo(Position first, Position second) =>
-    Math.Hypot(Math.Hypot(first.X - second.X, first.Y - second.Y), first.Z - second.Z);
+static double DistanceTo(Position first, Position second)
+{
+    var dx = first.X - second.X;
+    var dy = first.Y - second.Y;
+    var dz = first.Z - second.Z;
+    return Math.Sqrt(dx * dx + dy * dy + dz * dz);
+}
 
 internal sealed class Work(Action<IWorldWriteContext> action) : IWorldAction
 {
