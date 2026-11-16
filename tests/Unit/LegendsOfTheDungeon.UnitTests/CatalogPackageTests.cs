@@ -137,7 +137,7 @@ public sealed class CatalogPackageTests
                 Rule("links", "ref", "nodes")
             ]));
         Assert.Equal(CatalogPackageFault.ReferenceCycle, cycle.Fault);
-        Assert.Equal("links", cycle.Catalog);
+        Assert.Equal("nodes", cycle.Catalog);
         Assert.Equal(1, cycle.RowIndex);
     }
 
@@ -207,7 +207,7 @@ public sealed class CatalogPackageTests
     }
 
     [Fact]
-    public void MalformedNewPackageAndCancelledPreparationLeavePreviousVisible()
+    public async Task MalformedNewPackageAndCancelledPreparationLeavePreviousVisibleAsync()
     {
         var old = Package(1, Row("a", "good"));
         var registry = new CatalogReloadCoordinator(old);
@@ -219,9 +219,9 @@ public sealed class CatalogPackageTests
         Assert.Same(old, registry.Current);
         using var cancelled = new CancellationTokenSource();
         cancelled.Cancel();
-        Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
             registry.PrepareAsync(_ => Task.FromResult(Package(2, Row("a", "new"))),
-                cancelled.Token)).GetAwaiter().GetResult();
+                cancelled.Token));
         Assert.Same(old, registry.Current);
         using var firstTick = registry.CaptureTick(1);
         firstTick.Dispose();
@@ -290,9 +290,8 @@ public sealed class CatalogPackageTests
         using (var tick = registry.CaptureTick(2)) { }
         registry.CommitAtBoundary(2, next);
         Assert.Null(registry.FindRetained(1, v1.ContentHash));
-        Assert.NotNull(registry.FindRetained(2, next.Candidate.ContentHash) is null
-            ? registry.RetainedSnapshots().Single(x => x.Version == 2).ContentHash
-            : next.Candidate.ContentHash);
+        Assert.Equal([2, 3], registry.RetainedSnapshots().Select(x => x.Version));
+        Assert.NotNull(registry.FindRetained(3, next.Candidate.ContentHash));
         Assert.Equal(2, registry.RetainedSnapshots().Count);
     }
 
