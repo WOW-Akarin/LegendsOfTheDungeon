@@ -29,7 +29,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M1 基础。  
-当前阶段：P12 — Platform Concurrency，**REVIEW**。P00–P11 已完成验收，P12 代码与真实并发验证 #83 已 PASS；最终独立验收 HEAD 尚待 CI，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P12 — Platform Concurrency，**ACCEPTED**。P00–P12 已验收；下一阶段 P13 — Networking.Transport 尚未开始，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 
