@@ -1,6 +1,6 @@
 # P26 — Control / Ownership / Tags 技术契约
 
-状态：REVIEW（目标 C）；P24/P17/P18 已 ACCEPTED。稳定实现 HEAD `7689a25d88924511cb508127e25d1aa38cc06e43` CI #192 十 Job 全部 SUCCESS；独立 REVIEW HEAD CI 待验证。
+状态：ACCEPTED（目标 C）；P24/P17/P18 已 ACCEPTED。稳定实现 #192 与独立 REVIEW HEAD `3f8e80ade8b42fd9b21e543ea4530835c7924718` CI #193 均十 Job SUCCESS；正式 ACCEPTED HEAD CI 待核验。
 
 ## 实体能力与唯一拥有者
 
@@ -38,3 +38,7 @@
 
 - #192（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43910885713）**10/10 SUCCESS**，275/275 Unit、16/16 Architecture；P26 Probe 包括双独立控制来源、四角色环/销毁清理、旧代际与失效租约、回放一致、同 Tick 来源历史 Hash 差异五场景。
 - #189 CA1711 与 #190 跨种类撤销漏洞真实失败均保留并修复；#191 首次十 Job 全绿，#192 增加三类特定回归后又十 Job 全绿。独立审查：[P26_CONTROL_OWNERSHIP_REVIEW](../reviews/P26_CONTROL_OWNERSHIP_REVIEW.md)。
+
+## 独立审查与验收
+
+[P26 四视角审查](../reviews/P26_CONTROL_OWNERSHIP_REVIEW.md) 的 REVIEW HEAD `3f8e80ade8b42fd9b21e543ea4530835c7924718` 经 #193 十 Job SUCCESS，确认 C 阶段阻塞项 0，已正式 ACCEPTED。正式验收 HEAD CI 仍须单独核验；P21 Enter/Leave 尚未实现。

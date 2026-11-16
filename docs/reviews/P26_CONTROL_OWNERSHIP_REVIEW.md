@@ -1,9 +1,10 @@
 # P26 — Control / Ownership / Tags 独立四视角审查
 
-- 状态：REVIEW，目标 C，**尚未正式 ACCEPTED**
+- 状态：ACCEPTED，目标 C
 - 稳定实现 HEAD：`7689a25d88924511cb508127e25d1aa38cc06e43`
 - 实现 CI #192：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43910885713，10/10 SUCCESS
-- 独立 REVIEW HEAD：本次审查提交，CI NOT_RUN；正式 ACCEPTED HEAD：NOT_RUN
+- 独立 REVIEW HEAD：`3f8e80ade8b42fd9b21e543ea4530835c7924718`，CI #193（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43911621160）10/10 SUCCESS
+- 正式 ACCEPTED HEAD：本次状态提交，CI NOT_RUN
 - 直接依赖 P24 已正式 ACCEPTED；P17/P18/P19/P20 的世界集成/租约/Hash/Spatial 也已验收。未创建分支，main 直接更新。
 
 ## 1. 功能与不变量
@@ -42,11 +43,11 @@
 | 原有 WorldExecutor/WorldLifecycle/WorldTick/WorldSpatial + PostgreSQL/网络/诊断集成 | PASS |
 | 独立 P26 `world-control` 集成 | PASS（P26_WORLD_CONTROL_INTEGRATION_PASS） |
 | 完整 CI | **10/10 SUCCESS** |
-| 独立 REVIEW HEAD CI | NOT_RUN |
+| 独立 REVIEW HEAD CI | **10/10 SUCCESS**，run #193，275 Unit / 16 Architecture |
 | 正式 ACCEPTED HEAD CI | NOT_RUN |
 
 透明失败链：#189 新领域 [Flags] 枚举命名 CA1711 FAIL，#190 真实测试发现 Tag.Revoke 跨种类句柄误撤销（271/272 Unit），#191 修正后首次 10/10 SUCCESS，#192 源历史 Hash/容量/旧句柄加固后 10/10 SUCCESS。**未放松分析器或跳过真实负向测试。**
 
 ## 审查结论与下一安全动作
 
-P26 C 必需能力的控制多来源、临时 Tag、四关系、循环与清理、确定性来源摘要、真实 P18 写租约等已有实现及可复验的 CI 证据；审查中未发现当前 C 出口内必须立即修复的阻塞。**但本独立 REVIEW HEAD 尚未完成 CI，因此状态仍是 REVIEW**。本提交十 Job 全部 SUCCESS 后，才能正式 ACCEPTED 并再单独核验验收 HEAD；完成之后才可启动依赖它的 P21 Visibility。
+P26 C 必需能力的控制多来源、临时 Tag、四关系、循环与清理、确定性来源摘要、真实 P18 写租约等已有实现及可复验的 CI 证据；审查中未发现当前 C 出口内必须立即修复的阻塞。独立 REVIEW HEAD run #193 十 Job 全部 SUCCESS，P26 C 必修缺口 0，**正式 ACCEPTED**。但本次正式验收状态提交自身仍需独立核验十 Job；P21 Visibility 尚未实现。
