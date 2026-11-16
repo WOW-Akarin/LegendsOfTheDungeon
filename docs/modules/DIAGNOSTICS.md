@@ -16,6 +16,7 @@
 - `DiagnosticBudget` 硬限制 Trace 4096、慢操作 1024、CrashContext 每类最多 128；`BoundedObservationOutbox` 硬限制 4096 个结构化样本。所有容量在配置时失败而不允许无界扩展。
 - `FixedHealthRegistry` 固定五个组件 Runtime/Persistence/Networking/Background/Diagnostics，`Unknown` 不等于健康；只有全部由可信探针上报 Healthy 才能获得 AllHealthy。当前库**不自行声称真实生产依赖健康**。
 - `CrashContextCapture` 只组合健康、固定指标和有限 Trace/Slow 的只读快照，原因采用 `CrashCause` 枚举；没有 Exception/StackTrace/UserPayload/自由文本字段。上下文快照不改变业务状态，生产侧不可把敏感信息注入 GUID 或自由扩展。
+- `StructuredDiagnosticFormatter` 将 SlowOperation 与 CrashContext 输出为**字段白名单 JSON**（固定事件代码、技术领域、GUID、耗时/计数、健康枚举）。没有自由 message、exception 或任意标签；仅负责安全格式化，不进行文件 I/O/网络发送；外部 Sink 应通过非阻塞 Outbox 隔离。
 
 ## 异常、取消、顺序和成功点
 

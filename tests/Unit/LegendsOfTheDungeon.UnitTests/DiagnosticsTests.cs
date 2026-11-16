@@ -115,6 +115,36 @@ public sealed class DiagnosticsTests
     }
 
     [Fact]
+    public void StructuredSlowAndCrashLogsContainOnlySafeWhitelistedFields()
+    {
+        var trace = new DiagnosticTraceBuffer(3);
+        var metrics = new FixedMetricRecorder(5);
+        var slow = new SlowOperationDetector(3, 5);
+        var health = new FixedHealthRegistry();
+        var id = Guid.NewGuid();
+        trace.Record(DiagnosticArea.Script, DiagnosticTraceStage.Faulted, id);
+        slow.Observe(DiagnosticArea.Script, id, 99);
+        metrics.Record(DiagnosticArea.Script, DiagnosticOutcome.Failed, 99);
+
+        var entry = Assert.Single(slow.Snapshot());
+        var line = StructuredDiagnosticFormatter.SlowOperationToJson(entry);
+        Assert.Contains("\"eventId\":\"slow_operation\"", line, StringComparison.Ordinal);
+        Assert.Contains(id.ToString("D"), line, StringComparison.Ordinal);
+        Assert.Contains("\"elapsedMilliseconds\":99", line, StringComparison.Ordinal);
+        Assert.DoesNotContain("exception", line, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("credential", line, StringComparison.OrdinalIgnoreCase);
+
+        var crash = new CrashContextCapture(metrics, health, trace, slow, 1)
+            .Capture(CrashCause.UnexpectedException, id);
+        var json = StructuredDiagnosticFormatter.CrashContextToJson(crash);
+        Assert.Contains("\"cause\":\"UnexpectedException\"", json, StringComparison.Ordinal);
+        Assert.Contains("\"component\":\"Persistence\"", json, StringComparison.Ordinal);
+        Assert.Contains("\"stage\":\"Faulted\"", json, StringComparison.Ordinal);
+        Assert.DoesNotContain("credential", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("stackTrace", json, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void BudgetValidatesMemoryLimits()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new DiagnosticBudget(0, 1, 1, 1));
