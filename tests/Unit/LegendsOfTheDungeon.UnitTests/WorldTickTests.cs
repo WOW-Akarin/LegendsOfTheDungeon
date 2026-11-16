@@ -75,7 +75,7 @@ public sealed class WorldTickTests
             [new Step(WorldTickPhase.Input, " ", (_, _, _) => { })]));
         Assert.Throws<ArgumentOutOfRangeException>(() => new WorldTickPipeline(world, clock,
             Enumerable.Range(0, 129).Select(i =>
-                (IWorldTickStep)new Step(WorldTickPhase.Input, i.ToString("D3"), (_, _, _) => { }))));
+                (IWorldTickStep)new Step(WorldTickPhase.Input, i.ToString("D3", System.Globalization.CultureInfo.InvariantCulture), (_, _, _) => { }))));
     }
 
     [Fact]
