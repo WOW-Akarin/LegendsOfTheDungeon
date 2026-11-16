@@ -116,4 +116,4 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.NetworkingProbe/Legen
 ```
 
 - Probe 仅监听 127.0.0.1 随机端口，真实 Socket 验证半包/粘包、慢报头、截断/EOF、超大长度、断线、双向客户端/服务端适配器、入站限流、慢接收方背压、未授权拦截；额外使用故意忽略取消的流替身验证停止结果未知。通过时输出 `P13_NETWORKING_LOOPBACK_PASS`，CI 上传 `artifacts/networking-loopback/report.txt`。
-- 最终实现 run #99（43835963119）三 Job SUCCESS，Unit 139/139、Architecture 16/16，网络探针 10/10、PG 集成 PASS。独立 REVIEW/ACCEPTED HEAD 证据见 [P13 阶段记录](../progress/P13.md)。
+- 最终实现 run #99（43835963119）三 Job SUCCESS，Unit 139/139、Architecture 16/16，网络探针 10/10、PG 集成 PASS。独立 REVIEW HEAD run #100 三 Job SUCCESS，正式 ACCEPTED HEAD run #101 三 Job SUCCESS。完整证据见 [P13 阶段记录](../progress/P13.md)。

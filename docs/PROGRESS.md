@@ -21,13 +21,14 @@
 - 早期 CI #90/#91/#92：CA1512 FAIL；#93：CS9174 FAIL，均按真实诊断修复，不关闭分析器。
 - 实现 CI #94–#99 连续 SUCCESS；最终实现 #99：Unit 139/139、Architecture 16/16、10 项 Networking Loopback、原 PostgreSQL 18 Integration，全部质量 Gate PASS。
 - 独立 REVIEW HEAD #100：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43836500422 — 三 Job 全部 SUCCESS。
-- 四视角必需未解决项 0，已正式 ACCEPTED；本次正式 ACCEPTED HEAD 的 CI 尚待完整复核。
+- 正式 ACCEPTED HEAD 8fc43bf 的 CI #101：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43836883165 — 三 Job 完整 SUCCESS。
+- 四视角必需未解决项 0，独立 REVIEW #100 与正式 ACCEPTED #101 均全绿；P13 已完整收口。
 
 ## 当前停点
 
-1. 核对本次正式 ACCEPTED HEAD 的三 Job GitHub Actions 结果。
-2. 后续 P14 从 Metrics/Diagnostics 启动，P13 不提前承诺公网 TLS、真实生产身份签发、WorldExecutor、P64 性能或长稳。
-3. World 写必须由未来 P18/P27/P60/P61 的认证、主体、授权和 Epoch/Generation 校验接线；当前技术帧只处理不透明字节。
+1. 从 P14 — Metrics / Diagnostics 开启下一阶段（当前 NOT_STARTED）。
+2. 后续 P18/P27/P60/P61 接入真实认证、主体授权和 WorldEpoch/Generation 写入校验；P13 不承诺公网 TLS、全局连接配额、P64 性能或长稳。
+3. 世界命令可靠性须保留幂等键，不能将网络本地 Write 当成 DB 提交。
 
 ## 恢复
 
