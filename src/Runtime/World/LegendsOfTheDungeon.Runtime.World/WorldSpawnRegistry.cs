@@ -474,16 +474,18 @@ public sealed class WorldSpawnRegistry : IWorldTickStep
                 return Array.AsReadOnly(Array.Empty<WorldSpawnActivation>());
             }
 
+            // A future Tick is invalid even if it also skips an expected sequence number.
+            // The explicit clock boundary is reported before the logical continuity rule.
+            if (tick > _clock.CurrentTick)
+            {
+                throw new ArgumentOutOfRangeException(nameof(tick), "Tick cannot exceed the logical clock.");
+            }
+
             // Never accept historical or skipped ticks, even through the direct test/host API.
             // Otherwise a caller could jump over an observed lifecycle transition or due timer.
             if (tick < _lastTick || tick != _lastTick.Add(1))
             {
                 throw new InvalidOperationException("Spawn Timers requires exactly the next logical Tick.");
-            }
-
-            if (tick > _clock.CurrentTick)
-            {
-                throw new ArgumentOutOfRangeException(nameof(tick), "Tick cannot exceed the logical clock.");
             }
 
             var result = new List<WorldSpawnActivation>();
