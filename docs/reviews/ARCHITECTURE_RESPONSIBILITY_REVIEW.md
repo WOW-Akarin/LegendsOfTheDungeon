@@ -48,3 +48,11 @@
 ## 非目标
 
 P03 不通过类名长度、方法数量或 Common/Utils/Manager 关键词自动判定“巨型类”。这类信号只能用于人工定位；真正的自动失败依据必须来自项目引用、公共 API、IVT、依赖环或明确的审查元数据。
+
+## P17 引入第三模块引用 Kernel 的共享职责审查（P03-008）
+
+- 触发：新增 `Runtime.World` 后，Kernel 被至少三个独立 Module 引用；CI #168 P03-008 Gate FAIL 并正确阻断。
+- 所有权：Kernel 仅包含强类型 ID、不可变基础值、单位、时间和纯值计算，不保存实体可变世界状态；World/Entity 注册归 Runtime.World、实体能力归 Entities。
+- API 依赖方向：Kernel 自身零项目引用，不知道调用方、没有跨模块万能 CRUD/Service Locator；不同领域共享 `WorldId` / `WorldEpoch` / `EntityId` / `EntityGeneration`，若散落各模块会破坏强类型契约。
+- 审查批准范围：仅批准 Kernel 维持独立、纯净、不涉及业务对象的数据语义；以后新增领域管理逻辑、实体/世界持有者或中心服务仍必须另行审查，不能据此任意扩展 Kernel。
+- 已在 `eng/architecture/production-projects.json` 增加 `responsibilityReview.approved + reason` 供 P03 自动 Gate 对照；不更改 fan-in 阈值，不新增例外。

@@ -9,7 +9,11 @@
       "module": null,
       "allowedProjectReferences": [],
       "allowedPublicApiReferences": [],
-      "allowedInternalsVisibleTo": []
+      "allowedInternalsVisibleTo": [],
+      "responsibilityReview": {
+        "approved": true,
+        "reason": "P17 手工四视角核查：Kernel 仅拥有不可变强类型 ID、单位/时间/几何和纯值计算的基础语义，不持有 World/Entity Registry 或任何可变跨领域对象，也不添加任意领域 CRUD/Service Locator。Entities、RuntimeWorld 与 Security 等模块均需共享稳定 WorldId/EntityId/WorldEpoch/Generation 的同一类型与编码边界，不能在各模块重复定义造成类型绕过；Kernel 项目零 ProjectReference，不反向知道消费者，新增领域逻辑必须仍归具体模块。"
+      }
     },
     {
       "path": "src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj",
