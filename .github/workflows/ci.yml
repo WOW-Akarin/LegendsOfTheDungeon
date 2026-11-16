@@ -31,13 +31,25 @@ jobs:
         run: dotnet --info
 
       - name: Enable verification scripts
-        run: chmod +x eng/verify.sh eng/verify-negative-gates.sh
+        run: chmod +x eng/verify.sh eng/verify-negative-gates.sh eng/verify-documentation-gates.sh
 
       - name: Restore, build, unit and architecture tests
         run: ./eng/verify.sh
 
       - name: Verify negative build, unit and architecture gates
         run: ./eng/verify-negative-gates.sh
+
+      - name: Verify documentation quality gate
+        run: ./eng/verify-documentation-gates.sh
+
+      - name: Upload documentation gate evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: documentation-gate
+          path: artifacts/documentation-gate/**
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Upload test reports
         if: always()

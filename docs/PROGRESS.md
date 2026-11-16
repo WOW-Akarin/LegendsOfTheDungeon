@@ -24,19 +24,19 @@
 
 ## 当前停点
 
-P04 已启动。下一步落地中央编译文档 Gate、例外校验、自测脚本和中文人工 Review Checklist。
+P04 实现已准备落库：中央 CS1591 编译 Gate、Generated/ThirdParty 例外校验、8 组自测夹具、中文语义/复杂逻辑/AC 来源 Review Checklist 和独立 CI evidence artifact。
 
 ## 下一步（最多 5 项）
 
-1. 对非测试、非显式例外项目中央启用 XML Documentation File，使 CS1591 在 WarningsAsErrors 下阻断缺失公共 XML 注释。
-2. 只允许 Generated / ThirdParty 项目级例外，并强制填写具体理由。
-3. 建立现场生成的合规、缺失、合法例外、非法例外夹具，证明 Gate 会正确放行/拒绝。
-4. 建立中文语义、复杂逻辑与 AC 来源人工 Review Checklist，并把验证命令接入 CI。
-5. CI 全绿且负例真实被检出后进入 REVIEW。
+1. 提交 P04 自动 Gate、脚本、Checklist 与 CI 接线。
+2. 读取首次 GitHub Actions 的 compiler/MSBuild/脚本真实结果。
+3. 若失败，从第一个真实错误修复，不 suppress CS1591、不放宽例外。
+4. 记录八组夹具、现有 Solution 构建与 documentation-gate artifact。
+5. 完成人工语义 Review 后进入 REVIEW。
 
 ## 修改文件及原因
 
-本次启动提交只更新 P04 状态与恢复索引；检查器、脚本和审查文档在下一提交落库。
+将新增中央文档 Gate、自测脚本、中文语义人工 Checklist、CI evidence artifact，并更新 BUILD 操作基线。
 
 ## 契约、数据所有权与 ADR 变化
 

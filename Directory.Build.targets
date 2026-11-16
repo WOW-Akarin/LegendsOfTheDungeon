@@ -1,4 +1,38 @@
 <Project>
+  <!--
+    P04 文档质量 Gate：
+    - 非 Test、非显式例外项目必须生成 XML documentation file；
+    - TreatWarningsAsErrors 会把 CS1591（缺失公开 XML 注释）升级为构建失败；
+    - 生成/第三方代码只能通过有类型和理由的显式项目级例外退出 Gate；
+    - 禁止在生产项目用 NoWarn / WarningsNotAsErrors 绕过 CS1591。
+  -->
+  <PropertyGroup Condition="'$(IsTestProject)' != 'true' and '$(LegendsOfTheDungeonDocumentationGateExempt)' != 'true'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <Target Name="ValidateLotdDocumentationGatePolicy" BeforeTargets="CoreCompile">
+    <Error
+      Code="LOTD0002"
+      Condition="'$(LegendsOfTheDungeonDocumentationGateExempt)' == 'true'
+        and '$(LegendsOfTheDungeonDocumentationGateExemptionKind)' != 'Generated'
+        and '$(LegendsOfTheDungeonDocumentationGateExemptionKind)' != 'ThirdParty'"
+      Text="文档 Gate 例外类型无效。只允许 Generated 或 ThirdParty。" />
+
+    <Error
+      Code="LOTD0003"
+      Condition="'$(LegendsOfTheDungeonDocumentationGateExempt)' == 'true'
+        and '$(LegendsOfTheDungeonDocumentationGateExemptionReason)' == ''"
+      Text="文档 Gate 例外必须填写 LegendsOfTheDungeonDocumentationGateExemptionReason。" />
+
+    <Error
+      Code="LOTD0004"
+      Condition="'$(IsTestProject)' != 'true'
+        and '$(LegendsOfTheDungeonDocumentationGateExempt)' != 'true'
+        and ($([System.String]::Copy('$(NoWarn)').Contains('1591'))
+          Or $([System.String]::Copy('$(WarningsNotAsErrors)').Contains('1591')))"
+      Text="生产项目禁止通过 NoWarn / WarningsNotAsErrors 绕过 CS1591；需要例外时使用显式 Generated/ThirdParty 例外并填写理由。" />
+  </Target>
+
   <!-- 仅用于 P02 CI Gate 自测；正常构建不触发。 -->
   <Target Name="LotdInjectedBuildFailure" BeforeTargets="CoreCompile" Condition="'$(LOTD_INJECT_BUILD_FAILURE)' == 'true'">
     <Error Text="P02 intentional build failure gate." />

@@ -1,7 +1,7 @@
 # 构建与依赖基线
 
-> 关联阶段：P02  
-> 当前目标：提供干净环境可复现的 restore / build / test / architecture-test 入口。
+> 关联阶段：P02–P04  
+> 当前目标：提供干净环境可复现的 restore / build / test / architecture-test / documentation-gate 入口。
 
 ## SDK 与语言
 
@@ -53,7 +53,7 @@ dotnet restore LegendsOfTheDungeon.slnx --locked-mode
 ./eng/verify.sh
 ```
 
-该脚本依次执行 SDK 信息、locked restore、Release build、Unit tests 和 Architecture tests。
+该脚本依次执行 SDK 信息、locked restore、Release build、Unit tests 和 Architecture tests。Release build 同时受 P04 公共 XML 注释编译 Gate 约束。
 
 Gate 负向自测：
 
@@ -61,8 +61,20 @@ Gate 负向自测：
 ./eng/verify-negative-gates.sh
 ```
 
-脚本要求故意编译失败与故意测试失败都产生非零退出码；如果任一错误被错误吞掉，负向自测自身失败。
+脚本要求故意编译失败、故意 Unit 测试失败和故意 Architecture 测试失败都产生非零退出码；如果任一错误被错误吞掉，负向自测自身失败。
+
+## 文档质量 Gate
+
+生产公共 API 缺失 XML 注释由中央 `Directory.Build.targets` 启用 `GenerateDocumentationFile` 后交给编译器 `CS1591` 检测；全局 `TreatWarningsAsErrors=true` 使其阻断构建。
+
+自测入口：
+
+```bash
+./eng/verify-documentation-gates.sh
+```
+
+脚本现场生成合规、缺失、Generated/ThirdParty 例外、非法例外以及 `NoWarn` / `WarningsNotAsErrors` 绕过样本。证据输出到 `artifacts/documentation-gate/`；中文语义与复杂逻辑说明按 [中文注释与文档质量 Review Checklist](../reviews/DOCUMENTATION_QUALITY_REVIEW.md) 人工审查。
 
 ## CI 证据
 
-GitHub Actions 在干净 Ubuntu runner 上执行同一验证链。测试 TRX 作为 `test-results` artifact 保存 14 天。P03 将在现有 Architecture 测试入口上增加真正的依赖白名单、Internal/Infrastructure 泄漏和循环引用规则。
+GitHub Actions 在干净 Ubuntu runner 上执行同一验证链。测试 TRX 作为 `test-results` artifact 保存 14 天；P04 文档 Gate 日志与摘要作为 `documentation-gate` artifact 保存 14 天。
