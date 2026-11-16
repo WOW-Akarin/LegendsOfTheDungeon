@@ -127,7 +127,7 @@ public static class StaticCatalogBuilder
     }
 
     private static string ComputeHash(StaticCatalogSchema schema, int dataVersion,
-        IReadOnlyList<StaticDataRow> rows)
+        StaticDataRow[] rows)
     {
         using var hasher = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
         AppendText(hasher, "lotd.static_catalog.v1");
