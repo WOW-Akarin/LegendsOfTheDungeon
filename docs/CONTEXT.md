@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P10 — REVIEW
+当前阶段：P10 — ACCEPTED
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 建立 .NET 10 Solution；截至 P10 当前�
 
 ## 当前任务与下一步
 
-P00–P09 已 ACCEPTED。P10 Platform Configuration/Logging 已实现并进入 REVIEW：模块 Options/启动验证/安全指纹、结构化日志、Security.Contracts 默认拒绝契约，Unit 106/106 与 Architecture 16/16 已通过。
+P00–P10 已 ACCEPTED。Platform 具备模块独立 Options、配置启动门禁、非敏感 SHA-256 指纹与结构化日志；Security.Contracts 有默认拒绝身份/授权 Port 和本地测试身份隔离。Review CI run #63 通过 Unit 106/106、Architecture 16/16。P11 尚未开始。
 
 ## 阻塞与技术债
 
-当前无 P10 必需阻塞。Review HEAD 尚待独立验证。Platform 不包含游戏业务规则；无真实认证 Adapter，生产身份绑定/授权保持默认拒绝。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P10 必需阻塞。独立 Review 和 CI 已通过。Platform 不包含游戏业务规则；无真实认证 Adapter，生产身份绑定/授权保持默认拒绝。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
