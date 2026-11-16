@@ -24,11 +24,11 @@
 
 ## 当前停点
 
-P08 run #47 已执行 Unit 85/86；known-vector/状态恢复/权重/流隔离通过。唯一失败是测试试图用 decimal 精确表达 1/2^33 的错误假设，正在修测试向量，随机实现不变。
+P08 run #48 已全绿：Unit 86/86、Architecture 16/16、P04/P05 Gate 全部通过。契约自审发现 RandomState 应显式保存 Seed，且命名流需锁定固定派生向量；正在补强。
 
 ## 下一步（最多 5 项）
 
-1. 提交 Probability 量化测试向量修复并读取下一次 CI。
+1. 提交 Seed 持久化与命名流固定向量补强并读取最终实现 CI。
 2. 读取首次 CI 的 Analyzer/P04/Unit/Architecture/P05 Gate 真实结果。
 3. 若失败，从第一个真实诊断修复，不改变算法版本来迎合测试。
 4. 核对 known vector、状态恢复、概率/权重边界与 AI/Loot 隔离实际证据。

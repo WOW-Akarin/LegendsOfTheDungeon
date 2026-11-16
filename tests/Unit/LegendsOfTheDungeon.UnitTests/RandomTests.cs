@@ -50,6 +50,8 @@ public sealed class RandomTests
 
         Assert.Equal(DeterministicRandom.AlgorithmId, state.AlgorithmId);
         Assert.Equal(DeterministicRandom.AlgorithmVersion, state.AlgorithmVersion);
+        Assert.Equal(987654321UL, state.Seed);
+        Assert.Equal(state.Seed, restored.Seed);
 
         for (var index = 0; index < 128; index++)
         {
@@ -66,6 +68,7 @@ public sealed class RandomTests
         var wrongVersion = new RandomState(
             DeterministicRandom.AlgorithmId,
             DeterministicRandom.AlgorithmVersion + 1,
+            123,
             1,
             2,
             3,
@@ -76,6 +79,7 @@ public sealed class RandomTests
         var allZero = new RandomState(
             DeterministicRandom.AlgorithmId,
             DeterministicRandom.AlgorithmVersion,
+            123,
             0,
             0,
             0,
@@ -223,9 +227,15 @@ public sealed class RandomTests
         Assert.IsAssignableFrom<IRandom>(loot);
         Assert.IsAssignableFrom<IRandom>(ai);
 
+        Assert.Equal(1, RandomStreams.DerivationVersion);
+
         var combatFirst = combat.NextUInt64();
         var lootFirst = loot.NextUInt64();
         var aiFirst = ai.NextUInt64();
+
+        Assert.Equal(15891432599418929953UL, combatFirst);
+        Assert.Equal(13046111043867989088UL, lootFirst);
+        Assert.Equal(10434810588533208021UL, aiFirst);
 
         Assert.NotEqual(combatFirst, lootFirst);
         Assert.NotEqual(combatFirst, aiFirst);

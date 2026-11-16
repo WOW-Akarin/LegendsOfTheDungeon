@@ -8,10 +8,11 @@ public readonly record struct RandomState
     private readonly string? _algorithmId;
 
     /// <summary>
-    /// 创建带算法身份、版本和四个状态字的随机状态。
+    /// 创建带算法身份、版本、原始 Seed 和四个状态字的随机状态。
     /// </summary>
     /// <param name="algorithmId">稳定算法标识。</param>
     /// <param name="algorithmVersion">正整数算法版本。</param>
+    /// <param name="seed">创建该随机流时使用的 64-bit Seed。</param>
     /// <param name="state0">第一个 64-bit 状态字。</param>
     /// <param name="state1">第二个 64-bit 状态字。</param>
     /// <param name="state2">第三个 64-bit 状态字。</param>
@@ -21,6 +22,7 @@ public readonly record struct RandomState
     public RandomState(
         string algorithmId,
         int algorithmVersion,
+        ulong seed,
         ulong state0,
         ulong state1,
         ulong state2,
@@ -38,6 +40,7 @@ public readonly record struct RandomState
 
         _algorithmId = algorithmId;
         AlgorithmVersion = algorithmVersion;
+        Seed = seed;
         State0 = state0;
         State1 = state1;
         State2 = state2;
@@ -60,6 +63,11 @@ public readonly record struct RandomState
     /// 获取算法版本。
     /// </summary>
     public int AlgorithmVersion { get; }
+
+    /// <summary>
+    /// 获取创建该随机流时使用的 64-bit Seed。
+    /// </summary>
+    public ulong Seed { get; }
 
     /// <summary>
     /// 获取第一个 64-bit 状态字。

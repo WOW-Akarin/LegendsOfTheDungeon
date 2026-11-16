@@ -43,11 +43,17 @@ public sealed class DeterministicRandom : IRandom
     private ulong _state3;
 
     /// <summary>
+    /// 获取创建当前随机流时使用的 64-bit Seed。
+    /// </summary>
+    public ulong Seed { get; }
+
+    /// <summary>
     /// 使用 64-bit Seed 创建确定性随机源。
     /// </summary>
     /// <param name="seed">固定 Seed；0 也是合法 Seed。</param>
     public DeterministicRandom(ulong seed)
     {
+        Seed = seed;
         var splitMix = new SplitMix64(seed);
         _state0 = splitMix.Next();
         _state1 = splitMix.Next();
@@ -56,11 +62,13 @@ public sealed class DeterministicRandom : IRandom
     }
 
     private DeterministicRandom(
+        ulong seed,
         ulong state0,
         ulong state1,
         ulong state2,
         ulong state3)
     {
+        Seed = seed;
         _state0 = state0;
         _state1 = state1;
         _state2 = state2;
@@ -92,6 +100,7 @@ public sealed class DeterministicRandom : IRandom
         }
 
         return new DeterministicRandom(
+            state.Seed,
             state.State0,
             state.State1,
             state.State2,
@@ -101,12 +110,13 @@ public sealed class DeterministicRandom : IRandom
     /// <summary>
     /// 导出可持久化并可精确恢复的当前随机状态。
     /// </summary>
-    /// <returns>包含算法 ID、版本和四个状态字的快照。</returns>
+    /// <returns>包含算法 ID、版本、Seed 和四个状态字的快照。</returns>
     public RandomState ExportState()
     {
         return new RandomState(
             AlgorithmId,
             AlgorithmVersion,
+            Seed,
             _state0,
             _state1,
             _state2,
