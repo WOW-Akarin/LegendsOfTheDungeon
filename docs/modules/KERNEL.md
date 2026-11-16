@@ -115,3 +115,22 @@ Kernel 时间契约把三类时间分开：
 核心执行语义：逻辑 Timer 基于 Tick；UTC 不能驱动核心超时  
 持久化：绝对时间 UTC；离线补偿上限由业务模块显式提供  
 相关测试 / ADR / AC 参考：P07 Unit + P03/P04 持续 Gate；不参考 AzerothCore 专有计时实现
+
+
+## Random（P08）
+
+Kernel 的确定性随机契约使用固定 `xoshiro256**` 算法版本 1。Seed 通过固定 SplitMix64 初始化，运行状态由四个 64-bit 字组成；`RandomState` 同时记录算法 ID 与版本，Adapter 持久化时必须完整保存这些字段，恢复时不允许跨算法/版本静默解释。
+
+`IRandom` 只暴露无符号 64-bit 随机和无偏有界抽样。Combat、Loot、AI 后续模块只依赖该接口；`DeterministicRandom` 是 Kernel 提供的可复现实现。
+
+`Probability` 使用 decimal 输入并量化到 `2^-32` 固定精度，round-to-nearest-even；范围必须在 `[0,1]`，不做 clamp。0 与 1 是确定结果且不消耗随机状态。这样核心概率决策不依赖 Double 的 NaN/Infinity/跨平台细节。
+
+`WeightedSelector` 使用正整数 UInt64 权重；0 权重、空集合、总权重溢出都明确失败。有界随机采用 rejection sampling，不能用简单 `random % bound` 形成偏差。
+
+稳定随机流通过显式 `RandomStreamKind.Combat/Loot/AI` 与固定 salt 从根 Seed 派生，绝不使用运行时 HashCode。每个模块持有独立 `IRandom`，因此新增 AI 抽样不会推进 Loot 流。
+
+契约 ID / 版本：`kernel.random.v1`  
+算法 ID / 版本：`xoshiro256starstar` / `1`  
+提供模块 / 状态所有者：Kernel / PRNG 实例自身状态；业务模块拥有其注入的随机流实例生命周期  
+持久化：算法 ID、版本、四状态字必须一起保存；恢复不兼容版本时显式失败  
+相关测试 / ADR / AC 参考：P08 Unit + P03/P04 持续 Gate；不参考 AzerothCore 专有随机实现

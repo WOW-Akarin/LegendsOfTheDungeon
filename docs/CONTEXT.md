@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P07 — ACCEPTED
+当前阶段：P08 — IN_PROGRESS
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P00–P07 已 ACCEPTED。Kernel Time 已具备 Duration/Tick、IClock/IAuditClock、FakeClock、LogicalTimer、OfflineTime；逻辑 Tick、单调时间与审计 UTC 分离，核心 Timer 不依赖墙钟。P08 尚未开始。
+P00–P07 已 ACCEPTED。P08 已启动：正在实现固定版本确定性随机、状态导出恢复、Probability/WeightedSelector 与 Combat/Loot/AI 稳定独立随机流。
 
 ## 阻塞与技术债
 
-当前无 P07 阻塞。P08 将建立可保存状态的确定性随机与稳定命名随机流；不得使用运行时 HashCode 作为稳定 Seed。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P08 阻塞。随机算法/版本/Seed/状态必须可保存；Combat/Loot/AI 流独立，禁止 System.Random、时间戳或运行时 HashCode 作为稳定源。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
@@ -61,6 +61,7 @@ P00–P07 已 ACCEPTED。Kernel Time 已具备 Duration/Tick、IClock/IAuditCloc
 - [P05 证据](progress/P05.md)
 - [P06 证据](progress/P06.md)
 - [P07 证据](progress/P07.md)
+- [P08 证据](progress/P08.md)
 - [Kernel 基础值契约](modules/KERNEL.md)
 - [架构职责审查](reviews/ARCHITECTURE_RESPONSIBILITY_REVIEW.md)
 - [文档质量审查](reviews/DOCUMENTATION_QUALITY_REVIEW.md)
