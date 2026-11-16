@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj" />
+  </ItemGroup>
+</Project>
