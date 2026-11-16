@@ -249,11 +249,15 @@ public static class CatalogPackageBuilder
         CatalogReferenceRule[] rules)
     {
         var nodes = new Dictionary<(string Catalog, string Id), int>();
+        var nodeCatalogs = new List<string>();
+        var nodeRows = new List<int>();
         foreach (var catalog in catalogs)
         {
-            foreach (var row in catalog.Records)
+            for (var rowIndex = 0; rowIndex < catalog.Records.Count; rowIndex++)
             {
-                nodes.Add((catalog.Schema.CatalogName, row.Id), nodes.Count);
+                nodes.Add((catalog.Schema.CatalogName, catalog.Records[rowIndex].Id), nodes.Count);
+                nodeCatalogs.Add(catalog.Schema.CatalogName);
+                nodeRows.Add(rowIndex + 1);
             }
         }
 
@@ -277,9 +281,8 @@ public static class CatalogPackageBuilder
                 var position = nodes[(rule.SourceCatalog, row.Id)];
                 if (!nodes.TryGetValue((rule.TargetCatalog, referenced.CanonicalText), out var target))
                 {
-                    var rowIndex = position - IndexOffset(catalogs, rule.SourceCatalog) + 1;
                     throw Error(CatalogPackageFault.MissingReference,
-                        rule.SourceCatalog, rowIndex, rule.SourceField);
+                        rule.SourceCatalog, nodeRows[position], rule.SourceField);
                 }
 
                 if (edges >= MaximumReferenceEdges)
@@ -318,13 +321,8 @@ public static class CatalogPackageBuilder
                 var next = adjacency[node][cursor];
                 if (state[next] == 1)
                 {
-                    var sourceName = catalogs.First(c =>
-                        nodes.ContainsKey((c.Schema.CatalogName, c.Records[0].Id)) &&
-                        node >= IndexOffset(catalogs, c.Schema.CatalogName) &&
-                        node < IndexOffset(catalogs, c.Schema.CatalogName) + c.Records.Count)
-                        .Schema.CatalogName;
                     throw Error(CatalogPackageFault.ReferenceCycle,
-                        sourceName, node - IndexOffset(catalogs, sourceName) + 1, "references");
+                        nodeCatalogs[node], nodeRows[node], "references");
                 }
 
                 if (state[next] == 0)
@@ -334,22 +332,6 @@ public static class CatalogPackageBuilder
                 }
             }
         }
-    }
-
-    private static int IndexOffset(FrozenStaticCatalog[] catalogs, string name)
-    {
-        var offset = 0;
-        foreach (var catalog in catalogs)
-        {
-            if (catalog.Schema.CatalogName == name)
-            {
-                return offset;
-            }
-
-            offset += catalog.Records.Count;
-        }
-
-        return offset;
     }
 
     private static string Hash(
