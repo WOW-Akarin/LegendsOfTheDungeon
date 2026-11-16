@@ -140,13 +140,15 @@ public sealed class WorldTickPipeline
                 throw new InvalidOperationException("Tick requires a running WorldInstance.");
             }
 
-            if (tick.Value != _lastTick.Add(1).Value || Clock.CurrentTick < tick)
-            {
-                throw new InvalidOperationException("Tick must be contiguous and due on the logical clock.");
-            }
-
             try
             {
+                // 重复/跳号/提前 Tick 同样属于不可恢复的同步世界执行故障；
+                // 必须与 Phase 异常走同一 Faulted 路径，不能只把 P18 置为故障。
+                if (tick.Value != _lastTick.Add(1).Value || Clock.CurrentTick < tick)
+                {
+                    throw new InvalidOperationException("Tick must be contiguous and due on the logical clock.");
+                }
+
                 foreach (var phase in Phases)
                 {
                     foreach (var step in _steps)
