@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P03 — ACCEPTED
+当前阶段：P04 — IN_PROGRESS
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P03 第一批 Architecture Gates 已完成独立 Review 并 ACCEPTED：真实 ProjectReference 白名单、Domain/Core→Platform/Host、跨模块 Infrastructure/Internal、Modules→Hosts、无环、公共 API 泄漏、IVT、共享职责 fan-in 审查均由 CI 正/负例强制。
+P03 已 ACCEPTED。P04 已启动：正在建立公共 XML 注释编译 Gate、生成/第三方例外校验、中文语义/复杂逻辑/AC 来源人工 Review Checklist。
 
 ## 阻塞与技术债
 
-当前无 P03 阻塞。真实生产图仍只有 Kernel 与 Runtime.Abstractions；不存在为测试创建的空模块。P04 尚未开始。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值；P03 仍需实现真正的架构依赖规则与正/负例。
+当前无 P04 阻塞。真实生产代码目前没有公共业务 API，因此 P04 不人为制造假接口；首批真实 API 注释抽查将在 P05 适用。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
@@ -57,6 +57,7 @@ P03 第一批 Architecture Gates 已完成独立 Review 并 ACCEPTED：真实 Pr
 - [P01 证据](progress/P01.md)
 - [P02 证据](progress/P02.md)
 - [P03 证据](progress/P03.md)
+- [P04 证据](progress/P04.md)
 - [架构职责审查](reviews/ARCHITECTURE_RESPONSIBILITY_REVIEW.md)
 - [构建基线](operations/BUILD.md)
 - [UPSTREAM](UPSTREAM.md)
