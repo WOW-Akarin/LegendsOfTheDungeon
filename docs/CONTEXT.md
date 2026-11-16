@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 建立 .NET 10 Solution；截至 P10 已验�
 
 ## 当前任务与下一步
 
-P00–P10 已 ACCEPTED。P11 已 ACCEPTED：实现基线 0a092260，run #72 Unit 109/109、Architecture 16/16、真实 PostgreSQL 18 Integration 全绿；独立 REVIEW HEAD 270022e 的 run #73 两个 job 全绿。ConnectionFactory、参数化命令、事务 Unknown、Migration、BoundedBulkLoader、P65.F 初始注入与幂等消歧已形成可复现证据。正式 ACCEPTED HEAD b395553 的 run #74 也已完整 SUCCESS。P12 已正式 ACCEPTED：实现基线 d9e22e4，run #83 Unit 123/123、Architecture 16/16、PG Integration 全绿；独立 REVIEW HEAD 48d5604 的 run #84 两个 Job SUCCESS。双车道 Mailbox、逻辑 Scheduler、有界 WorkChannel、有限 WorkerPool、超时未完成清单与 Abandoned 恢复标识已验证。正式 ACCEPTED HEAD CI 仍待检查；下一阶段 P13 NOT_STARTED。
+P00–P10 已 ACCEPTED。P11 已 ACCEPTED：实现基线 0a092260，run #72 Unit 109/109、Architecture 16/16、真实 PostgreSQL 18 Integration 全绿；独立 REVIEW HEAD 270022e 的 run #73 两个 job 全绿。ConnectionFactory、参数化命令、事务 Unknown、Migration、BoundedBulkLoader、P65.F 初始注入与幂等消歧已形成可复现证据。正式 ACCEPTED HEAD b395553 的 run #74 也已完整 SUCCESS。P12 已正式 ACCEPTED：实现基线 d9e22e4，run #83 Unit 123/123、Architecture 16/16、PG Integration 全绿；独立 REVIEW HEAD 48d5604 的 run #84 两个 Job SUCCESS。双车道 Mailbox、逻辑 Scheduler、有界 WorkChannel、有限 WorkerPool、超时未完成清单与 Abandoned 恢复标识已验证。正式 ACCEPTED HEAD 14f509c 的 run #85 完整 SUCCESS；下一阶段 P13 NOT_STARTED。
 
 ## 阻塞与技术债
 
-P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。下一安全动作：验证 P12 ACCEPTED HEAD CI，随后按路线图进入 P13。P12 不替代 P18 WorldExecutor，性能和业务恢复仍待后续阶段。
+P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。下一安全动作：按路线图进入 P13，先验证网络通用帧/背压/身份隔离的需求。P12 不替代 P18 WorldExecutor，性能和业务恢复仍待后续阶段。
 
 ## 关键入口
 
