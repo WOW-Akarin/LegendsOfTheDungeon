@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P01 — REVIEW
+当前阶段：P01 — ACCEPTED
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ LegendsOfTheDungeon 是通用 C# / .NET 10 游戏服务器核心。研究 Azerot
 
 ## 当前任务与下一步
 
-P01 实现已完成并进入 REVIEW：已落地 CONTEXT/PROGRESS/阶段归档模板、合法状态、更新触发点和恢复流程。当前只剩独立链接/围栏/恢复可执行性检查；通过前不进入 P02。
+P01 已通过独立 Review 并 ACCEPTED：CONTEXT/PROGRESS/阶段归档模板、合法状态、更新触发点和恢复流程已经落地。下一任务为 P02，但尚未开始；开始 P02 时必须先核对真实 .NET 10 SDK，不能伪造 global.json patch。
 
 ## 阻塞与技术债
 
-当前无 P00 阻塞。后续必须实测的事项：P02 SDK patch、P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P01 阻塞。后续必须实测的事项：P02 SDK patch、P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 

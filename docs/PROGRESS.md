@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `91c70ad6892e9702bfbb4924d0e13607d56907b9` / `main` / 通过 GitHub 直接提交，无本地未提交工作区  
-阶段 / 任务 / 状态 / 目标完成度：P01 / 开发规范、上下文与断线恢复制度 / REVIEW / 文档基线
+阶段 / 任务 / 状态 / 目标完成度：P01 / 开发规范、上下文与断线恢复制度 / ACCEPTED / 文档基线
 
 ## 目标与成功条件
 
@@ -22,19 +22,19 @@
 
 ## 当前停点
 
-P01 实现已落地：独立模板、状态迁移、恢复工作流与阶段证据已准备完成，当前进入独立 Review。
+P01 已完成独立 Review 并 ACCEPTED；P02 尚未开始。
 
 ## 下一步（最多 5 项）
 
-1. 独立检查模板文件实际存在且相对链接可达。
-2. 检查 Markdown 围栏与状态枚举。
-3. 按恢复流程从当前文档定位任务起点、当前停点和下一成功条件。
-4. 将 Review 结果写入 progress/P01.md。
-5. 全部必需项通过后将 P01 标记 ACCEPTED，再进入 P02。
+1. 开始 P02 — Solution 与 CI 骨架。
+2. 先在实际执行环境核对可用 .NET 10 SDK，并据此固定 global.json。
+3. 创建最小必要 Solution/src/tests 结构、集中 Nullable/Analyzer/包策略。
+4. 建立 restore/build/test/architecture-test 的统一入口与 CI。
+5. 做故意失败的编译/测试 Gate 验证后再评审 P02。
 
 ## 修改文件及原因
 
-新增 docs/templates 三份模板、RECOVERY_WORKFLOW、progress/P01；更新 PROJECT_SPEC 第 9 节及当前恢复索引。
+P01 最终交付：docs/templates 三份模板、RECOVERY_WORKFLOW、progress/P01；PROJECT_SPEC 第 9 节已正式链接这些入口。
 
 ## 契约、数据所有权与 ADR 变化
 
@@ -55,7 +55,6 @@ P01 不进行新的 AC 机制研究。固定 AC 基线仍为 `17f9f9d5003708136c
 ## 失败、阻塞、风险与未验证假设
 
 - 当前无 P01 阻塞。
-- 尚未完成独立模板落库和链接/围栏检查，因此当前不能进入 REVIEW。
 - P02 SDK、P11 DB、P64.F 性能事项仍属于后续阶段，不在 P01 提前验证。
 
 ## 恢复步骤
@@ -63,8 +62,8 @@ P01 不进行新的 AC 机制研究。固定 AC 基线仍为 `17f9f9d5003708136c
 1. 读取 [PROJECT_SPEC](PROJECT_SPEC.md)、[CONTEXT](CONTEXT.md)、本文件。
 2. 读取 [DEVELOPMENT_ROADMAP](DEVELOPMENT_ROADMAP.md) 的 P01。
 3. 核对 `main` 当前 HEAD 与任务起始基线 `91c70ad6892e9702bfbb4924d0e13607d56907b9` 的差异。
-4. 检查本阶段新增模板和 [progress/P01.md](progress/P01.md)（创建后）。
-5. 从“当前停点”继续；只有全部 P01 出口证据通过才进入 P02。
+4. 检查 [progress/P01.md](progress/P01.md) 的最终 Review。
+5. P01 已 ACCEPTED；下一任务从 P02 入口开始。
 
 ## 不应重复执行的操作
 
