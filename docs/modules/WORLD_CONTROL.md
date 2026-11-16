@@ -1,6 +1,6 @@
 # P26 — Control / Ownership / Tags 技术契约
 
-状态：ACCEPTED（目标 C）；P24/P17/P18 已 ACCEPTED。稳定实现 #192 与独立 REVIEW HEAD `3f8e80ade8b42fd9b21e543ea4530835c7924718` CI #193 均十 Job SUCCESS；正式 ACCEPTED HEAD CI 待核验。
+状态：ACCEPTED（目标 C）；P24/P17/P18 已 ACCEPTED。稳定实现 #192 与独立 REVIEW HEAD `3f8e80ade8b42fd9b21e543ea4530835c7924718` CI #193 均十 Job SUCCESS；正式 ACCEPTED HEAD `f0ee3d9601add1a799caacfa4d49c06a3179c149` 的 CI #194 10/10 SUCCESS。
 
 ## 实体能力与唯一拥有者
 
@@ -41,4 +41,4 @@
 
 ## 独立审查与验收
 
-[P26 四视角审查](../reviews/P26_CONTROL_OWNERSHIP_REVIEW.md) 的 REVIEW HEAD `3f8e80ade8b42fd9b21e543ea4530835c7924718` 经 #193 十 Job SUCCESS，确认 C 阶段阻塞项 0，已正式 ACCEPTED。正式验收 HEAD CI 仍须单独核验；P21 Enter/Leave 尚未实现。
+[P26 四视角审查](../reviews/P26_CONTROL_OWNERSHIP_REVIEW.md) 的 REVIEW HEAD `3f8e80ade8b42fd9b21e543ea4530835c7924718` 经 #193 十 Job SUCCESS，确认 C 阶段阻塞项 0，已正式 ACCEPTED。正式 ACCEPTED HEAD #194 十 Job SUCCESS，P26 C 完整验收；P21 Enter/Leave 尚未实现。

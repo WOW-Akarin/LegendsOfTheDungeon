@@ -24,8 +24,16 @@
 - #189：CA1711 Flags 枚举命名失败，构建 Gate 阻断。
 - #190：272 Unit 中 1 个跨能力句柄误撤销测试失败，修复 Tag.Revoke 句柄 Kind 校验。
 - #191：272 Unit / 16 Architecture，10/10 全绿；#192：增补同 Tick 不同来源 Hash、令牌不复用、永久 Tag 容量回归，**275 Unit / 16 Architecture，10/10 全绿**。
-- 独立四视角审查：[P26 Review](reviews/P26_CONTROL_OWNERSHIP_REVIEW.md)。独立 REVIEW HEAD `3f8e80ade8b42fd9b21e543ea4530835c7924718` 的 CI #193（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43911621160）10/10 SUCCESS，P26 C 已正式 ACCEPTED；正式 ACCEPTED HEAD CI 仍待核验。
+- 独立四视角审查：[P26 Review](reviews/P26_CONTROL_OWNERSHIP_REVIEW.md)。独立 REVIEW HEAD `3f8e80ade8b42fd9b21e543ea4530835c7924718` 的 CI #193（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43911621160）10/10 SUCCESS，P26 C 已正式 ACCEPTED；正式 ACCEPTED HEAD `f0ee3d9601add1a799caacfa4d49c06a3179c149` 的 CI #194（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43912274627）**10/10 SUCCESS**，P26 C 完整验收。
 
 ## 下一安全动作
 
-核验本次正式 P26 ACCEPTED HEAD 十 Job CI，然后归档真实证据。P21 Visibility 的直接依赖 P20 + P26 在阶段验收层已满足，但 P21 自身尚未开始，不得预先标记通过。
+P26 实现 #192、独立 REVIEW #193、正式 ACCEPTED #194 全部十 Job SUCCESS。下一阶段按路线图启动 P21 — Visibility / Relevance：P20 + P26 两项前置依赖已 ACCEPTED，但 P21 的 VisibilitySet、过滤和 Delta 尚未实现。
+
+## P26 三阶段实证归档
+
+- 实现 HEAD `7689a25d88924511cb508127e25d1aa38cc06e43`，CI #192：10/10 SUCCESS。
+- 独立 REVIEW HEAD `3f8e80ade8b42fd9b21e543ea4530835c7924718`，CI #193：10/10 SUCCESS。
+- 正式 ACCEPTED HEAD `f0ee3d9601add1a799caacfa4d49c06a3179c149`，CI #194：10/10 SUCCESS，275 Unit / 16 Architecture，P26 五类真实 Probe 和全部旧集成回归成功。
+- #189 CA1711、#190 真实跨种类撤销漏洞 FAIL 均透明留存，#191 首次完整 10/10、#192 源历史 Hash/Token/Tag 容量加固后再次 10/10。
+- 当前归档提交自身的十 Job CI 须提交后另外核验，不能将文档提交等同于验证。
