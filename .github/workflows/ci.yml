@@ -124,3 +124,38 @@ jobs:
 
       - name: Record actual PostgreSQL image digest
         run: docker image inspect postgres:18@sha256:2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbc --format '{{json .RepoDigests}}'
+
+  networking-loopback:
+    needs: build-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CI: 'true'
+      DOTNET_NOLOGO: '1'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET 10.0.404
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.404'
+
+      - name: Restore pinned P13 networking probe graph
+        run: dotnet restore tests/Integration/LegendsOfTheDungeon.NetworkingProbe/LegendsOfTheDungeon.NetworkingProbe.csproj --locked-mode
+
+      - name: Run real TCP loopback protocol and shutdown probes
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/networking-loopback
+          dotnet run --project tests/Integration/LegendsOfTheDungeon.NetworkingProbe/LegendsOfTheDungeon.NetworkingProbe.csproj --configuration Release --no-restore | tee artifacts/networking-loopback/report.txt
+
+      - name: Upload networking loopback report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: networking-loopback
+          path: artifacts/networking-loopback/report.txt
+          if-no-files-found: warn
+          retention-days: 14

@@ -120,6 +120,12 @@
       },
       "legendsofthedungeon.platform.concurrency": {
         "type": "Project"
+      },
+      "legendsofthedungeon.platform.networking": {
+        "type": "Project",
+        "dependencies": {
+          "LegendsOfTheDungeon.Security.Contracts": "[1.0.0, )"
+        }
       }
     }
   }

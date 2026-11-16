@@ -82,6 +82,20 @@
       "allowedProjectReferences": [],
       "allowedPublicApiReferences": [],
       "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/Platform/Networking/LegendsOfTheDungeon.Platform.Networking/LegendsOfTheDungeon.Platform.Networking.csproj",
+      "assemblyName": "LegendsOfTheDungeon.Platform.Networking",
+      "role": "PlatformAdapter",
+      "module": null,
+      "allowedProjectReferences": [
+        "src/Security/Contracts/LegendsOfTheDungeon.Security.Contracts/LegendsOfTheDungeon.Security.Contracts.csproj"
+      ],
+      "allowedPublicApiReferences": [
+        "src/Security/Contracts/LegendsOfTheDungeon.Security.Contracts/LegendsOfTheDungeon.Security.Contracts.csproj",
+        "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj"
+      ],
+      "allowedInternalsVisibleTo": []
     }
   ]
 }
