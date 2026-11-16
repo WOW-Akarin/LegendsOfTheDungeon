@@ -23,7 +23,7 @@ public sealed class BuildBaselineTests
     {
         if (Environment.GetEnvironmentVariable("LOTD_INJECT_TEST_FAILURE") == "1")
         {
-            Assert.True(false, "P02 intentional test failure gate.");
+            Assert.Fail("P02 intentional test failure gate.");
         }
     }
 }

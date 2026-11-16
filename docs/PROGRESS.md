@@ -23,13 +23,13 @@
 
 ## 当前停点
 
-P02 工程骨架与 CI 已落库，正在读取 GitHub Actions 的首次真实验证结果；当前仍为 IN_PROGRESS。
+P02 首次 CI 已完成：SDK 10.0.404 与 restore 通过，Release build 被 xUnit2020 分析器正确阻止；已按分析器要求修复 Assert.Fail，等待下一次 CI。
 
 ## 下一步（最多 5 项）
 
-1. 读取本次 push 触发的 GitHub Actions workflow run。
-2. 若失败，从第一个真实失败修复，不弱化 Gate。
-3. CI 通过后记录 dotnet --info、restore/build/test/architecture-test 和负向 Gate 结果。
+1. 读取修复提交触发的下一次 GitHub Actions run。
+2. 若仍失败，从新的第一个真实失败继续修复。
+3. CI 全绿后记录 Unit/Architecture/负向 Gate 与 artifact。
 4. 更新 ADR-0002 的精确 SDK 验证事实。
 5. 独立 Review 通过后将 P02 ACCEPTED。
 
@@ -52,7 +52,7 @@ P02 暂不新增业务公共契约；只建立工程 Assembly 边界。若 CI �
 | P01 依赖状态 | GitHub，2026-11-16 | PASS | progress/P01.md |
 | `dotnet --info` | 当前执行容器，2026-11-16 | FAIL（环境缺少 dotnet） | 本阶段记录 |
 | 官方 .NET 10 SDK 查询 | Microsoft，2026-11-16 | PASS：候选 10.0.404 | progress/P02.md |
-| restore/build/test | 尚未有工程 | NOT_RUN | 待 CI |
+| CI run #1：SDK/restore/build | GitHub Actions Ubuntu，2026-11-16 | FAIL（SDK/restore PASS；build xUnit2020 FAIL） | run 43801961507 |
 
 ## 失败、阻塞、风险与未验证假设
 
