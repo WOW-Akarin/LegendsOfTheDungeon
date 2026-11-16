@@ -150,3 +150,10 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.StaticDataProbe/Legen
 - P15 最终实现 run #131：五 Job SUCCESS，Unit 174/174、Architecture 16/16、7 项真实 PostgreSQL 18 静态数据探针、全部既有回归 PASS。
 - 独立 REVIEW HEAD run #132：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43847835022 — 五 Job SUCCESS。
 - 正式 ACCEPTED HEAD run #133：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43848207249 — 五 Job SUCCESS，P15 技术目标 C 已 ACCEPTED。
+
+## P16 CatalogPackage / Reload
+
+- 沿用 P15 `StaticData.Core`、Unit 工程及 `staticdata-postgres` Job，无新生产依赖；固定锁文件和五项 CI 门禁保持不变。
+- `CatalogPackageTests`：跨目录/自环/10k 深链引用验证、版本与来源校验、不可变 Bundle Hash、Tick 一致性/错边界、错误预检旧包保留、活动定义拒绝/旧版 Pin/迁移拒绝、有限 Replay 历史和 Prepare/Commit 竞态负例。
+- 真实 SQL Probe 在既有 `P15_STATICDATA_POSTGRES_PASS` 后另外执行 `p16-real-sql-bundle-atomic-reload` 和 `p16-real-sql-bundle-invalid-reference-keeps-old`，通过输出 `P16_CATALOG_RELOAD_POSTGRES_PASS`。程序仍使用独立测试 PostgreSQL 18（固定 digest，`LOTD_TEST_POSTGRES` 只能用于临时环境），无游戏数据库业务表。
+- 复现：`dotnet restore LegendsOfTheDungeon.slnx --locked-mode`，`./eng/verify.sh`，再用既有 P15 StaticDataProbe 在 PostgreSQL 18 启动后执行 SQL 集成。最终证据见 [P16 阶段记录](../progress/P16.md)。

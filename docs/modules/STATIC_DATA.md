@@ -1,6 +1,6 @@
 # P15 — Static Data Schema / Loader 通用契约
 
-状态：P15 IN_PROGRESS，P15.J JSON、P15.S PostgreSQL SQL 已实现，真实验收以 [阶段记录](../progress/P15.md) 为准。
+状态：P15 ACCEPTED（技术 C，最终归档 main 8f6b425、CI #134 五 Job SUCCESS）。P16 整包引用验证、版本 Pin 和安全 Reload 的独立契约见 [CATALOG_RELOAD](CATALOG_RELOAD.md)；P16 当前尚未验收。
 
 ## 领域边界与项目图
 
