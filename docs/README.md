@@ -22,12 +22,14 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [modules/MESSAGING.md](modules/MESSAGING.md)：Command / Query / DeferredEvent 协作契约
 - [modules/PLATFORM.md](modules/PLATFORM.md)：P10 配置、日志和 P60.F 身份/授权边界
 - [modules/PERSISTENCE.md](modules/PERSISTENCE.md)：P11 持久化、事务与故障语义契约
+- [modules/CONCURRENCY.md](modules/CONCURRENCY.md)：P12 有界并发与关闭恢复契约
+- [reviews/P12_CONCURRENCY_REVIEW.md](reviews/P12_CONCURRENCY_REVIEW.md)：P12 独立四视角审查
 - [reviews/P11_PERSISTENCE_REVIEW.md](reviews/P11_PERSISTENCE_REVIEW.md)：P11 四视角独立代码审查
 
 ## 当前状态
 
 当前里程碑：M1 基础。  
-当前阶段：P12 — Platform Concurrency，**IN_PROGRESS**。P00–P11 已完成验收；P12 在进行中，尚未验证出口，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P12 — Platform Concurrency，**REVIEW**。P00–P11 已完成验收，P12 代码与真实并发验证 #83 已 PASS；最终独立验收 HEAD 尚待 CI，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 

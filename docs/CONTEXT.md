@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M1 基础  
-当前阶段：P12 — IN_PROGRESS
+当前阶段：P12 — REVIEW
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 建立 .NET 10 Solution；截至 P10 已验�
 
 ## 当前任务与下一步
 
-P00–P10 已 ACCEPTED。P11 已 ACCEPTED：实现基线 0a092260，run #72 Unit 109/109、Architecture 16/16、真实 PostgreSQL 18 Integration 全绿；独立 REVIEW HEAD 270022e 的 run #73 两个 job 全绿。ConnectionFactory、参数化命令、事务 Unknown、Migration、BoundedBulkLoader、P65.F 初始注入与幂等消歧已形成可复现证据。正式 ACCEPTED HEAD b395553 的 run #74 也已完整 SUCCESS。P12 已开始（IN_PROGRESS），起始 HEAD 4123a51 / CI run #75 SUCCESS；尚无 P12 实现或验证证据。
+P00–P10 已 ACCEPTED。P11 已 ACCEPTED：实现基线 0a092260，run #72 Unit 109/109、Architecture 16/16、真实 PostgreSQL 18 Integration 全绿；独立 REVIEW HEAD 270022e 的 run #73 两个 job 全绿。ConnectionFactory、参数化命令、事务 Unknown、Migration、BoundedBulkLoader、P65.F 初始注入与幂等消歧已形成可复现证据。正式 ACCEPTED HEAD b395553 的 run #74 也已完整 SUCCESS。P12 实现已提交并进入 REVIEW：代码 HEAD d9e22e4，run #83 SUCCESS（Unit 123/123、Architecture 16/16、PostgreSQL 集成全绿）。双车道 Mailbox、逻辑 Scheduler、有界 WorkChannel、有限 WorkerPool、超时未完成清单与 Abandoned 恢复标识已验证；REVIEW HEAD / ACCEPTED HEAD 仍待验证。
 
 ## 阻塞与技术债
 
-P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。下一安全动作：实现有界 WorkQueue/Mailbox/逻辑 Scheduler/BackgroundWorker 的独立技术层，并以 CI 验证。P12 不能替代 P18 WorldExecutor。
+P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。下一安全动作：独立 REVIEW HEAD CI，全绿才可验收 P12。P12 不能替代 P18 WorldExecutor，性能/业务恢复仍待后续阶段。
 
 ## 关键入口
 
@@ -74,6 +74,8 @@ P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网�
 - [P10 证据](progress/P10.md)
 - [P11 阶段进度](progress/P11.md)
 - [P12 阶段进度](progress/P12.md)
+- [P12 独立审查](reviews/P12_CONCURRENCY_REVIEW.md)
+- [Concurrency 契约](modules/CONCURRENCY.md)
 - [P11 独立代码审查](reviews/P11_PERSISTENCE_REVIEW.md)
 - [Persistence 契约](modules/PERSISTENCE.md)
 - [Platform 契约](modules/PLATFORM.md)
