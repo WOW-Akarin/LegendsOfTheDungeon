@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P07 — REVIEW
+当前阶段：P07 — ACCEPTED
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P00–P06 已 ACCEPTED。P07 Time 已实现并进入 REVIEW：Tick/Duration、IClock/IAuditClock、FakeClock、LogicalTimer、OfflineTime；逻辑 Tick、单调时间与审计 UTC 分离，核心 Timer 只依赖 Tick。
+P00–P07 已 ACCEPTED。Kernel Time 已具备 Duration/Tick、IClock/IAuditClock、FakeClock、LogicalTimer、OfflineTime；逻辑 Tick、单调时间与审计 UTC 分离，核心 Timer 不依赖墙钟。P08 尚未开始。
 
 ## 阻塞与技术债
 
-当前无 P07 阻塞。Kernel/TimeTests 无真实系统时钟读取、Sleep/Delay/System Timer；最终验收前要求 REVIEW HEAD 自身完整 CI 全绿。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P07 阻塞。P08 将建立可保存状态的确定性随机与稳定命名随机流；不得使用运行时 HashCode 作为稳定 Seed。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
