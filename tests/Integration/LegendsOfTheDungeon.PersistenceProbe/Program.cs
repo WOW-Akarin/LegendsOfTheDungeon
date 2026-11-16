@@ -222,7 +222,24 @@ try
     {
         try
         {
-            await BoundedBulkLoader.ExecuteAsync(transaction, [firstWrite, duplicateWrite], maximumCommands: 1);
+            await BoundedBulkLoader.ExecuteAsync(
+                transaction, [firstWrite], maximumCommands: 2, maximumParameters: 1);
+            throw new InvalidOperationException("批量参数上限没有被拒绝。");
+        }
+        catch (ArgumentException exception) when (
+            exception.Message.Contains("参数总数超出", StringComparison.Ordinal))
+        {
+            // 参数数量的预算检查必须先于第一次数据库写入。
+        }
+
+        await transaction.RollbackAsync();
+    }
+
+    await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
+    {
+        try
+        {
+            await BoundedBulkLoader.ExecuteAsync(transaction, [firstWrite, duplicateWrite], maximumCommands: 1, maximumParameters: 8);
             throw new InvalidOperationException("有界批量写入没有拒绝超限。");
         }
         catch (ArgumentException exception) when (
@@ -238,7 +255,7 @@ try
     {
         try
         {
-            await BoundedBulkLoader.ExecuteAsync(transaction, [firstWrite, duplicateWrite], maximumCommands: 2);
+            await BoundedBulkLoader.ExecuteAsync(transaction, [firstWrite, duplicateWrite], maximumCommands: 2, maximumParameters: 8);
             throw new InvalidOperationException("重复主键应该触发整批回滚。");
         }
         catch (PostgresException exception) when (exception.SqlState == PostgresErrorCodes.UniqueViolation)
@@ -260,11 +277,44 @@ try
     await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
     {
         var batch = await BoundedBulkLoader.ExecuteAsync(transaction,
-            [firstWrite], maximumCommands: 2);
+            [firstWrite], maximumCommands: 2, maximumParameters: 8);
         Check(batch == 1, "成功批量写入数量不正确。");
         Check(await transaction.CommitAsync() == CommitOutcome.Committed,
             "成功批量写入必须由调用方明确提交。");
     }
+
+    await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
+    {
+        await transaction.ExecuteNonQueryAsync(new ParameterizedCommand(
+            "INSERT INTO lotd_p11_probe.version_probe (id, version, payload) VALUES (779, 0, 1)", []));
+        // 未显式提交，DisposeAsync 需自动回滚并释放连接。
+    }
+
+    // 连接池大小在 CI 中固定为 1：持有连接期间其他 OpenAsync 必须受取消控制。
+    await using (var held = await factory.OpenAsync())
+    {
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromMilliseconds(350));
+        try
+        {
+            await using var unexpected = await factory.OpenAsync(cancellation.Token);
+            throw new InvalidOperationException("连接池已满时不应再次分配连接。");
+        }
+        catch (OperationCanceledException)
+        {
+            // 取消有界等待；不得泄漏池槽。
+        }
+    }
+
+    await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
+    {
+        var count = await transaction.ExecuteScalarAsync(new ParameterizedCommand(
+            "SELECT COUNT(*) FROM lotd_p11_probe.version_probe WHERE id=779", []));
+        Check(Convert.ToInt64(count, CultureInfo.InvariantCulture) == 0,
+            "自动回滚后的连接没有释放或遗留了写入。");
+        await transaction.RollbackAsync();
+    }
+    Console.WriteLine("P11 connection release PASS: pool limit, bounded open cancellation, "
+        + "implicit rollback and re-open.");
 
     await using (var transaction = await factory.BeginTransactionWithFaultInjectionAsync(
         IsolationLevel.ReadCommitted, new FailAt(PersistenceFailurePoint.BeforeCommit)))

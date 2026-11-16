@@ -7,25 +7,34 @@ public static class BoundedBulkLoader
     /// <param name="transaction">由调用方拥有的活跃事务。</param>
     /// <param name="commands">预构造的参数化写入命令，不支持流式无限枚举。</param>
     /// <param name="maximumCommands">严格正数的命令上限，执行前完整校验。</param>
+    /// <param name="maximumParameters">本批全部参数总数上限，执行前完整校验。</param>
     /// <param name="cancellationToken">取消信号；执行中取消将回滚全部本事务写入。</param>
     /// <returns>执行完成的命令数，不代表事务最终已经提交。</returns>
     public static async Task<int> ExecuteAsync(
         PersistenceTransaction transaction,
         IReadOnlyList<ParameterizedCommand> commands,
         int maximumCommands,
+        int maximumParameters,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(transaction);
         ArgumentNullException.ThrowIfNull(commands);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumCommands);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumParameters);
         if (commands.Count > maximumCommands)
         {
             throw new ArgumentException("批量命令数超出允许上限。", nameof(commands));
         }
 
+        long totalParameters = 0;
         foreach (var command in commands)
         {
             ArgumentNullException.ThrowIfNull(command);
+            totalParameters += command.Parameters.Count;
+            if (totalParameters > maximumParameters)
+            {
+                throw new ArgumentException("批量参数总数超出允许上限。", nameof(commands));
+            }
         }
 
         try

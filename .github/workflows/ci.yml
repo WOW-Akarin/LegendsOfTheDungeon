@@ -108,7 +108,19 @@ jobs:
         run: dotnet restore tests/Integration/LegendsOfTheDungeon.PersistenceProbe/LegendsOfTheDungeon.PersistenceProbe.csproj --locked-mode
 
       - name: Run real PostgreSQL 18 persistence probes
-        run: dotnet run --project tests/Integration/LegendsOfTheDungeon.PersistenceProbe/LegendsOfTheDungeon.PersistenceProbe.csproj --configuration Release --no-restore
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/persistence-integration
+          dotnet run --project tests/Integration/LegendsOfTheDungeon.PersistenceProbe/LegendsOfTheDungeon.PersistenceProbe.csproj --configuration Release --no-restore | tee artifacts/persistence-integration/report.txt
+
+      - name: Upload PostgreSQL integration report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: persistence-integration
+          path: artifacts/persistence-integration/report.txt
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Record actual PostgreSQL image digest
         run: docker image inspect postgres:18@sha256:2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbc --format '{{json .RepoDigests}}'
