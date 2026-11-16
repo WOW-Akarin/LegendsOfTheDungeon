@@ -7,7 +7,7 @@
 
 ## 阶段真相
 
-P00–P19、P24(B) 已正式验收。P19 归档 HEAD `8aeea75a9bb0e3aa87ce2b0842a3ce31bbffae10`，CI #182 八 Job SUCCESS。当前进入 **P20 Spatial（REVIEW，目标 C）**，新增代码尚未获得 CI PASS，不能冒充完成。
+P00–P19、P24(B) 已正式验收。P19 归档 HEAD `8aeea75a9bb0e3aa87ce2b0842a3ce31bbffae10`，CI #182 八 Job SUCCESS。当前进入 **P20 Spatial（ACCEPTED，目标 C）**，新增代码尚未获得 CI PASS，不能冒充完成。
 
 ## 当前实现
 
@@ -19,4 +19,4 @@ P00–P19、P24(B) 已正式验收。P19 归档 HEAD `8aeea75a9bb0e3aa87ce2b0842
 
 ## 下一安全动作
 
-先核验独立 P20 REVIEW HEAD 九 Job；正式 ACCEPTED HEAD 再独立验证。不得把首版微基准当成 P64 大规模压测。下一阶段 P21 Visibility/P27 Movement/P62 Full Replay/P64 Performance 当前均未完成。入口：[PROGRESS](PROGRESS.md)、[P20](progress/P20.md)、[Spatial 契约](modules/WORLD_SPATIAL.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)。
+核验 P20 正式 ACCEPTED HEAD 的九个 Job，再归档阶段证据与转入 P21 Visibility。不得把首版微基准当成 P64 大规模压测。下一阶段 P21 Visibility/P27 Movement/P62 Full Replay/P64 Performance 当前均未完成。入口：[PROGRESS](PROGRESS.md)、[P20](progress/P20.md)、[Spatial 契约](modules/WORLD_SPATIAL.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)。

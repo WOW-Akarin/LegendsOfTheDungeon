@@ -1,6 +1,6 @@
 # P20 — Spatial / Cell / Grid 技术契约
 
-状态：REVIEW（目标 C）；依赖 P19 与 P24 已正式 ACCEPTED。稳定实现 HEAD `875f0cd64c2dbcf34985c0c2de3a1bbc90c7921b` 的 CI #185 九 Job SUCCESS；独立 REVIEW HEAD 和 ACCEPTED HEAD 尚需各自验证。
+状态：ACCEPTED（目标 C）；依赖 P19 与 P24 已正式 ACCEPTED。稳定实现 #185 和独立 REVIEW HEAD `f9a90264fa5fbab02d5ce596414f7c2a133e5bec` CI #186 均九 Job SUCCESS；正式 ACCEPTED HEAD CI 待核验。
 
 ## 唯一 Transform 真相与派生索引
 
@@ -34,3 +34,7 @@ P21 Visibility、P27 移动碰撞/速度、P29 Terrain/Navigation、P60 Host、P
 - #185 首版基准：`P20_BENCHMARK_V1` 在 Ubuntu 26.04.1 LTS、4 CPU、.NET 10 Release，1600 Entity / 700 Move / 400 Nearby，seed=2071；Move p50/p95/p99=0.0040/0.0093/0.0198 ms；Query p50/p95/p99=0.1866/0.3860/0.4764 ms，当前线程分配 7,325,944 bytes，GC0/1/2 均 0。原始证据在 #185 的 `world-spatial` Artifact。
 - 当前查询的 Cell 候选是遍历已分配桶的 O(CellCount) 粗筛，真实上限 16,384；空 Cell 即使 Unloaded 也暂留 tombstone 至 Stop，会消耗预算。这是 P64 优化、未来 Grid 生命周期接线的风险，不得伪称大规模最优或无限地图动态分页。
 - Faulted 允许 P17 单体真相快照供可信诊断，但拒绝 Nearby/Range；生产 Host 恢复、跨节点所有权、P21 可见域仍待后续工作。
+
+## 独立审查结论
+
+[P20 独立四视角审查](../reviews/P20_WORLD_SPATIAL_REVIEW.md) 在 HEAD `f9a90264fa5fbab02d5ce596414f7c2a133e5bec` CI #186 九 Job SUCCESS，技术 C 必需缺口 0，正式 ACCEPTED。正式状态提交自身仍需 CI 复核；P64 大规模性能仍是后续独立工作。

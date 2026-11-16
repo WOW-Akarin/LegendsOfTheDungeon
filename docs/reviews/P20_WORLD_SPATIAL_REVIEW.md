@@ -1,9 +1,10 @@
 # P20 — Spatial / Cell / Grid 独立四视角审查
 
-- 状态：REVIEW；目标 C；尚未正式 ACCEPTED
+- 状态：ACCEPTED；目标 C
 - 稳定实现 HEAD：`875f0cd64c2dbcf34985c0c2de3a1bbc90c7921b`
 - 实现 CI #185：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43903710433，9/9 SUCCESS
-- 独立 REVIEW HEAD：本次审查提交，CI NOT_RUN；ACCEPTED HEAD：NOT_RUN
+- 独立 REVIEW HEAD：`f9a90264fa5fbab02d5ce596414f7c2a133e5bec`，CI #186（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43904373576）9/9 SUCCESS
+- 正式 ACCEPTED HEAD：本次验收状态提交，CI NOT_RUN
 - 依赖 P19 Tick 与 P24 Transform 均已正式 ACCEPTED；main 直推，无分支
 
 ## 1. 功能与一致性
@@ -43,7 +44,7 @@
 | P20 首版 Release 微基准 Artifact | PASS |
 | 原有八 Job 全量回归 | PASS |
 | 实现 CI | **9/9 SUCCESS** |
-| 独立 REVIEW HEAD CI | NOT_RUN |
+| 独立 REVIEW HEAD CI | **9/9 SUCCESS**，run #186，257 Unit / 16 Architecture |
 | 正式 ACCEPTED HEAD CI | NOT_RUN |
 
 Benchmark #185 原始记录（`world-spatial` artifact）：
@@ -59,4 +60,4 @@ Benchmark #185 原始记录（`world-spatial` artifact）：
 
 P20 C 所要求的 Add/Move/Remove、Cell 生命周期、Nearby/Range、跨 Cell 更新、失败重定位、随机暴力扫描一致、同步 Transform/Spatial 可见原子性和首版性能基准均有实际 CI 证据。未发现阶段 C 必需的代码阻塞，仍有 O(CellCount) 与 Unloaded tombstone 的明确后续性能/资源限制。
 
-**但独立 REVIEW HEAD 尚未运行 CI，不可提前标记 ACCEPTED。** 审查 HEAD 九 Job 全部 SUCCESS 后，再提交正式 ACCEPTED 并独立核验 ACCEPTED HEAD；P21/P27/P62/P64 不属于此次结论。
+独立 REVIEW HEAD run #186 九 Job 全部 SUCCESS，P20 C 所需技术证据与首版基准已通过审查，**正式 ACCEPTED**；正式验收状态 HEAD 的 CI 仍需独立复核。P21/P27/P62/P64 不属于此次结论。
