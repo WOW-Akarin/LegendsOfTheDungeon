@@ -214,13 +214,13 @@ public sealed class RandomTests
     public void NamedStreamsAreStableDistinctAndInjectableAsIRandom()
     {
         const ulong rootSeed = 20261116;
-        IRandom combat = RandomStreams.Create(rootSeed, RandomStreamKind.Combat);
-        IRandom loot = RandomStreams.Create(rootSeed, RandomStreamKind.Loot);
-        IRandom ai = RandomStreams.Create(rootSeed, RandomStreamKind.AI);
+        var combat = RandomStreams.Create(rootSeed, RandomStreamKind.Combat);
+        var loot = RandomStreams.Create(rootSeed, RandomStreamKind.Loot);
+        var ai = RandomStreams.Create(rootSeed, RandomStreamKind.AI);
 
-        var combatFirst = combat.NextUInt64();
-        var lootFirst = loot.NextUInt64();
-        var aiFirst = ai.NextUInt64();
+        var combatFirst = ConsumeAsInjectedRandom(combat);
+        var lootFirst = ConsumeAsInjectedRandom(loot);
+        var aiFirst = ConsumeAsInjectedRandom(ai);
 
         Assert.NotEqual(combatFirst, lootFirst);
         Assert.NotEqual(combatFirst, aiFirst);
@@ -272,16 +272,18 @@ public sealed class RandomTests
                 (RandomStreamKind)999));
     }
 
+    private static ulong ConsumeAsInjectedRandom(IRandom random)
+    {
+        return random.NextUInt64();
+    }
+
     private sealed class FixedBoundRandom(ulong value) : IRandom
     {
         public ulong NextUInt64() => value;
 
         public ulong NextUInt64(ulong exclusiveUpperBound)
         {
-            if (exclusiveUpperBound == 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(exclusiveUpperBound));
-            }
+            ArgumentOutOfRangeException.ThrowIfZero(exclusiveUpperBound);
 
             if (value >= exclusiveUpperBound)
             {
