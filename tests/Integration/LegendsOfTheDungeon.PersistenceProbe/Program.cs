@@ -209,7 +209,6 @@ try
         await transaction.RollbackAsync();
     }
 
-    var loader = new BoundedBulkLoader();
     var firstWrite = new ParameterizedCommand(
         "INSERT INTO lotd_p11_probe.migration_probe (id, payload) VALUES (@id, @payload)",
         [new SqlParameterValue("@id", DbType.Int32, 3),
@@ -223,7 +222,7 @@ try
     {
         try
         {
-            await loader.ExecuteAsync(transaction, [firstWrite, duplicateWrite], maximumCommands: 1);
+            await BoundedBulkLoader.ExecuteAsync(transaction, [firstWrite, duplicateWrite], maximumCommands: 1);
             throw new InvalidOperationException("有界批量写入没有拒绝超限。");
         }
         catch (ArgumentException exception) when (
@@ -239,7 +238,7 @@ try
     {
         try
         {
-            await loader.ExecuteAsync(transaction, [firstWrite, duplicateWrite], maximumCommands: 2);
+            await BoundedBulkLoader.ExecuteAsync(transaction, [firstWrite, duplicateWrite], maximumCommands: 2);
             throw new InvalidOperationException("重复主键应该触发整批回滚。");
         }
         catch (PostgresException exception) when (exception.SqlState == PostgresErrorCodes.UniqueViolation)
@@ -260,7 +259,7 @@ try
 
     await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
     {
-        var batch = await loader.ExecuteAsync(transaction,
+        var batch = await BoundedBulkLoader.ExecuteAsync(transaction,
             [firstWrite], maximumCommands: 2);
         Check(batch == 1, "成功批量写入数量不正确。");
         Check(await transaction.CommitAsync() == CommitOutcome.Committed,

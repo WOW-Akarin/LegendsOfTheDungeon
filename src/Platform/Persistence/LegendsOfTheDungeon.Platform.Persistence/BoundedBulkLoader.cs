@@ -1,7 +1,7 @@
 namespace LegendsOfTheDungeon.Platform.Persistence;
 
 /// <summary>在已有事务内执行有界参数化命令批次；不是 PostgreSQL COPY 的性能替代品。</summary>
-public sealed class BoundedBulkLoader
+public static class BoundedBulkLoader
 {
     /// <summary>执行不超过硬限制的命令列表；任一失败将回滚整个事务。</summary>
     /// <param name="transaction">由调用方拥有的活跃事务。</param>
@@ -9,7 +9,7 @@ public sealed class BoundedBulkLoader
     /// <param name="maximumCommands">严格正数的命令上限，执行前完整校验。</param>
     /// <param name="cancellationToken">取消信号；执行中取消将回滚全部本事务写入。</param>
     /// <returns>执行完成的命令数，不代表事务最终已经提交。</returns>
-    public async Task<int> ExecuteAsync(
+    public static async Task<int> ExecuteAsync(
         PersistenceTransaction transaction,
         IReadOnlyList<ParameterizedCommand> commands,
         int maximumCommands,
