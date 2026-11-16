@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M1 基础  
-当前阶段：P15 — ACCEPTED（P16 NOT_STARTED）
+当前阶段：P16 — IN_PROGRESS
 
 ## 当前范围
 
@@ -43,7 +43,7 @@ P00–P10 已 ACCEPTED。P11 已 ACCEPTED：实现基线 0a092260，run #72 Unit
 
 ## 阻塞与技术债
 
-P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。下一安全动作：按路线图进入 P16 的跨 Catalog Validator / Freeze / Reload（当前未开始）。P16 引用校验/热重载仍未开始。真实业务 Host 埋点仍属后续阶段。生产认证和 WorldExecutor 仍未接线。P12 不替代 P18 WorldExecutor，性能和业务恢复仍待后续阶段。
+P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。下一安全动作：P16.F 整包引用/循环验证与 P16.R Tick 边界安全 Reload；新阶段目前 IN_PROGRESS，尚无实现 CI 证据。P16 引用校验/热重载仍未开始。真实业务 Host 埋点仍属后续阶段。生产认证和 WorldExecutor 仍未接线。P12 不替代 P18 WorldExecutor，性能和业务恢复仍待后续阶段。
 
 ## 关键入口
 
@@ -77,6 +77,7 @@ P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网�
 - [P13 阶段进度](progress/P13.md)
 - [P14 阶段进度](progress/P14.md)
 - [P15 阶段进度](progress/P15.md)
+- [P16 阶段进度](progress/P16.md)
 - [P15 StaticData 模块契约](modules/STATIC_DATA.md)
 - [P15 四视角审查](reviews/P15_STATIC_DATA_REVIEW.md)
 - [P14 技术契约](modules/DIAGNOSTICS.md)
