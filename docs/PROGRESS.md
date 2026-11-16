@@ -19,12 +19,13 @@
 - #106/#107：CA1001/CA1822 Analyzer 失败；#108：CS5001 缺入口；#109：CS0106 顶层声明错误。按实际诊断修复，无 Analyzer suppression。
 - #110/#111/#112 均 SUCCESS；实现 #112：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43841708511 — Unit 151/151、Architecture 16/16、6 项 Diagnostics Probe、PostgreSQL 18、TCP Loopback 以及全部质量 Gate PASS。
 - 独立 REVIEW HEAD #113：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43842375618 — **四 Job 全部 SUCCESS**。
-- 必需未解决问题 0，P14 正式 ACCEPTED；本次 ACCEPTED 文档 HEAD 完整 CI 尚待复核。
+- 正式 ACCEPTED HEAD 220c5d9 的 run #114：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43842797286 — 四 Job 完整 SUCCESS。
+- 必需未解决问题 0；独立 REVIEW HEAD #113 和正式 ACCEPTED HEAD #114 均全部 PASS，P14 正式收口。
 
 ## 当前停点
 
-1. 核查本次正式 ACCEPTED HEAD 的四 Job CI。
-2. 开始 P15 — Static Data Schema/Loader 前读取 JSON/SQL 适配器分工与数据版本规则。P14 不证明真实 World/DB/AI/Script Host 已经全部埋点。
+1. 启动 P15 — Static Data Schema/Loader 前读取 JSON/SQL 适配器分工与数据版本规则；P15 尚未开始。
+2. 后续真实 World/DB/AI/Script Owner 接入 P14 技术指标；当前不声称全生产埋点完成。
 3. P64 负载/性能与 P66 长稳仍 NOT_RUN，不能用 P14 的功能正确性推断性能通过。
 
 ## 恢复

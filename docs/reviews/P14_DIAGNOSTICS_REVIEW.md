@@ -25,4 +25,4 @@
 - P14 Probe 六项：Worker 200 项（199 成功/1 故意异常）、慢任务 70ms、Sink 故障、取消、50,000 关联采样固定基数、Health、CrashContext。
 - P64 记录来自 ADR 的 Linux x64 容器 / 4vCPU / 8GiB / 10 World / 10k 实体 / 50ms Tick，但未运行真实负载；`docs/operations/P64_BASELINE.md` 显式 NOT_RUN，不能声称性能通过。
 
-结论：本阶段技术 C 范围内必需未解决问题 **0**；独立 REVIEW HEAD a496aadd 的 CI #113 四 Job 全绿，正式 ACCEPTED。最终 ACCEPTED HEAD 仍待 CI；生产 Host、真实业务埋点、OTLP/持久化审计、P64/P66 需要后续独立验收。
+结论：本阶段技术 C 范围内必需未解决问题 **0**；独立 REVIEW HEAD a496aadd 的 CI #113 四 Job 全绿，正式 ACCEPTED。正式 ACCEPTED HEAD 220c5d9 的 CI run #114 四 Job 同样 SUCCESS；生产 Host、真实业务埋点、OTLP/持久化审计、P64/P66 需要后续独立验收。

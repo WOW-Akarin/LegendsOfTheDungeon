@@ -130,4 +130,4 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.DiagnosticsProbe/Lege
 ```
 
 - 实际 P12 BackgroundWorkerPool 200 项任务、Sink 故意失败、取消、超时阈值、50,000 个不同关联采样固定指标槽位、健康与 CrashContext 全部通过后打印 `P14_DIAGNOSTICS_INTEGRATION_PASS`，CI 上传 `artifacts/diagnostics-integration/report.txt`。
-- 最终实现 run #112（43841708511）四 Job SUCCESS：Unit 151/151、Architecture 16/16、6 项 Diagnostics Probe、现有 PG 18 和 TCP Loopback 全部通过。独立 REVIEW/ACCEPTED HEAD 记录见 [P14](../progress/P14.md)。
+- 最终实现 run #112（43841708511）四 Job SUCCESS：Unit 151/151、Architecture 16/16、6 项 Diagnostics Probe、现有 PG 18 和 TCP Loopback 全部通过。独立 REVIEW HEAD run #113 和正式 ACCEPTED HEAD run #114 均四 Job SUCCESS；完整证据见 [P14](../progress/P14.md)。
