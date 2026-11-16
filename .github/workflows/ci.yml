@@ -78,7 +78,7 @@ jobs:
     timeout-minutes: 15
     services:
       postgres:
-        image: postgres:18
+        image: postgres:18@sha256:2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbc
         env:
           POSTGRES_USER: lotd_test
           POSTGRES_PASSWORD: ephemeral_test_password
@@ -111,4 +111,4 @@ jobs:
         run: dotnet run --project tests/Integration/LegendsOfTheDungeon.PersistenceProbe/LegendsOfTheDungeon.PersistenceProbe.csproj --configuration Release --no-restore
 
       - name: Record actual PostgreSQL image digest
-        run: docker image inspect postgres:18 --format '{{json .RepoDigests}}'
+        run: docker image inspect postgres:18@sha256:2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbc --format '{{json .RepoDigests}}'

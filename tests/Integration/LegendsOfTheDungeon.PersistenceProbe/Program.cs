@@ -148,6 +148,128 @@ try
         await transaction.RollbackAsync();
     }
 
+    var migrations = new PostgreSqlMigrationRunner(factory);
+    var migrationPlan = new[]
+    {
+        new MigrationStep("p11.probe", 1,
+            "CREATE TABLE lotd_p11_probe.migration_probe (id integer PRIMARY KEY, payload integer NOT NULL)"),
+        new MigrationStep("p11.probe", 2,
+            "INSERT INTO lotd_p11_probe.migration_probe (id, payload) VALUES (1, 1)")
+    };
+    await migrations.ApplyAsync(migrationPlan);
+    await migrations.ApplyAsync(migrationPlan);
+    await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
+    {
+        var count = await transaction.ExecuteScalarAsync(new ParameterizedCommand(
+            "SELECT COUNT(*) FROM lotd_p11_probe.migration_probe", []));
+        Check(Convert.ToInt64(count, CultureInfo.InvariantCulture) == 1, "迁移重放写入重复数据。");
+        await transaction.RollbackAsync();
+    }
+
+    try
+    {
+        await migrations.ApplyAsync([
+            migrationPlan[0],
+            new MigrationStep("p11.probe", 2,
+                "INSERT INTO lotd_p11_probe.migration_probe (id, payload) VALUES (1, 2)")
+        ]);
+        throw new InvalidOperationException("历史迁移变更未被拒绝。");
+    }
+    catch (InvalidOperationException exception) when (
+        exception.Message.Contains("校验和冲突", StringComparison.Ordinal))
+    {
+        // 已应用的 SQL checksum 不允许变更。
+    }
+
+    try
+    {
+        await migrations.ApplyAsync([
+            migrationPlan[0], migrationPlan[1],
+            new MigrationStep("p11.probe", 3,
+                "INSERT INTO lotd_p11_probe.migration_probe (id, payload) VALUES (2, 2); SELECT 1/0")
+        ]);
+        throw new InvalidOperationException("错误迁移应该失败并回滚。");
+    }
+    catch (PostgresException exception) when (exception.SqlState == PostgresErrorCodes.DivisionByZero)
+    {
+        // 后续核查 DML 和 migration 账本全部回滚。
+    }
+
+    await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
+    {
+        var count = await transaction.ExecuteScalarAsync(new ParameterizedCommand(
+            "SELECT COUNT(*) FROM lotd_p11_probe.migration_probe WHERE id=2", []));
+        Check(Convert.ToInt64(count, CultureInfo.InvariantCulture) == 0, "错误迁移未完整回滚。");
+        var applied = await transaction.ExecuteScalarAsync(new ParameterizedCommand(
+            "SELECT COUNT(*) FROM public.lotd_platform_migrations "
+            + "WHERE module_id=@module AND version=3",
+            [new SqlParameterValue("@module", DbType.String, "p11.probe")]));
+        Check(Convert.ToInt64(applied, CultureInfo.InvariantCulture) == 0,
+            "错误迁移写入了版本账本。");
+        await transaction.RollbackAsync();
+    }
+
+    var loader = new BoundedBulkLoader();
+    var firstWrite = new ParameterizedCommand(
+        "INSERT INTO lotd_p11_probe.migration_probe (id, payload) VALUES (@id, @payload)",
+        [new SqlParameterValue("@id", DbType.Int32, 3),
+         new SqlParameterValue("@payload", DbType.Int32, 30)]);
+    var duplicateWrite = new ParameterizedCommand(
+        "INSERT INTO lotd_p11_probe.migration_probe (id, payload) VALUES (@id, @payload)",
+        [new SqlParameterValue("@id", DbType.Int32, 3),
+         new SqlParameterValue("@payload", DbType.Int32, 31)]);
+
+    await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
+    {
+        try
+        {
+            await loader.ExecuteAsync(transaction, [firstWrite, duplicateWrite], maximumCommands: 1);
+            throw new InvalidOperationException("有界批量写入没有拒绝超限。");
+        }
+        catch (ArgumentException exception) when (
+            exception.Message.Contains("超出允许上限", StringComparison.Ordinal))
+        {
+            // 超限在任何 SQL 运行前被拒绝。
+        }
+
+        await transaction.RollbackAsync();
+    }
+
+    await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
+    {
+        try
+        {
+            await loader.ExecuteAsync(transaction, [firstWrite, duplicateWrite], maximumCommands: 2);
+            throw new InvalidOperationException("重复主键应该触发整批回滚。");
+        }
+        catch (PostgresException exception) when (exception.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            Check(transaction.State == PersistenceTransactionState.RolledBack,
+                "有界写入失败没有将整个事务回滚。");
+        }
+    }
+
+    await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
+    {
+        var count = await transaction.ExecuteScalarAsync(new ParameterizedCommand(
+            "SELECT COUNT(*) FROM lotd_p11_probe.migration_probe WHERE id=3", []));
+        Check(Convert.ToInt64(count, CultureInfo.InvariantCulture) == 0,
+            "批量写入失败遗留了第一条数据。");
+        await transaction.RollbackAsync();
+    }
+
+    await using (var transaction = await factory.BeginTransactionAsync(IsolationLevel.ReadCommitted))
+    {
+        var batch = await loader.ExecuteAsync(transaction,
+            [firstWrite], maximumCommands: 2);
+        Check(batch == 1, "成功批量写入数量不正确。");
+        Check(await transaction.CommitAsync() == CommitOutcome.Committed,
+            "成功批量写入必须由调用方明确提交。");
+    }
+
+    Console.WriteLine("P11 migration and bounded bulk PASS: repeat, checksum, "
+        + "failed DDL rollback, prevalidation, atomic batch failure.");
+
     Console.WriteLine("P11 PostgreSQL 18 integration PASS: rollback, isolation, optimistic version, "
         + "idempotency, pre-commit cancellation, statement timeout, commit confirmation.");
 }
