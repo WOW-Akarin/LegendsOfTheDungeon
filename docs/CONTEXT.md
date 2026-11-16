@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P04 — ACCEPTED
+当前阶段：P05 — IN_PROGRESS
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P03/P04 已 ACCEPTED。公共 XML 注释缺失由 CS1591 阻断；Generated/ThirdParty 例外、LOTD0002/3/4/5 逃逸保护、中文语义/复杂逻辑/AC 来源 Review Checklist 均已落地。P05 尚未开始。
+P00–P04 已 ACCEPTED。P05 已启动，正在实现 Kernel Strong IDs、EntityGeneration/WorldEpoch 与 Result/Error/ValidationIssue；首批真实 Public 业务 API 将直接受 P04 XML Gate 约束。
 
 ## 阻塞与技术债
 
-当前无 P04 阻塞。首批真实 Public 业务 API 将在 P05 出现，并自动受 P04 XML Gate 与人工语义 Checklist 约束。P05 尚未开始。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P05 阻塞。Strong ID 的 CLR default 无法从类型系统消除，将以 empty sentinel + 构造/解析/序列化边界拒绝实现。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
@@ -58,6 +58,8 @@ P03/P04 已 ACCEPTED。公共 XML 注释缺失由 CS1591 阻断；Generated/Thir
 - [P02 证据](progress/P02.md)
 - [P03 证据](progress/P03.md)
 - [P04 证据](progress/P04.md)
+- [P05 证据](progress/P05.md)
+- [Kernel 基础值契约](modules/KERNEL.md)
 - [架构职责审查](reviews/ARCHITECTURE_RESPONSIBILITY_REVIEW.md)
 - [文档质量审查](reviews/DOCUMENTATION_QUALITY_REVIEW.md)
 - [构建基线](operations/BUILD.md)
