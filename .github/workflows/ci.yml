@@ -301,13 +301,13 @@ jobs:
           dotnet-version: '10.0.404'
 
       - name: Locked restore P17 world lifecycle integration graph
-        run: dotnet restore tests/Integration/LegendsOfTheDungeon.WorldLifecycleProbe/LegendsOfTheDungeon.WorldLifecycleProbe.csproj/LegendsOfTheDungeon.WorldLifecycleProbe.csproj --locked-mode
+        run: dotnet restore tests/Integration/LegendsOfTheDungeon.WorldLifecycleProbe/LegendsOfTheDungeon.WorldLifecycleProbe.csproj --locked-mode
 
       - name: Run real parallel worlds and lifecycle cleanup probes
         run: |
           set -o pipefail
           mkdir -p artifacts/world-lifecycle
-          dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldLifecycleProbe/LegendsOfTheDungeon.WorldLifecycleProbe.csproj/LegendsOfTheDungeon.WorldLifecycleProbe.csproj --configuration Release --no-restore | tee artifacts/world-lifecycle/report.txt
+          dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldLifecycleProbe/LegendsOfTheDungeon.WorldLifecycleProbe.csproj --configuration Release --no-restore | tee artifacts/world-lifecycle/report.txt
 
       - name: Upload world lifecycle integration evidence
         if: always()
