@@ -24,11 +24,11 @@
 
 ## 当前停点
 
-P06 Geometry 实现与确定性 Unit 已准备落库：Position/Vector/Distance/Angle/Transform/Bounds、有限数与溢出防护、右手坐标/Yaw 约定及 Adapter-style JSON 回读。
+P06 首轮实现 CI run #31 已全绿：Unit 48/48、Architecture 16/16、P04/P05 Gate 全部通过。自审发现 Vector 默认容差不应借用带米单位命名的 Distance 常量，正在改为无单位 Vector.DefaultTolerance。
 
 ## 下一步（最多 5 项）
 
-1. 提交 P06 Geometry 与 Unit。
+1. 提交 Vector 无单位默认容差修正并运行最终实现 CI。
 2. 读取首次 CI 的 Analyzer/P04/Unit/Architecture 真实结果。
 3. 若失败，从第一个真实诊断修复，不放宽非有限数或溢出规则。
 4. 核对角度归一、边界距离、零向量和 JSON wire 回读实际测试证据。

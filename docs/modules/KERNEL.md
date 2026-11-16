@@ -77,7 +77,7 @@ Canonical 文本形式是 `InvariantCulture` 下的十进制无符号整数：
 Geometry 是纯数学值契约，不拥有世界状态，也不查询 Runtime：
 
 - `Position`：三维世界位置，单位米；
-- `Vector`：三维向量，单位由调用语境决定；位置差向量单位米；
+- `Vector`：三维向量，单位由调用语境决定；位置差向量单位米；向量近似比较默认绝对容差为无单位 `1e-9`，调用方必须保证双方单位一致；
 - `Distance`：非负米值；
 - `Angle`：方向角，弧度，canonical 范围 `[0, 2π)`；
 - `Transform`：Position + Yaw；

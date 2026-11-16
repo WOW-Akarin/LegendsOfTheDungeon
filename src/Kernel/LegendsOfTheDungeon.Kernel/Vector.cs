@@ -6,6 +6,11 @@ namespace LegendsOfTheDungeon.Kernel;
 public readonly record struct Vector
 {
     /// <summary>
+    /// 向量分量比较的默认绝对容差；该值无单位，调用方应确保比较双方采用同一单位。
+    /// </summary>
+    public const double DefaultTolerance = 1e-9;
+
+    /// <summary>
     /// 创建有限三维向量。
     /// </summary>
     /// <param name="x">X 分量。</param>
@@ -109,7 +114,7 @@ public readonly record struct Vector
     /// <param name="tolerance">非负有限绝对容差。</param>
     /// <returns>三个分量都在容差内时返回 true。</returns>
     /// <exception cref="ArgumentOutOfRangeException">容差为负数、NaN 或 Infinity 时抛出。</exception>
-    public bool NearlyEquals(Vector other, double tolerance = Distance.DefaultToleranceMeters)
+    public bool NearlyEquals(Vector other, double tolerance = DefaultTolerance)
     {
         GeometryMath.RequireNonNegativeFinite(tolerance, nameof(tolerance));
 
