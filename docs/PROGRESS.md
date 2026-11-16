@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `87f7e29467be9319a6359c724deda597985cdd81` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P08 / Kernel Random / REVIEW / B
+阶段 / 任务 / 状态 / 目标完成度：P08 / Kernel Random / ACCEPTED / B
 
 ## 目标与成功条件
 
@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P08 最终实现 CI run #49 已全绿：Unit 86/86、Architecture 16/16、P04/P05 Gate 全部通过；Seed 持久化、固定流向量与不稳定随机源审查通过，当前进入独立 REVIEW。
+P08 已完成独立 Review 并 ACCEPTED；P09 尚未开始。
 
 ## 下一步（最多 5 项）
 
-1. 独立读取 REVIEW HEAD 的 RandomState/Random/Probability/WeightedSelector/RandomStreams 与 RandomTests。
-2. 核对 REVIEW HEAD 自身 Unit 86+、Architecture、P04/P05 Gate 全绿。
-3. 核对 Seed/状态/算法版本与命名流派生版本均已锁定。
-4. 重查 System.Random/Random.Shared/GetHashCode/时间戳/Guid Seed 路径为 0。
-5. 无必需问题后将 P08 ACCEPTED，再进入 P09。
+1. 开始 P09 — Command / Query / Event。
+2. 实现 ICommand/Handler/Result 与 IQuery/Handler 只读协作契约。
+3. 实现 DomainEvent / DeferredEventQueue，并定义异常、取消、重复注册策略。
+4. 定义消息版本、CommandId、事件因果/序号与提交后发布语义。
+5. 建立数量/深度上限和示范模块验证；Handler 注册不得进入 Kernel。
 
 ## 契约、数据所有权与 ADR 变化
 
@@ -63,7 +63,7 @@ P08 最终实现 CI run #49 已全绿：Unit 86/86、Architecture 16/16、P04/P0
 2. 核对 main HEAD 与 P08 起始 SHA `87f7e29467be9319a6359c724deda597985cdd81`。
 3. 打开 Kernel Random 源码与 `RandomTests.cs`。
 4. 读取最新 CI；失败时从第一个 Analyzer/Compiler/Test 真实诊断修复，不改算法版本来迎合测试。
-5. P08 已进入 REVIEW；按 progress/P08.md 当前停点做独立审查。
+5. P08 已 ACCEPTED；下一任务从 DEVELOPMENT_ROADMAP 的 P09 开始。
 
 ## 不应重复执行的操作
 

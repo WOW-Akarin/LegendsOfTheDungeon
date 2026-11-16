@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P08 — REVIEW
+当前阶段：P08 — ACCEPTED
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P00–P07 已 ACCEPTED。P08 Random 已实现并进入 REVIEW：xoshiro256** v1、Seed+状态导出恢复、固定精度 Probability、WeightedSelector 与 Combat/Loot/AI 稳定独立流。
+P00–P08 已 ACCEPTED。Kernel Random 已具备 xoshiro256** v1、Algorithm/Version/Seed/状态导出恢复、固定精度 Probability、WeightedSelector 与 Combat/Loot/AI 稳定独立随机流。P09 尚未开始。
 
 ## 阻塞与技术债
 
-当前无 P08 阻塞。源码审查未发现 System.Random、Random.Shared、运行时 HashCode、时间戳或 Guid 随机派生；最终验收前要求 REVIEW HEAD 自身完整 CI 全绿。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P08 阻塞。P09 将建立 Command/Query/Event 协作契约；Handler 注册与运行时分发不得塞入 Kernel，也不得引入全局 Service Locator。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
