@@ -2,27 +2,25 @@
 
 更新时间：2026-11-16 +08:00
 分支：main（按要求直接更新，不创建分支）
-当前阶段：P18 — WorldMailbox / WorldExecutor / ACCEPTED / C
-已验收：P00–P16、P18；P17/P19 尚未验收，P24 尚未开始
-P18 实现基线：5d51a41920110471f31e8efd3c157d9c3386f243
-P18 独立 REVIEW HEAD：04c862cfe52991701e8011c0f67a2da3d31c5565
+当前阶段：P24 — Entity Identity / Transform / Life（IN_PROGRESS，目标 B）
+最近已验收：P00–P16、P18；P17/P19 尚未验收
 
-## P18 已正式验收
+## 最近稳定基线
 
-- `Runtime.Abstractions` 同步世界写 Port + `Platform.WorldExecution`、P12 双车道有界 Mailbox。
-- 独占同步执行租约（Epoch/Generation/WorldId/作用中 Scope/线程）、Task.Run 无法冒用、同 World 非重入、多世界并行。
-- 一次性 RequestSeq 回执票据与关键车道，接纳/执行时过期检查；P60.F 身份/授权 fail closed。
-- 故障停止处理而保留剩余工作、正常 Complete 关闭后排空已有工作。
-- [技术契约](modules/WORLD_EXECUTION.md)、[完整阶段记录](progress/P18.md)、[四视角审查](reviews/P18_WORLD_EXECUTION_REVIEW.md)。
+- P18 实现基线：5d51a41920110471f31e8efd3c157d9c3386f243；独立 REVIEW：04c862cfe52991701e8011c0f67a2da3d31c5565。
+- P18 正式 ACCEPTED：95d2e3028453fb712bd1eafcb6d27e634c52397d，CI run #161 六 Job 全绿。
+- P18 归档 HEAD：1f1a01b06a967acce29c0762a65b46c08055f636；CI run #162 六 Job 全绿。
 
-## 真实 CI 证据
+## P24 当前工作
 
-- 实现 #159：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43868940960 — 六 Job 全绿，210/210 Unit、16/16 Architecture、真实 Worker 世界执行器 5 项与原 P11/P13/P14/P15/P16 集成 PASS。
-- 独立 REVIEW HEAD #160：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43880202422 — 全六 Job SUCCESS。
-- 正式 ACCEPTED HEAD 95d2e30 run #161：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43880688909 — 六 Job 全部 SUCCESS。
-- P18 必需未解决项 0，独立 REVIEW #160 和正式 ACCEPTED #161 均六 Job PASS，P18 技术 C 正式收口。
+- 新增 Entities.Core：实体四元组身份、唯一 Transform 能力、Life/Target 窄能力、固定组合容器。
+- P18 同步世界租约绑定实体原归属；目标跨世界与旧 Epoch 拒绝；死亡清目标。
+- 新增真实 WorldExecutor Unit 测试、P03 架构白名单、Solution 与锁图。
+- [P24 阶段记录](progress/P24.md)、[Entities 领域契约](modules/ENTITIES.md)。
+- **本批新代码的 locked restore、编译、测试、六 Job CI 和独立 Review 尚未完成；状态不提前标为 ACCEPTED。**
 
-## 后续依赖
+## 下一安全动作
 
-- P17 WorldInstance 直接依赖 P18/P24/P15.J，P18 现已满足；P24 基础实体能力尚未开始，先实施 P24 再推进 P17。
-- P19 WorldTick 依赖 P17；真正 Entity/World 数据写入、生产认证 Host、P64/P66 负载与长稳暂不声称完成。
+1. 观察 P24 实现 HEAD GitHub Actions，任何 FAIL 先修复，保留真实记录。
+2. 达到全部质量 Gate PASS 后进行独立四视角 REVIEW 和独立 REVIEW HEAD CI。
+3. P24 被正式接受后再推进 P17 WorldInstance/Registry/Lifecycle；P19 仍依赖 P17。
