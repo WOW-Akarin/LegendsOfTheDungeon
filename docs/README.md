@@ -1,27 +1,32 @@
 # 项目文档中心
 
-本目录用于维护 LegendsOfTheDungeon 的需求、架构、迁移计划、任务卡和验收记录。
+LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维护在本目录。计划不能替代实现证据；阶段状态以 PROGRESS 和阶段归档为准。
 
-## 文档结构（规划）
+## 当前入口
 
-- `project/`：目标、范围、术语及决策记录
-- `architecture/`：C# 服务端架构和模块接口
-- `migration/`：AzerothCore 源码盘点、依赖图和迁移映射
-- `tasks/`：主控分发的任务卡与执行记录
-- `testing/`：测试方案、对照验证和验收结果
+- [PROJECT_SPEC.md](PROJECT_SPEC.md)：范围、开发规则、变更与验收制度
+- [ARCHITECTURE.md](ARCHITECTURE.md)：依赖、状态所有权、执行与一致性语义
+- [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md)：P00–P67 阶段依赖、交付物和出口
+- [UPSTREAM.md](UPSTREAM.md)：AzerothCore 固定研究基线、来源与许可规则
+- [CONTEXT.md](CONTEXT.md)：当前恢复摘要
+- [PROGRESS.md](PROGRESS.md)：当前任务、停点、风险和验证
+- [decisions/](decisions/)：架构与范围决策记录
+- [research/azerothcore/](research/azerothcore/)：AzerothCore 研究记录与模板
+- [progress/](progress/)：阶段验收证据
 
-## 协作职责
+## 当前状态
 
-- **主控**：规划阶段目标、确认依赖关系、拆分任务卡、规定验收标准、审核结果。
-- **执行**：按任务卡实现和测试、提交可复核证据、报告阻塞和偏差；未经确认不擅自扩大范围。
+当前里程碑：M0 基线。  
+当前阶段：P00 — 范围冻结与 AC 研究基线，状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
-## Phase 0 目标
+P00 固定的 AzerothCore 研究 SHA：
 
-1. 盘点 `azerothcore-wotlk-master` 实际源码与依赖；记录版本与 commit SHA。
-2. 设计最小可编译 C# 项目骨架。
-3. 绘制关键模块依赖关系并确定迁移顺序。
-4. 创建第一批具备输入、输出、验收标准的 Task Card。
+`17f9f9d5003708136c798ab4ef8c1b9762251bad`
 
-**状态**：目录初始化完成；Phase 0 的源码审查、依赖图及任务卡尚未执行。
+## 协作与提交规则
 
-**注意**：AzerothCore 原项目的许可与第三方组件许可须在引用、移植或改写代码前核查；不要假设重写语言会自动免除许可义务。
+- 按 PROJECT_SPEC → ARCHITECTURE → ROADMAP → ADR/模块文档逐层解释约束。
+- 任务实施、功能检查、架构自审、失败恢复检查、最终验收分开记录。
+- 不把计划、模拟实现或未运行命令写成已完成证据。
+- 当前用户明确要求持续直接更新 `main`，因此本项目当前工作流不创建任务分支。
+- 复制、改写或分发上游代码/数据/测试向量前必须核查实际来源许可与归属要求。
