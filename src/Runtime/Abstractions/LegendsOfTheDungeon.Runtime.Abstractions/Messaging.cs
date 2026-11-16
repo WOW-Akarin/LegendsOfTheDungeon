@@ -3,7 +3,7 @@ using LegendsOfTheDungeon.Kernel;
 namespace LegendsOfTheDungeon.Runtime.Abstractions;
 
 /// <summary>
-/// 处理具体 Command，并在成功提交前将事实事件写入当前 DeferredEventQueue。
+/// 处理具体 Command，并在成功提交前将事实事件写入当前 DeferredEventBuffer。
 /// </summary>
 /// <typeparam name="TCommand">具体 Command 类型。</typeparam>
 /// <typeparam name="TResult">Command 成功结果类型。</typeparam>
@@ -19,7 +19,7 @@ public interface ICommandHandler<TCommand, TResult>
     /// <returns>业务成功值或稳定 KernelError。</returns>
     ValueTask<Result<TResult>> HandleAsync(
         TCommand command,
-        DeferredEventQueue deferredEvents,
+        DeferredEventBuffer deferredEvents,
         CancellationToken cancellationToken);
 }
 

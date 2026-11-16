@@ -4,7 +4,7 @@
 
 ## 分层
 
-- **Kernel**：CommandId、MessageVersion、ICommand/IQuery/IQuerySnapshot、DomainEvent、DeferredEventQueue 与不可变事件 envelope/batch。
+- **Kernel**：CommandId、MessageVersion、ICommand/IQuery/IQuerySnapshot、DomainEvent、DeferredEventBuffer 与不可变事件 envelope/batch。
 - **Runtime.Abstractions**：Command/Query Handler 与 Dispatcher 端口、DeferredEvent Publisher 端口。
 - **Runtime.Core**：显式 Handler 注册表与 Command/Query 分发实现。
 - **Modules**：定义自己的 Command/Query/Event、Handler 和只读 Query Snapshot；不通过 Service Locator 获取依赖。
@@ -20,7 +20,7 @@ Command 必须携带：
 
 Handler 通过 `ICommandHandler<TCommand,TResult>` 返回 `Result<TResult>`。业务预期失败使用 `KernelError`；取消保留标准 OperationCanceledException；不可预期异常向运行时上层传播。
 
-每次 dispatch 创建独立 `DeferredEventQueue`。Handler 返回成功表示其领域提交点已经完成，此后 dispatcher 才 commit queue 并 publish；失败/取消/异常都 discard queue。
+每次 dispatch 创建独立 `DeferredEventBuffer`。Handler 返回成功表示其领域提交点已经完成，此后 dispatcher 才 commit queue 并 publish；失败/取消/异常都 discard queue。
 
 ## Query
 
@@ -30,7 +30,10 @@ Query 携带正整数 `MessageVersion`。返回值必须实现 `IQuerySnapshot`�
 
 ## DeferredEvent
 
-`DeferredEventQueue` 绑定当前 CommandId。根事件记录：
+> 命名说明：路线图中的 `DeferredEventQueue` 概念在 C# API 中命名为 `DeferredEventBuffer`，以满足启用的 CA1711 API 命名规则；数量/深度/因果/提交语义不变。
+
+
+`DeferredEventBuffer` 绑定当前 CommandId。根事件记录：
 
 - CommandId 因果来源；
 - 从 1 开始的 EventSequence；

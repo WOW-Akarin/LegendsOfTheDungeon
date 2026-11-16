@@ -83,9 +83,9 @@ public sealed class DeferredEventBatch
 }
 
 /// <summary>
-/// 收集单次 Command 提交后发布的领域事件，并强制数量、深度和因果边界。
+/// 收集单次 Command 提交后发布的领域事件，并强制数量、深度和因果边界；路线图中的 DeferredEventQueue 概念在 C# API 中命名为 DeferredEventBuffer。
 /// </summary>
-public sealed class DeferredEventQueue
+public sealed class DeferredEventBuffer
 {
     private readonly object _queueToken = new();
     private readonly List<DeferredEventEnvelope> _events = [];
@@ -98,7 +98,7 @@ public sealed class DeferredEventQueue
     /// <param name="maximumEvents">整个派生树允许的最大事件数量，必须大于 0。</param>
     /// <param name="maximumDepth">允许的最大派生深度；根事件深度为 0。</param>
     /// <exception cref="ArgumentOutOfRangeException">CommandId 为空、事件上限小于 1 或深度小于 0 时抛出。</exception>
-    public DeferredEventQueue(
+    public DeferredEventBuffer(
         CommandId commandId,
         int maximumEvents,
         int maximumDepth)
@@ -107,7 +107,7 @@ public sealed class DeferredEventQueue
         {
             throw new ArgumentOutOfRangeException(
                 nameof(commandId),
-                "DeferredEventQueue 的 CommandId 不能为 default/empty。");
+                "DeferredEventBuffer 的 CommandId 不能为 default/empty。");
         }
 
         if (maximumEvents < 1)
@@ -188,7 +188,7 @@ public sealed class DeferredEventQueue
         if (!ReferenceEquals(parent.QueueToken, _queueToken))
         {
             throw new ArgumentException(
-                "派生事件 parent 必须由当前 DeferredEventQueue 产生。",
+                "派生事件 parent 必须由当前 DeferredEventBuffer 产生。",
                 nameof(parent));
         }
 
@@ -229,13 +229,13 @@ public sealed class DeferredEventQueue
         if (_events.Count >= MaximumEvents)
         {
             throw new InvalidOperationException(
-                $"DeferredEventQueue 已达到 maximumEvents={MaximumEvents}。");
+                $"DeferredEventBuffer 已达到 maximumEvents={MaximumEvents}。");
         }
 
         if (depth > MaximumDepth)
         {
             throw new InvalidOperationException(
-                $"DeferredEventQueue 派生 depth={depth} 超过 maximumDepth={MaximumDepth}。");
+                $"DeferredEventBuffer 派生 depth={depth} 超过 maximumDepth={MaximumDepth}。");
         }
 
         var envelope = new DeferredEventEnvelope(
@@ -255,7 +255,7 @@ public sealed class DeferredEventQueue
         if (_completed)
         {
             throw new InvalidOperationException(
-                "DeferredEventQueue 已经 Commit 或 Discard，不能继续修改。");
+                "DeferredEventBuffer 已经 Commit 或 Discard，不能继续修改。");
         }
     }
 }

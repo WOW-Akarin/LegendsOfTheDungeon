@@ -115,7 +115,7 @@ public sealed class MessagingTests
     [Fact]
     public void DeferredQueueAssignsSequenceCausalityAndDepth()
     {
-        var queue = new DeferredEventQueue(
+        var queue = new DeferredEventBuffer(
             new CommandId(30),
             maximumEvents: 4,
             maximumDepth: 2);
@@ -138,7 +138,7 @@ public sealed class MessagingTests
     [Fact]
     public void DeferredQueueRejectsCountDepthAndForeignParent()
     {
-        var countQueue = new DeferredEventQueue(
+        var countQueue = new DeferredEventBuffer(
             new CommandId(31),
             maximumEvents: 1,
             maximumDepth: 2);
@@ -146,7 +146,7 @@ public sealed class MessagingTests
         Assert.Throws<InvalidOperationException>(
             () => countQueue.EnqueueRoot(new DemoSignalEvent(V1, "two")));
 
-        var depthQueue = new DeferredEventQueue(
+        var depthQueue = new DeferredEventBuffer(
             new CommandId(32),
             maximumEvents: 8,
             maximumDepth: 1);
@@ -155,7 +155,7 @@ public sealed class MessagingTests
         Assert.Throws<InvalidOperationException>(
             () => depthQueue.EnqueueDerived(child, new DemoSignalEvent(V1, "too-deep")));
 
-        var otherQueue = new DeferredEventQueue(
+        var otherQueue = new DeferredEventBuffer(
             new CommandId(33),
             maximumEvents: 8,
             maximumDepth: 8);
@@ -261,7 +261,7 @@ public sealed class MessagingTests
     {
         public ValueTask<Result<DemoRenameResult>> HandleAsync(
             RenameDemoCommand command,
-            DeferredEventQueue deferredEvents,
+            DeferredEventBuffer deferredEvents,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -328,7 +328,7 @@ public sealed class MessagingTests
     {
         public ValueTask<Result<DemoRenameResult>> HandleAsync(
             FailingCommand command,
-            DeferredEventQueue deferredEvents,
+            DeferredEventBuffer deferredEvents,
             CancellationToken cancellationToken)
         {
             _ = deferredEvents.EnqueueRoot(
@@ -350,7 +350,7 @@ public sealed class MessagingTests
     {
         public ValueTask<Result<DemoRenameResult>> HandleAsync(
             CancellingCommand command,
-            DeferredEventQueue deferredEvents,
+            DeferredEventBuffer deferredEvents,
             CancellationToken cancellationToken)
         {
             _ = deferredEvents.EnqueueRoot(
@@ -371,7 +371,7 @@ public sealed class MessagingTests
     {
         public ValueTask<Result<DemoRenameResult>> HandleAsync(
             ThrowingCommand command,
-            DeferredEventQueue deferredEvents,
+            DeferredEventBuffer deferredEvents,
             CancellationToken cancellationToken)
         {
             _ = deferredEvents.EnqueueRoot(
@@ -390,7 +390,7 @@ public sealed class MessagingTests
     {
         public ValueTask<Result<DemoRenameResult>> HandleAsync(
             SuccessfulNoopCommand command,
-            DeferredEventQueue deferredEvents,
+            DeferredEventBuffer deferredEvents,
             CancellationToken cancellationToken)
         {
             _ = deferredEvents.EnqueueRoot(

@@ -123,7 +123,7 @@ public sealed class CommandDispatcher : ICommandDispatcher
                 $"Command Handler 注册结果类型与消息契约不一致: {command.GetType().FullName}。");
         }
 
-        var deferredEvents = new DeferredEventQueue(
+        var deferredEvents = new DeferredEventBuffer(
             command.CommandId,
             _maximumDeferredEvents,
             _maximumEventDepth);
@@ -168,7 +168,7 @@ public sealed class CommandDispatcher : ICommandDispatcher
     {
         ValueTask<Result<TResult>> HandleAsync(
             ICommand<TResult> command,
-            DeferredEventQueue deferredEvents,
+            DeferredEventBuffer deferredEvents,
             CancellationToken cancellationToken);
     }
 
@@ -179,7 +179,7 @@ public sealed class CommandDispatcher : ICommandDispatcher
     {
         public ValueTask<Result<TResult>> HandleAsync(
             ICommand<TResult> command,
-            DeferredEventQueue deferredEvents,
+            DeferredEventBuffer deferredEvents,
             CancellationToken cancellationToken)
         {
             return handler.HandleAsync(

@@ -24,11 +24,11 @@
 
 ## 当前停点
 
-P09 第一批实现已准备落库：Kernel 消息/DeferredEvent、Runtime.Abstractions 端口、Runtime.Core 显式 dispatcher、Solution/架构/lock graph 与 test-only 示例模块。
+P09 run #53 locked restore 已通过，但 Runtime.Core 两个相对 ProjectReference 层级错误导致类型缺失；另有 CA1711 要求公共 DeferredEventQueue 改名。正在修引用并命名为 DeferredEventBuffer，不 suppress。
 
 ## 下一步（最多 5 项）
 
-1. 提交 P09 第一批实现。
+1. 提交 Runtime.Core 引用路径与 DeferredEventBuffer 命名修复。
 2. 读取 locked restore/build/Analyzer/Unit/Architecture 的第一个真实诊断。
 3. 若失败，修实现/锁图/测试，不绕过 P03/P04。
 4. 核对 Demo Command→Result、Query Snapshot、DeferredEvent、上限/注册/未知消息实际证据。
