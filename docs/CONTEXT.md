@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M1 基础  
-当前阶段：P11 — IN_PROGRESS
+当前阶段：P11 — REVIEW
 
 ## 当前范围
 
@@ -35,15 +35,15 @@ LegendsOfTheDungeon 是通用 C# / .NET 10 游戏服务器核心。研究 Azerot
 
 ## 已具备能力
 
-P00/P01 文档基线已验收；P02 建立 .NET 10 Solution；截至 P10 已验收 Kernel、Runtime.Abstractions、Runtime.Core、Platform、Security.Contracts 五个生产 Assembly、Unit/Architecture 测试入口、NuGet lock file 与 CI Gate，并已由 locked-mode CI run #4 全绿验证。尚无业务功能、数据库集成、网络集成或性能通过证据。
+P00/P01 文档基线已验收；P02 建立 .NET 10 Solution；截至 P10 已验收 Kernel、Runtime.Abstractions、Runtime.Core、Platform、Security.Contracts 五个生产 Assembly、Unit/Architecture 测试入口、NuGet lock file 与 CI Gate，并已由 locked-mode CI run #4 全绿验证。尚无游戏业务功能、游戏网络集成或性能通过证据；P11 已有真实 PostgreSQL 18 技术层集成证据。
 
 ## 当前任务与下一步
 
-P00–P10 已 ACCEPTED，P10 最终 CI run #64 SUCCESS。P11 现为 IN_PROGRESS；第一批 ADO.NET 连接工厂、参数化命令、事务 Unknown 基础已提交 b1dc27c，P11 首批 CI run #65、#66 SUCCESS，run #67 真实 postgres:18 / Npgsql 10.0.3 Integration SUCCESS（rollback、Serializable、版本、幂等、取消、statement_timeout）。Migration/BulkLoader、未知提交回执、digest 冻结、P65.F 与阶段 C 出口尚未完成。
+P00–P10 已 ACCEPTED。P11 已进入 REVIEW；代码审查基线 0a092260，GitHub Actions run #72 SUCCESS（Unit 109/109、Architecture 16/16、真实 PostgreSQL 18 Integration 全绿）。ConnectionFactory、参数化命令、事务 Unknown、Migration、BoundedBulkLoader、P65.F 初始注入与幂等消歧均有可追溯代码和真实测试。REVIEW 文档 HEAD CI 与 ACCEPTED HEAD CI 尚未运行，因此 P11 尚未 ACCEPTED。
 
 ## 阻塞与技术债
 
-P11 当前已获得初始真实数据库证据；仍缺 Migration/BulkLoader 和 Unknown/恢复测试，不能验收 C。Platform 不包含游戏业务规则；无真实认证 Adapter，生产身份绑定/授权保持默认拒绝。必须实测：P11 PostgreSQL 18 版本/digest、隔离/事务/幂等/故障语义，P64.F 绝对性能阈值。
+本阶段已确认的必需实现阻塞：0。留存风险：模拟确认丢失而非实际物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。保留现有架构不变量和不记录秘密的约束。下一安全动作：验证 REVIEW HEAD CI → 正式验收并验证 ACCEPTED HEAD。
 
 ## 关键入口
 
@@ -73,5 +73,6 @@ P11 当前已获得初始真实数据库证据；仍缺 Migration/BulkLoader 和
 
 - [P10 证据](progress/P10.md)
 - [P11 阶段进度](progress/P11.md)
+- [P11 独立代码审查](reviews/P11_PERSISTENCE_REVIEW.md)
 - [Persistence 契约](modules/PERSISTENCE.md)
 - [Platform 契约](modules/PLATFORM.md)

@@ -1,29 +1,31 @@
-# P11 — Platform Persistence 契约（进行中）
+# P11 — Platform Persistence 技术契约
 
-## 范围与依赖
+状态：P11 REVIEW，代码审查基线 0a092260，真实 PostgreSQL 18 run #72 SUCCESS。本文件只描述技术层已证实的范围，P11 最终 ACCEPTED 仍待独立 HEAD 检查。
 
-P11 直接依赖 P10（已 ACCEPTED），目标完成度 C：在真实 PostgreSQL 18 上提供数据库基础技术设施。新项目 LegendsOfTheDungeon.Platform.Persistence 使用 ADO.NET 抽象，不拥有游戏业务表、领域 SQL 或游戏状态；业务 SQL 必须位于各业务模块 Infrastructure。已新增专用 Npgsql 10.0.3 Integration Probe（非生产依赖），在 postgres:18 service 实测；真实 NuGet lock 已从 runner 生成并入库。PostgreSQL image digest 尚待固定。
+## 所有权与依赖
 
-## 已实现基础契约
+- Platform.Persistence 只依赖 BCL ADO.NET 抽象，不直接依赖 Npgsql，且不引用任何游戏业务模块或游戏表。具体 PostgreSQL Provider 在 Composition/Integration 层选择。
+- 模块 Infrastructure 拥有 SQL 模板、持久化业务表及其业务幂等键；技术层只拥有公开技术迁移账本 public.lotd_platform_migrations 和中立执行语义。
+- Npgsql 10.0.3 只在 Integration Probe，使用版本锁文件；PostgreSQL 18 CI service 固定 digest sha256:2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbc。
 
-- DatabaseConnectionFactory：通过注入的 DbProviderFactory 创建连接，打开失败主动释放；连接串仅在私有字段中保存，不写入日志或失败报告。
-- SqlParameterValue / ParameterizedCommand：固定命令和参数快照，校验参数名与类型，拒绝重复名；以 DbParameter 真正绑定值，null 转为 DBNull.Value。
-- SQL 文本只能由模块 Infrastructure 静态持有。此 API 不能在运行时自动识别调用方是否在 SQL 字符串中拼接了不可信值，后续需要审查规则和使用方测试。
-- PersistenceTransaction：显式隔离级别；Active 状态下离开作用域尝试回滚；提交成功才返回 Committed。提交过程中发生 DbException、TimeoutException 或 OperationCanceledException 则返回 Unknown，禁止将结果视为已回滚并盲目重试。
-- 上述 API 已在 GitHub Actions run #67 使用真实 PostgreSQL 18 + Npgsql 验证连接、Rollback、隔离、条件版本写、幂等键、取消与 statement_timeout。但 Migration/BulkLoader、提交 Unknown 故障点及 Provider 失联测试未完成，不意味着 P11 已达到 C。
+## 基础 API 与一致性语义
 
-## 目标完成度 C 的真实出口
+1. DatabaseConnectionFactory：可注入 DbProviderFactory，异常路径释放连接；BeginTransactionAsync 强制明确 IsolationLevel；调用方以 await using 释放。连接串是秘密，不得进入日志或错误报告。
+2. SqlParameterValue / ParameterizedCommand：受检参数名、DbType、重复名拒绝，null 绑定 DBNull，命令文本与 DbParameter 值分离；参数集合冻结为只读列表，但不会深复制参数值对象。SQL 文本只能由可信模块 Infrastructure 提供，不允许在调用方拼接不可信输入。
+3. PersistenceTransaction：Active、Committed、RolledBack、OutcomeUnknown、Disposed。仅获得 Provider 提交确认后返回 Committed；提交发出后的 DB 故障/取消/超时返回 Unknown；未知不能直接重试；Active 退出自动回滚，始终释放连接。
+4. PostgreSqlMigrationRunner：对事务级 advisory lock 下的连续迁移清单先查账本、比对 checksum，逐步执行 DDL/DML 并同事务写入账本。已执行的版本不可改写，不允许自动降级；故障时回滚。调用方提供静态、审计过、可在事务中运行的 SQL。
+5. BoundedBulkLoader：输入为预构造 IReadOnlyList 参数化命令；执行前校验正的 maximumCommands 和 maximumParameters，拒绝超额；执行失败或取消则回滚活跃事务；成功返回命令数但调用方仍需自己 Commit。不是 PostgreSQL COPY，也没有宣称高性能。
+6. P65.F 初始注入：BeforeCommit / AfterCommit / AfterRollback。测试显示实际提交后模拟回执超时 -> CommitOutcome.Unknown；新连接查幂等账本确认已提交并禁止重复写。模拟回滚回执丢失也保留 OutcomeUnknown。生产默认路径无故障注入。
 
-1. 在 PostgreSQL 18 上实际建立连接、记录 server_version 及镜像 digest，验证连接释放和 Provider 故障。
-2. 完成 Migration：模块贡献有序、不可变版本清单；技术层只管理版本账本、互斥及失败中止；重复执行不得破坏数据；不可自动对已上线破坏性迁移做假回滚。
-3. 完成 BulkLoader：限定批次、参数上限、取消和事务归属；写入和事务提交的确认要分开。
-4. 在真实选定 DB 上验证事务 Rollback 无残留、隔离级别、乐观条件版本写入、幂等账本和重复请求。
-5. 在提交前取消、提交中超时、回执丢失、连接断开等情形区分失败与 Unknown，演示查询账本后的消歧行为。
-6. 启动 P65.F：按 prepare、数据库变更后、commit 前、commit 回执后、内存应用前设置可控故障点，复用后续经济事务。
+## 真实测试与出口
 
-## 安全和禁止项
+- run #72：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43824023757
+- Npgsql 10.0.3、PostgreSQL 18、Ubuntu Linux x64、SDK 10.0.404、locked-mode restore。
+- 回滚无残留、未提交作用域回滚、ReadCommitted/Serializable、版本写拒绝旧版本、幂等请求去重均真实 PASS。
+- Migration 重放/历史 checksum 变更拒绝/错误迁移整事务回滚；Bulk 命令/参数预算、重复键整批回滚均真实 PASS。
+- 提交前取消、statement_timeout、提交成功后注入确认丢失 Unknown、回滚确认丢失、幂等重查和单连接池释放均真实 PASS。
+- P11 证据见 [P11 阶段档案](../progress/P11.md) 和 [独立代码审查](../reviews/P11_PERSISTENCE_REVIEW.md)。
 
-- Platform.Persistence 不创建或解释任何游戏业务表。
-- 连接串、认证信息、参数原值和 Provider 原始异常文本不能进入日志及持久构建 artifact。
-- 不能用内存替身、静态推断或仅编译成功替代真实 PostgreSQL 集成。
-- Unknown 状态必须通过业务幂等键或版本查询消歧；不能默认重试、推断回滚或报告成功。
+## 明确保留的风险
+
+原始 Provider 异常可能携带秘密，实际日志系统不得直接记录 ToString/连接串/参数原文；技术层没有生产业务日志。当前提交回执丢失是实际 PostgreSQL 事务后注入的模拟故障，不是物理断网测试。P65 完整故障矩阵、生产 ServerHost、业务持久化、COPY 性能与 P64 预算均未完成。

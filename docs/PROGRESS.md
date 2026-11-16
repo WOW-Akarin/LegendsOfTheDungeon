@@ -1,33 +1,44 @@
 # 当前进度
 
 更新时间：2026-11-16 +08:00
-代码基线 / Branch：P11 起始 0e0ab46f99a16f27b404d233105cc512dcd13dc2 / main
-当前阶段 / 状态 / 目标：P11 — Platform Persistence / IN_PROGRESS / C
+分支：main（按用户要求直接提交，不创建分支）
+阶段 / 状态 / 目标：P11 — Platform Persistence / REVIEW / C
+任务起始 HEAD：0e0ab46f99a16f27b404d233105cc512dcd13dc2
+实现审查基线：0a092260c20f826b5126e2e83422b125b0b27cc5
 
-## 目标与出口
+## 当前交付
 
-实现 DB 技术层 ConnectionFactory、Transaction、ParameterizedCommand、Migration、BulkLoader；在真实 PostgreSQL 18 上证明 rollback 无残留、隔离、旧版本拒绝、幂等和事务结果未知的处理，禁止在 Platform.Persistence 内引入游戏业务表。
+- 独立 Platform.Persistence / ADO.NET 工厂、参数化命令和事务 Unknown 状态。
+- PostgreSQL 技术迁移账本、校验和验证、事务级 advisory lock、有界命令/参数批量写入。
+- 实际 Npgsql 10.0.3 + PostgreSQL 18 集成、固定镜像 digest、locked NuGet 图。
+- P65.F 最小 BeforeCommit / AfterCommit / AfterRollback 注入及真实数据库幂等恢复探针。
+- P11 Unit、Architecture、功能与失败恢复证明见 [P11 阶段证据](progress/P11.md)、[独立代码审查](reviews/P11_PERSISTENCE_REVIEW.md)。
 
-## 本轮交付
+## 最近真实验证
 
-- 新增独立 Platform.Persistence 生产 Assembly；同步 Solution、P03 manifest、Unit 引用和锁文件。
-- ADO.NET Provider 工厂、显式 DbParameter、事务状态/提交 Unknown 语义；新增参数合法性 Unit。
-- 详细范围见 [P11 阶段证据](progress/P11.md)、[Persistence 契约](modules/PERSISTENCE.md)。
+- Actions run #69：FAIL，CA1822；已按分析器修复，不 suppress。
+- Actions run #70：SUCCESS（Migration / Bulk 真实集成）。
+- Actions run #71：SUCCESS（提交回执未知 / 回滚回执未知 / 账本消歧）。
+- Actions run #72：SUCCESS，Ubuntu Linux x64 / SDK 10.0.404；locked restore、Release build、109/109 Unit、16/16 Architecture、负向/文档/Kernel Gate，PostgreSQL 集成全部 PASS，并上传集成报告 artifact。
+- PostgreSQL image digest：2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbc；Probe 确认 major version 18。
+- 审查代码基线是 0a092260；REVIEW 文档 HEAD CI 尚未执行，不等于 ACCEPTED。
 
-## 当前停点
+## 当前停点及下一步
 
-- P10 先前 ACCEPTED HEAD Actions run #64：SUCCESS。
-- P11 实现起始提交 b1dc27c：CI run #65、#66 PASS。真实 PostgreSQL 18 集成探针提交 600dfe2：CI run #67 build-test 与 persistence-integration 全部 SUCCESS。
-- Npgsql 10.0.3 的真实 postgres:18 Probe 已通过回滚、隔离、版本条件写、幂等、取消与 SQL statement_timeout；Migration/BulkLoader、提交回执 Unknown、镜像 digest 固定与 P65.F 仍 NOT_RUN，P11 不能标记 REVIEW/ACCEPTED。
+1. REVIEW 文档提交后验证 main HEAD 的完整 CI，若出现失败按首个真实诊断修复。
+2. 完成文档/契约及四视角审查，确保真实测试和追溯材料一致。
+3. REVIEW HEAD 全绿后把阶段转为 ACCEPTED。
+4. 再验证 ACCEPTED HEAD 的完整 CI，回写最终证据。
+5. P11 完成后启动 P12 — Platform Concurrency（不提前交付）。
 
-## 下一步
+## 风险及未验证事项
 
-1. 检查 Integration lock 入库后的 --locked-mode CI，并冻结真实 PostgreSQL 18 镜像 digest。
-2. Npgsql 10.0.3 Integration 已接入，生成的 NuGet package lock 已回写仓库；下一步加强事务故障注入与失败恢复。
-3. 实现 Migration/BulkLoader，并实际测事务、隔离、版本写和幂等。
-4. 补提交未知/回执丢失/释放/取消/超时及 P65.F 测试证据。
-5. 四视角自审、独立 REVIEW、最终 CI 全绿再决定 ACCEPTED。
+- P65.F 只开始故障点，不能当完整经济/崩溃恢复验收。
+- 当前 BulkLoader 为有界命令批处理，非 COPY 性能基准；性能属于后续 P64。
+- 提交确认丢失通过真实 PG 提交后故意抛超时模拟，尚无物理断网试验。
+- 无生产 Host、业务表、真实认证或持久化业务模块，留给后续阶段。
+- 当前执行环境无本地 dotnet，正式构建与报告来自 GitHub Actions。
 
-## 风险与恢复
+## 恢复
 
-当前运行环境无 dotnet；CI 是正式构建环境。连接串和 Provider 原始异常禁止进入日志；提交 Unknown 必须由业务幂等账本消歧。恢复读 PROJECT_SPEC → ARCHITECTURE → CONTEXT → 本文 → P11 阶段与模块文档，再核对 main HEAD/CI 结果，禁止把 NOT_RUN 解释为 PASS。
+PROJECT_SPEC → ARCHITECTURE → CONTEXT → 本文 → progress/P11.md → modules/PERSISTENCE.md → reviews/P11_PERSISTENCE_REVIEW.md，再核对 main HEAD/CI。NOT_RUN 不得当 PASS。

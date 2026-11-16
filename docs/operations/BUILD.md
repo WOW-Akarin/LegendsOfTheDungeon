@@ -93,4 +93,11 @@ P05 使用独立编译夹具证明 Strong ID 的 CLR 类型隔离，而不是只
 
 ## P11 PostgreSQL Integration
 
-独立 Probe 在 tests/Integration/LegendsOfTheDungeon.PersistenceProbe，使用 Npgsql 10.0.3、postgres:18 service。实际依赖锁文件已由 run #67 非 locked bootstrap 生成并检入；后续必须执行 dotnet restore <Probe.csproj> --locked-mode。run #67 已 PASS 真实回滚、Serializable、条件版本更新、重复幂等、提交前取消与 statement_timeout；Migration、BulkLoader、提交结果未知故障及镜像 digest 仍待验收。
+- CI 的 persistence-integration Job 使用 Ubuntu Linux x64、SDK 10.0.404、Npgsql 10.0.3、PostgreSQL 18。
+- PostgreSQL 镜像已固定：postgres:18@sha256:2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbc。
+- 独立 Integration 项目：tests/Integration/LegendsOfTheDungeon.PersistenceProbe；Npgsql 锁文件已提交并用 --locked-mode 验证，程序也纳入 Solution。
+- 构建命令：dotnet restore LegendsOfTheDungeon.slnx --locked-mode；真实数据库运行：dotnet run --project tests/Integration/LegendsOfTheDungeon.PersistenceProbe/LegendsOfTheDungeon.PersistenceProbe.csproj --configuration Release --no-restore。
+- CI Service 注入 LOTD_TEST_POSTGRES 专用临时连接串；不能在公共日志中输出原值。连接池上限为 1 以验证事务释放。
+- run #72（43824023757）完整成功：Unit 109/109、Architecture 16/16；真实数据库跑过回滚、Serializable、版本与幂等、Migration、BoundedBulkLoader、超时、故障回执未知、取消和连接释放。
+- Integration Job 会上传 persistence-integration/report.txt artifact（保留 14 天）。该报告不含连接串和参数秘密；只记录通过探针组。
+- P65.F 仅初始确认丢失模拟，后续业务/断电/消息恢复需单独记录证据。
