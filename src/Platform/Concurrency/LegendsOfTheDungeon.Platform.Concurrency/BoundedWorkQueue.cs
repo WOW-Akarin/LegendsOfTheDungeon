@@ -21,7 +21,9 @@ public enum OutstandingWorkState
     /// <summary>仍在有界队列内。</summary>
     Queued,
     /// <summary>已被 Worker 领取且正在处理。</summary>
-    Running
+    Running,
+    /// <summary>关停后不会被执行，已释放队列负载；调用方必须根据 ID 恢复。</summary>
+    Abandoned
 }
 
 /// <summary>关闭时仍未完成的一项稳定任务标识和阶段。</summary>
@@ -157,6 +159,31 @@ public sealed class BoundedWorkChannel
         lock (_gate)
         {
             _outstanding.Remove(id);
+        }
+    }
+
+    internal void MarkAbandoned(long id)
+    {
+        lock (_gate)
+        {
+            if (_outstanding.ContainsKey(id))
+            {
+                _outstanding[id] = OutstandingWorkState.Abandoned;
+            }
+        }
+    }
+
+    internal void ReleaseQueuedCallbacksAfterWorkersExit()
+    {
+        lock (_gate)
+        {
+            while (_channel.Reader.TryRead(out var item))
+            {
+                if (_outstanding.ContainsKey(item.Id))
+                {
+                    _outstanding[item.Id] = OutstandingWorkState.Abandoned;
+                }
+            }
         }
     }
 }

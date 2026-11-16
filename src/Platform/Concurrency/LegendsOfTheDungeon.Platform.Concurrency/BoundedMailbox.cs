@@ -123,7 +123,10 @@ public sealed class BoundedMailbox<T>
                 if (critical)
                 {
                     delivered.Add(new MailboxDelivery<T>(MailboxLane.Critical, _critical.Dequeue()));
-                    _consecutiveCritical++;
+                    if (_consecutiveCritical < _criticalBurst)
+                    {
+                        _consecutiveCritical++;
+                    }
                 }
                 else
                 {

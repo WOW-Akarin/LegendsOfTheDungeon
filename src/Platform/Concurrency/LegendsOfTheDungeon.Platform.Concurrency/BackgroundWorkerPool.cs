@@ -62,6 +62,7 @@ public sealed class BackgroundWorkerPool : IAsyncDisposable
     private long _succeeded;
     private long _failed;
     private long _cancelled;
+    private int _disposed;
 
     /// <summary>立即启动固定数量的后台消费者。</summary>
     /// <param name="queue">共享有界任务队列，调用方拥有接纳权。</param>
@@ -117,6 +118,11 @@ public sealed class BackgroundWorkerPool : IAsyncDisposable
     /// <summary>等待已发出的任务和 Worker 退出后释放取消源；调用方应先用限时 ShutdownAsync 停止接纳并取得未完成清单。</summary>
     public async ValueTask DisposeAsync()
     {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+        {
+            return;
+        }
+
         _queue.Complete();
         _stop.Cancel();
         try
@@ -125,6 +131,8 @@ public sealed class BackgroundWorkerPool : IAsyncDisposable
         }
         finally
         {
+            // 在所有 Worker 退出后释放尚未执行任务的闭包，不删除供恢复的 ID。
+            _queue.ReleaseQueuedCallbacksAfterWorkersExit();
             _stop.Dispose();
         }
     }
@@ -138,6 +146,7 @@ public sealed class BackgroundWorkerPool : IAsyncDisposable
                 // Channel 在取消与已缓冲数据竞态时仍可能交付一项；超时后不再启动新工作。
                 if (_stop.IsCancellationRequested)
                 {
+                    _queue.MarkAbandoned(item.Id);
                     break;
                 }
 

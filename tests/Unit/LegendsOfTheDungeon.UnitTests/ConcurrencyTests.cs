@@ -126,7 +126,7 @@ public sealed class ConcurrencyTests
     {
         var queue = new BoundedWorkChannel(4);
         var completed = new List<int>();
-        var pool = new BackgroundWorkerPool(queue, workerCount: 1);
+        await using var pool = new BackgroundWorkerPool(queue, workerCount: 1);
         queue.Offer(new BackgroundWorkItem(1, _ => throw new InvalidOperationException("secret-error-message")));
         queue.Offer(new BackgroundWorkItem(2, _ =>
         {
@@ -163,7 +163,7 @@ public sealed class ConcurrencyTests
             Interlocked.Increment(ref invoked);
             return ValueTask.CompletedTask;
         }, cancelled.Token));
-        var pool = new BackgroundWorkerPool(queue, 1);
+        await using var pool = new BackgroundWorkerPool(queue, 1);
         var report = await pool.ShutdownAsync(TimeSpan.FromSeconds(5));
 
         Assert.True(report.Drained);
@@ -178,7 +178,7 @@ public sealed class ConcurrencyTests
         var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var queue = new BoundedWorkChannel(1);
-        var pool = new BackgroundWorkerPool(queue, 1);
+        await using var pool = new BackgroundWorkerPool(queue, 1);
         Assert.Equal(WorkOfferStatus.Accepted, queue.Offer(new BackgroundWorkItem(21, async _ =>
         {
             started.TrySetResult(true);
@@ -201,13 +201,55 @@ public sealed class ConcurrencyTests
         // 超时取消 Worker 后，不再自行执行尚未领取的工作；必须由调用方恢复。
         Assert.False(completed.Drained);
         Assert.Equal([22L], completed.Outstanding.Select(static x => x.Id));
+        await pool.DisposeAsync();
+        var abandoned = Assert.Single(queue.SnapshotOutstanding());
+        Assert.Equal(22L, abandoned.Id);
+        Assert.Equal(OutstandingWorkState.Abandoned, abandoned.State);
+    }
+
+    [Fact]
+    public async Task FailureSummariesAreBoundedAndNeverContainExceptions()
+    {
+        var queue = new BoundedWorkChannel(8);
+        await using var pool = new BackgroundWorkerPool(queue, 1, maximumFailureRecords: 2);
+        for (var i = 1; i <= 5; i++)
+        {
+            Assert.Equal(WorkOfferStatus.Accepted,
+                queue.Offer(new BackgroundWorkItem(i,
+                    _ => throw new InvalidOperationException("private-credential-sentinel"))));
+        }
+
+        var report = await pool.ShutdownAsync(TimeSpan.FromSeconds(5));
+        Assert.True(report.Drained);
+        Assert.Equal(5L, report.Failed);
+        Assert.Equal([4L, 5L], report.RecentFailures.Select(static x => x.Id));
+        Assert.All(report.RecentFailures,
+            static item => Assert.DoesNotContain("private", item.Code, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void InvalidConcurrencyBudgetsFailFast()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new BoundedMailbox<int>(0, 1, 1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new BoundedMailbox<int>(1, 0, 1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new BoundedMailbox<int>(1, 1, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new LogicalScheduler<int>(0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new BoundedWorkChannel(0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new BackgroundWorkItem(0,
+            static _ => ValueTask.CompletedTask));
+        var mailbox = new BoundedMailbox<int>(1, 1, 1);
+        Assert.Throws<ArgumentOutOfRangeException>(() => mailbox.Offer(1, (MailboxLane)99));
+        Assert.Throws<ArgumentOutOfRangeException>(() => mailbox.Drain(0));
+        var scheduler = new LogicalScheduler<int>(1);
+        Assert.Throws<ArgumentOutOfRangeException>(() => scheduler.Schedule(-1, 1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => scheduler.DrainDue(0, 0));
     }
 
     [Fact]
     public async Task ShutdownDrainsAcceptedTasksAndCapsWorkerParallelism()
     {
         var queue = new BoundedWorkChannel(15);
-        var pool = new BackgroundWorkerPool(queue, 2);
+        await using var pool = new BackgroundWorkerPool(queue, 2);
         var active = 0;
         var maximum = 0;
         var completed = 0;
