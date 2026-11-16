@@ -15,7 +15,7 @@
 ## P19 状态摘要与重放可复现性
 
 - P26 扩充 `WorldEntitySnapshot` 的 `Control`、`Tags`、`Relationships` 以及 Control/Tag 来源明细与递增最大序号，保证同一有效状态下撤销语义不同的来源集合**不会被误视为相同的确定性状态**。
-- P19 SHA256 `WorldStateDigest` schema 从 v1/v2 升级为 **v3**，显式 little-endian 编码每实体控制标志、来源 Sequence/Source/Flag、临时标签来源、永久 Tag、有序有效 Tag 和四类含存在位的关系身份。未使用墙钟、线程 ID、字典迭代顺序；旧 schema digest 不应被当作新版本的同义值。
+- P19 SHA256 `WorldStateDigest` schema 从 v1/v2 升级为 **v3**，显式 little-endian 编码每实体控制标志、来源 Sequence/Source/Flag、临时标签来源、永久 Tag、有序有效 Tag 和四类含存在位的关系身份。未使用墙钟、线程 ID、字典迭代顺序；旧 schema digest 不应被当作新版本的同义值。验证必须在同一 Tick 比较单一 Stun 与双独立 Stun 来源、永久/临时同名 Tag 的不同来源历史，不能只比较不同 Tick（Tick 本身参与 Hash）。
 - 本版是 P19/P26 最小内存状态摘要扩展，仍不是 P62.F 跨 DB/网络/AI/随机流的完整回放验收。
 
 ## P26 出口证据要求
@@ -28,3 +28,8 @@
 
 - P21 Visibility 的实时 Enter/Leave Delta、距离和状态/标签过滤；P27 移动、P25 Stats/Resources、P60 Host、P62 完整 Replay 与 P64 大规模性能/长期测试均不能由本阶段替代。
 - 当前 `EntityEffectSource` 是显式非零业务来源编号，撤销由签发方或其生命周期清理器发起；**来源实体销毁并不自动推导所有 EffectSourceId 引用**。P26 负责目标实体退休时清理自身来源，后续 Aura/Ability/AI 消费者须通过受信任生命周期回调撤销其他实体上的来源。
+
+## 实现 CI 中发现的反例
+
+- #189 CA1711 领域 Flags 枚举命名 FAIL；#190 272 Unit 中跨 Control/Tag 撤销句柄真实 FAIL，随后修复为匹配 `EntityEffectKind`；#191 272 Unit/16 Architecture、10/10 SUCCESS。失败保留而不改变负向测试。
+- 在 #191 基础上补同 Tick 来源历史 Hash 检验、64 来源永久 Tag 容量保护与旧 Token 不复用，新 HEAD CI 尚待验证；正式 REVIEW/ACCEPTED 均不得预先标记通过。

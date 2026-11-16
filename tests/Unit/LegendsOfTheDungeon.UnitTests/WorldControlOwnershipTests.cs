@@ -446,6 +446,97 @@ public sealed class WorldControlOwnershipTests
         Assert.Equal(4, new[] { first, control, tagged, related }.Distinct().Count());
     }
 
+    [Fact]
+    public void SameEffectiveControlAndTagCanHaveDifferentSourceHistoryAndDifferentHashes()
+    {
+        string Hash(int stunSources, bool permanentTag, bool temporaryTag)
+        {
+            var (world, executor) = Create();
+            var subject = Id(60);
+            Run(executor, ctx =>
+            {
+                Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(subject)));
+                for (ulong i = 1; i <= (ulong)stunSources; i++)
+                {
+                    Assert.Equal(WorldEntityResult.ControlGranted,
+                        world.GrantControl(ctx, subject, Source(i),
+                            EntityControlEffects.Stunned, out _));
+                }
+
+                if (permanentTag)
+                {
+                    Assert.Equal(WorldEntityResult.TagChanged,
+                        world.SetPermanentTag(ctx, subject, "npc", true));
+                }
+
+                if (temporaryTag)
+                {
+                    Assert.Equal(WorldEntityResult.TagGranted,
+                        world.GrantTag(ctx, subject, Source(99), "npc", out _));
+                }
+            });
+            var clock = new FakeClock(new Duration(50),
+                new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            var pipeline = new WorldTickPipeline(world, clock, []);
+            clock.AdvanceTicks(1);
+            Run(executor, ctx => pipeline.Execute(ctx, new Tick(1)));
+            return pipeline.LastStateHash;
+        }
+
+        // All comparisons occur at the SAME Tick/World/Epoch with identical effective flags.
+        Assert.NotEqual(Hash(1, false, false), Hash(2, false, false));
+        Assert.NotEqual(Hash(1, true, false), Hash(1, false, true));
+        Assert.NotEqual(Hash(1, true, false), Hash(1, true, true));
+        Assert.Equal(Hash(2, true, true), Hash(2, true, true));
+    }
+
+    [Fact]
+    public void RevokedHandleCannotCancelFreshGrantOfIdenticalSource()
+    {
+        var (world, executor) = Create();
+        var id = Id(61);
+        EntityEffectHandle old = default, replacement = default;
+        Run(executor, ctx =>
+        {
+            Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(id)));
+            Assert.Equal(WorldEntityResult.ControlGranted,
+                world.GrantControl(ctx, id, Source(5), EntityControlEffects.Rooted, out old));
+            Assert.Equal(WorldEntityResult.ControlRevoked, world.RevokeControl(ctx, id, old));
+            Assert.Equal(WorldEntityResult.ControlGranted,
+                world.GrantControl(ctx, id, Source(5), EntityControlEffects.Rooted, out replacement));
+            Assert.NotEqual(old, replacement);
+            Assert.True(old.Sequence < replacement.Sequence);
+            Assert.Equal(WorldEntityResult.AlreadyCompleted, world.RevokeControl(ctx, id, old));
+        });
+        Assert.True(world.TryGetSnapshot(id.Id, out var snapshot));
+        Assert.Equal(EntityControlEffects.Rooted, snapshot.Control);
+        Assert.Equal(replacement.Sequence, snapshot.ControlSequence);
+        Assert.Single(snapshot.ControlGrants);
+    }
+
+    [Fact]
+    public void PermanentTagCapacityReturnsExplicitResultWithoutFaultingWorld()
+    {
+        var (world, executor) = Create();
+        var id = Id(62);
+        Run(executor, ctx =>
+        {
+            Assert.Equal(WorldEntityResult.Spawned, world.Spawn(ctx, Seed(id)));
+            for (ulong i = 1; i <= 64; i++)
+            {
+                Assert.Equal(WorldEntityResult.TagGranted,
+                    world.GrantTag(ctx, id, Source(i), "busy", out _));
+            }
+
+            Assert.Equal(WorldEntityResult.CapacityExceeded,
+                world.SetPermanentTag(ctx, id, "npc", true));
+        });
+        Assert.Equal(WorldLifecycle.Running, world.State);
+        Assert.True(world.TryGetSnapshot(id.Id, out var snapshot));
+        Assert.Equal(["busy"], snapshot.Tags);
+        Assert.Empty(snapshot.PermanentTags);
+    }
+
     private sealed class Work(Action<IWorldWriteContext> action) : IWorldAction
     {
         public void Execute(IWorldWriteContext context) => action(context);

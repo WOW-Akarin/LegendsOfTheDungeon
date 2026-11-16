@@ -9,6 +9,7 @@ RunCheck("two-source-stun-and-temporary-tag-lease", ControlAndTags);
 RunCheck("independent-four-relations-cycle-rejection-and-death-cleanup", RelationsAndDeath);
 RunCheck("old-generation-handle-and-captured-lease-fail-closed", StaleAndGuards);
 RunCheck("world-tick-control-tag-relation-replay-hash", Replay);
+RunCheck("equal-effective-control-different-source-history-hash", SourceSensitiveHash);
 Console.WriteLine("P26_WORLD_CONTROL_INTEGRATION_PASS");
 
 static void RunCheck(string name, Action check)
@@ -204,6 +205,34 @@ static void Replay()
     var b = Sequence();
     Require(a.SequenceEqual(b) && a.Distinct().Count() == 4 &&
         a.All(hash => hash.Length == 64), "control/tag/relationship digest replay diverged");
+}
+
+static void SourceSensitiveHash()
+{
+    static string Digest(int sources)
+    {
+        var (world, executor) = Create();
+        var entity = Id(77);
+        Run(executor, ctx =>
+        {
+            Spawn(world, ctx, entity);
+            for (ulong source = 1; source <= (ulong)sources; source++)
+            {
+                Require(world.GrantControl(ctx, entity, new EntityEffectSource(source),
+                    EntityControlEffects.Stunned, out _) == WorldEntityResult.ControlGranted,
+                    "source grant failed");
+            }
+        });
+        var clock = new FakeClock(new Duration(50),
+            new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        clock.AdvanceTicks(1);
+        var pipeline = new WorldTickPipeline(world, clock, []);
+        Run(executor, ctx => pipeline.Execute(ctx, new Tick(1)));
+        return pipeline.LastStateHash;
+    }
+
+    Require(Digest(1) != Digest(2), "two independent Stun sources collapsed into same state digest");
+    Require(Digest(2) == Digest(2), "same sources did not replay deterministically");
 }
 
 internal sealed class Work(Action<IWorldWriteContext> action) : IWorldAction
