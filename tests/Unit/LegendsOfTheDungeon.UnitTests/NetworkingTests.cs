@@ -60,6 +60,10 @@ public sealed class NetworkingTests
         Assert.Throws<ArgumentOutOfRangeException>(() => Options(maxPayload: 1_048_577));
         Assert.Throws<ArgumentOutOfRangeException>(() => Options(frames: 0));
         Assert.Throws<ArgumentOutOfRangeException>(() => Options(queuedBytes: 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Options(frames: 257));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Options(queuedBytes: 4_194_305));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new FrameTransportOptions(10, TimeSpan.FromSeconds(31), 1, 10, 1, 10));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             new FrameTransportOptions(10, TimeSpan.Zero, 1, 10, 1, 10));
         Assert.Throws<ArgumentOutOfRangeException>(() =>

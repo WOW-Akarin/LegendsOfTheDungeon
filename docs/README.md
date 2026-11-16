@@ -23,6 +23,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [modules/PLATFORM.md](modules/PLATFORM.md)：P10 配置、日志和 P60.F 身份/授权边界
 - [modules/PERSISTENCE.md](modules/PERSISTENCE.md)：P11 持久化、事务与故障语义契约
 - [modules/CONCURRENCY.md](modules/CONCURRENCY.md)：P12 有界并发与关闭恢复契约
+- [modules/NETWORKING.md](modules/NETWORKING.md)：P13 通用帧、TCP Loopback、安全边界契约
 - [progress/P13.md](progress/P13.md)：P13 网络传输阶段证据
 - [reviews/P12_CONCURRENCY_REVIEW.md](reviews/P12_CONCURRENCY_REVIEW.md)：P12 独立四视角审查
 - [reviews/P11_PERSISTENCE_REVIEW.md](reviews/P11_PERSISTENCE_REVIEW.md)：P11 四视角独立代码审查

@@ -46,6 +46,15 @@ public sealed class FrameTransportOptions
     /// <summary>硬性最大单帧载荷；不能通过配置突破。</summary>
     public const int AbsoluteMaximumPayloadBytes = 1_048_576;
 
+    /// <summary>每连接等待队列的硬帧数上限。</summary>
+    public const int AbsoluteMaximumQueuedFrames = 256;
+
+    /// <summary>每连接等待队列的硬字节上限（4 MiB）。</summary>
+    public const int AbsoluteMaximumQueuedBytes = 4 * 1024 * 1024;
+
+    /// <summary>整帧读取最多允许 30 秒，防止无限慢速占用。</summary>
+    public static TimeSpan AbsoluteMaximumFrameReadTimeout => TimeSpan.FromSeconds(30);
+
     /// <summary>创建显式限制的帧传输设置。</summary>
     /// <param name="maximumPayloadBytes">单帧最大负载字节数，1–1048576。</param>
     /// <param name="frameReadTimeout">整帧读取期限，正数。</param>
@@ -61,9 +70,11 @@ public sealed class FrameTransportOptions
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumPayloadBytes);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(maximumPayloadBytes, AbsoluteMaximumPayloadBytes);
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(frameReadTimeout, TimeSpan.Zero);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(frameReadTimeout, AbsoluteMaximumFrameReadTimeout);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumQueuedFrames);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(maximumQueuedFrames, AbsoluteMaximumQueuedFrames);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumQueuedBytes);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(maximumQueuedBytes, AbsoluteMaximumPayloadBytes * 1024);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(maximumQueuedBytes, AbsoluteMaximumQueuedBytes);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumFramesPerSecond);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumBytesPerSecond);
         MaximumPayloadBytes = maximumPayloadBytes;
