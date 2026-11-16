@@ -1,9 +1,10 @@
 # P19 — WorldTick / Scheduler 独立四视角审查
 
-- 状态：REVIEW，目标 C；正式 ACCEPTED 尚未给出
+- 状态：ACCEPTED，目标 C
 - 实现 HEAD：`630615a915fe0e976314e94c2b88fad7c7f501ff`
 - 实现 CI #179：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43897180562，八 Job 全部 SUCCESS
-- 独立 REVIEW HEAD：本审查提交，CI NOT_RUN；正式 ACCEPTED HEAD：NOT_RUN
+- 独立 REVIEW HEAD：`b31c2ffcd2431628897fdd43dd87376092e14bcc`，CI #180 8/8 SUCCESS（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43897969071）
+- 正式 ACCEPTED HEAD：本次状态提交，CI NOT_RUN
 - 基线依赖：P07/P08/P14/P17 均 ACCEPTED；main 直接更新，不创建分支
 
 ## 1. 功能与确定性
@@ -41,13 +42,13 @@
 | P19 Mailbox Backpressure 不虚报已提交 | PASS |
 | 原 P11/P13/P14/P15/P16/P17/P18 集成回归 | PASS |
 | 本轮全部 CI | **8/8 SUCCESS** |
-| 独立 REVIEW HEAD | NOT_RUN |
+| 独立 REVIEW HEAD | **8/8 SUCCESS**，run #180，242 Unit / 16 Architecture |
 | 正式 ACCEPTED HEAD | NOT_RUN |
 
 过程失败透明保留：#176 测试格式化 CA1305、#177 重复 Tick 两层故障状态不一致、#178 P03-006 具体平台类型泄漏；全部修复后 #179 真实八 Job 全绿，无放松门禁或跳过测试。
 
 ## 审查结论
 
-P19 C 最小技术交付（确定性 Tick、稳定状态 Hash、逻辑时钟、多世界有界调度、慢 Tick、背压）具备实证，实现 CI 无必需阻塞。但本审查提交的 CI 尚未运行，**当前只能标记 REVIEW**。待 REVIEW HEAD 八 Job 全绿，再提交正式 ACCEPTED，并独立核验 ACCEPTED HEAD。
+P19 C 最小技术交付（确定性 Tick、稳定状态 Hash、逻辑时钟、多世界有界调度、慢 Tick、背压）具备实证，实现 CI 无必需阻塞。独立 REVIEW HEAD #180 已八 Job 全部成功，P19 C 技术出口必要未解决项 0，**正式 ACCEPTED**。正式验收 HEAD 仍须独立核验八 Job 并归档。
 
 保留后续边界：P20 Spatial、P27 Movement、P60 Host 生产身份、P62.F 全链路回放、P64.F 性能、P66 长稳。不将最小 P19 重放 Hash 等同于完整回放/强性能证据。
