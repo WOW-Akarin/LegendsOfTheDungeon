@@ -82,7 +82,7 @@ public sealed class WorldVisibilityFilter
                !ExcludedTags.Any(tag => entity.Tags.Contains(tag, StringComparer.Ordinal));
     }
 
-    private static IReadOnlyList<string> Normalize(IEnumerable<string>? source)
+    private static System.Collections.ObjectModel.ReadOnlyCollection<string> Normalize(IEnumerable<string>? source)
     {
         var tags = source?.ToArray() ?? [];
         if (tags.Length > 64)
@@ -274,8 +274,9 @@ public sealed class WorldVisibilitySet
                 throw new InvalidOperationException("Visibility snapshot version exhausted.");
             }
 
+            WorldEntitySnapshot observer = default;
             var observerActive = _world.State == WorldLifecycle.Running &&
-                _world.TryGetSnapshot(prior.Observer.Id, out var observer) &&
+                _world.TryGetSnapshot(prior.Observer.Id, out observer) &&
                 observer.Identity == prior.Observer &&
                 observer.Lifecycle == WorldEntityLifecycle.Active &&
                 observer.Life == LifeState.Alive;
