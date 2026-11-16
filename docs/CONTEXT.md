@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M0 基线  
-当前阶段：P08 — ACCEPTED
+当前阶段：P09 — IN_PROGRESS
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 已建立可构建的 .NET 10 Solution、Ker
 
 ## 当前任务与下一步
 
-P00–P08 已 ACCEPTED。Kernel Random 已具备 xoshiro256** v1、Algorithm/Version/Seed/状态导出恢复、固定精度 Probability、WeightedSelector 与 Combat/Loot/AI 稳定独立随机流。P09 尚未开始。
+P00–P08 已 ACCEPTED。P09 已启动：正在建立 Kernel 消息/DeferredEvent 契约、Runtime Handler/Dispatcher 端口与 Runtime.Core 显式注册/分发；禁止全局 Service Locator。
 
 ## 阻塞与技术债
 
-当前无 P08 阻塞。P09 将建立 Command/Query/Event 协作契约；Handler 注册与运行时分发不得塞入 Kernel，也不得引入全局 Service Locator。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
+当前无 P09 阻塞。Query 必须返回与可变领域状态断开的 Snapshot；事件发布只发生在 Command Handler 成功返回之后。后续必须实测的事项：P11 PostgreSQL 实际版本/digest 与事务语义、P64.F 绝对性能阈值。
 
 ## 关键入口
 
@@ -62,6 +62,8 @@ P00–P08 已 ACCEPTED。Kernel Random 已具备 xoshiro256** v1、Algorithm/Ver
 - [P06 证据](progress/P06.md)
 - [P07 证据](progress/P07.md)
 - [P08 证据](progress/P08.md)
+- [P09 证据](progress/P09.md)
+- [消息协作契约](modules/MESSAGING.md)
 - [Kernel 基础值契约](modules/KERNEL.md)
 - [架构职责审查](reviews/ARCHITECTURE_RESPONSIBILITY_REVIEW.md)
 - [文档质量审查](reviews/DOCUMENTATION_QUALITY_REVIEW.md)

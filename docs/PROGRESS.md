@@ -1,70 +1,70 @@
 # 当前进度
 
 更新时间（含时区）：2026-11-16 +08:00  
-代码基线 / Branch / 工作区：任务开始 `87f7e29467be9319a6359c724deda597985cdd81` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P08 / Kernel Random / ACCEPTED / B
+代码基线 / Branch / 工作区：任务开始 `8bbedd6bf96a224317b032d802d11e774fca1ff7` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
+阶段 / 任务 / 状态 / 目标完成度：P09 / Command / Query / Event / IN_PROGRESS / B
 
 ## 目标与成功条件
 
-实现 IRandom/DeterministicRandom/Probability/WeightedSelector，固定算法与版本并支持状态导出恢复；建立 Combat/Loot/AI 稳定独立随机流，证明插入 AI 抽样不改变 Loot 流，并明确概率与权重边界。
+建立跨模块协作基础：Command→Result、只读 Query、DeferredEvent 因果/序号与提交后发布；Runtime.Core 提供显式 Handler 注册/分发，重复注册与未知消息失败，派生事件队列有数量/深度上限，且不存在全局 Service Locator。
 
 ## 开始前状态与已有未提交修改
 
-- P00–P07 已 ACCEPTED。
-- P08 开始 HEAD：`87f7e29467be9319a6359c724deda597985cdd81`。
-- Kernel 已具备 primitives、Geometry 与 Time。
+- P00–P08 已 ACCEPTED。
+- P09 开始 HEAD：`8bbedd6bf96a224317b032d802d11e774fca1ff7`。
+- 当前生产项目只有 Kernel 与 Runtime.Abstractions；P09 将新增职责明确的 Runtime.Core。
 - 当前执行容器无 dotnet；GitHub Actions .NET 10.0.404 runner 继续作为真实编译/测试环境。
 - 用户要求直接更新 `main`，不创建任务分支。
 
 ## 已完成与证据链接
 
-- [P07 证据](progress/P07.md) 已验收 Time。
-- [Kernel 基础值契约](modules/KERNEL.md) 已加入 `kernel.random.v1` 设计。
-- [P08 阶段证据](progress/P08.md) 已建立。
+- [P08 证据](progress/P08.md) 已验收 Random。
+- [Command / Query / Event 协作契约](modules/MESSAGING.md) 已建立。
+- [P09 阶段证据](progress/P09.md) 已建立。
 
 ## 当前停点
 
-P08 已完成独立 Review 并 ACCEPTED；P09 尚未开始。
+P09 已启动，尚未提交消息/分发实现。
 
 ## 下一步（最多 5 项）
 
-1. 开始 P09 — Command / Query / Event。
-2. 实现 ICommand/Handler/Result 与 IQuery/Handler 只读协作契约。
-3. 实现 DomainEvent / DeferredEventQueue，并定义异常、取消、重复注册策略。
-4. 定义消息版本、CommandId、事件因果/序号与提交后发布语义。
-5. 建立数量/深度上限和示范模块验证；Handler 注册不得进入 Kernel。
+1. 实现 Kernel 消息值契约与 DeferredEventQueue。
+2. 实现 Runtime.Abstractions Handler/Dispatcher/Publisher 端口。
+3. 新增 Runtime.Core 显式 registry/dispatcher，并同步 Solution/架构白名单/lock files。
+4. 用 test-only 示例模块完成 Command→Result、Query Snapshot、DeferredEvent 和错误/取消/上限测试。
+5. 跑完整 CI 并独立 Review，无必需问题后 ACCEPTED。
 
 ## 契约、数据所有权与 ADR 变化
 
-新增 A1 公共随机契约 `kernel.random.v1`；PRNG 实例拥有自己的可变状态，但不拥有世界业务状态，不新增 ADR。
+新增 A1 协作契约 `runtime.messaging.v1`。DeferredEventQueue 只拥有单次 Command 执行的临时事件队列状态，不拥有领域状态；Handler 注册由 Runtime.Core 所有。无架构方向变化，不新增 ADR。
 
 ## AC 参考与已知差异（适用时）
 
-不适用。P08 固定项目自己的 xoshiro256** / SplitMix64 规则，不复制 AzerothCore 随机实现。
+不适用。P09 是项目通用协作模型，不复制 AzerothCore dispatcher/event bus 实现。
 
 ## 验证
 
 | 命令/检查 | 环境与时间 | 结果 | 报告 |
 |---|---|---|---|
-| P07 依赖状态 | GitHub Actions，2026-11-16 | PASS | progress/P07.md |
-| P08 Unit | GitHub Actions，2026-11-16 | PASS：86/86 | run 43811342353 / artifact 14200686587 |
-| P03/P04/P05/P06/P07 回归 | GitHub Actions，2026-11-16 | PASS：Architecture 16/16 + 文档/Strong ID Gate | run 43811342353 |
+| P08 依赖状态 | GitHub Actions，2026-11-16 | PASS | progress/P08.md |
+| P09 Unit | 尚未实现 | NOT_RUN | 待 CI |
+| Architecture/P04/P05 回归 | 尚未执行 P09 HEAD | NOT_RUN | 待 CI |
 
 ## 风险与未验证假设
 
-- 算法升级必须提升版本；不能在相同 AlgorithmId/Version 下改变序列。
-- 不承诺密码学安全；该 PRNG 仅用于确定性游戏模拟。
-- 流派生必须使用固定 salt；禁止 runtime HashCode。
-- WeightedSelector 当前要求每项权重 > 0；若未来需要“禁用但保留项”，应在调用方过滤或另行版本化契约。
+- Runtime.Core dispatcher 是类型专用 registry，不得演变成任意 Service Locator。
+- Query Snapshot 的深层不可变性仍需模块 Review；marker interface 不能单独证明。
+- P09 只保证“Handler 成功返回后才 publish”；不提供数据库 outbox 或跨进程 exactly-once。
+- Event publisher 提交后失败会向上传播；恢复/outbox 属于后续 Persistence 阶段。
 
 ## 恢复步骤
 
-1. 读取 ARCHITECTURE §3、CONTEXT、PROGRESS、modules/KERNEL.md 和 progress/P08.md。
-2. 核对 main HEAD 与 P08 起始 SHA `87f7e29467be9319a6359c724deda597985cdd81`。
-3. 打开 Kernel Random 源码与 `RandomTests.cs`。
-4. 读取最新 CI；失败时从第一个 Analyzer/Compiler/Test 真实诊断修复，不改算法版本来迎合测试。
-5. P08 已 ACCEPTED；下一任务从 DEVELOPMENT_ROADMAP 的 P09 开始。
+1. 读取 ARCHITECTURE、CONTEXT、PROGRESS、modules/MESSAGING.md 与 progress/P09.md。
+2. 核对 main HEAD 与 P09 起始 SHA `8bbedd6bf96a224317b032d802d11e774fca1ff7`。
+3. 打开 Kernel Messaging、Runtime.Abstractions Messaging、Runtime.Core dispatcher 和 MessagingTests。
+4. 读取最新 CI；失败时从第一个 Analyzer/Compiler/Test 真实诊断修复，不添加 Service Locator 或 suppress。
+5. 出口证据满足后进入 REVIEW。
 
 ## 不应重复执行的操作
 
-不要使用 System.Random、Random.Shared、Guid、时间戳、运行时 HashCode 或非稳定 string hash 作为核心确定性随机源/Seed。
+不要把 Handler registry 放进 Kernel；不要增加全局静态 dispatcher/service provider；不要让 Query 返回可变领域实体。
