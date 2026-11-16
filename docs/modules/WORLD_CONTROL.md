@@ -1,6 +1,6 @@
 # P26 — Control / Ownership / Tags 技术契约
 
-状态：IN_PROGRESS（目标 C）；直接依赖 P24 已 ACCEPTED，P17 世界和 P18 同步写租约也已验收。此文档伴随初次代码提交，**本阶段 CI 尚未验证**。
+状态：REVIEW（目标 C）；P24/P17/P18 已 ACCEPTED。稳定实现 HEAD `7689a25d88924511cb508127e25d1aa38cc06e43` CI #192 十 Job 全部 SUCCESS；独立 REVIEW HEAD CI 待验证。
 
 ## 实体能力与唯一拥有者
 
@@ -33,3 +33,8 @@
 
 - #189 CA1711 领域 Flags 枚举命名 FAIL；#190 272 Unit 中跨 Control/Tag 撤销句柄真实 FAIL，随后修复为匹配 `EntityEffectKind`；#191 272 Unit/16 Architecture、10/10 SUCCESS。失败保留而不改变负向测试。
 - 在 #191 基础上补同 Tick 来源历史 Hash 检验、64 来源永久 Tag 容量保护与旧 Token 不复用，新 HEAD CI 尚待验证；正式 REVIEW/ACCEPTED 均不得预先标记通过。
+
+## 稳定实现验证
+
+- #192（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43910885713）**10/10 SUCCESS**，275/275 Unit、16/16 Architecture；P26 Probe 包括双独立控制来源、四角色环/销毁清理、旧代际与失效租约、回放一致、同 Tick 来源历史 Hash 差异五场景。
+- #189 CA1711 与 #190 跨种类撤销漏洞真实失败均保留并修复；#191 首次十 Job 全绿，#192 增加三类特定回归后又十 Job 全绿。独立审查：[P26_CONTROL_OWNERSHIP_REVIEW](../reviews/P26_CONTROL_OWNERSHIP_REVIEW.md)。

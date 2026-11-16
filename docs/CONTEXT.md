@@ -8,16 +8,16 @@
 
 P00–P20 与 P24(B) 已 ACCEPTED。P20 归档 HEAD `ec80ea7a7ce2755a70807f750c0a4fe9d4f01f0a`，CI #188 九 Job SUCCESS（257 Unit/16 Architecture）。
 
-正在实施 **P26 Control / Ownership / Tags（IN_PROGRESS，目标 C）**，尚无本次 CI PASS。P21 Visibility 要求 P20 + P26，不能跳过依赖。
+正在实施 **P26 Control / Ownership / Tags（REVIEW，目标 C）**，尚无本次 CI PASS。P21 Visibility 要求 P20 + P26，不能跳过依赖。
 
 ## P26 边界
 
 - 领域 Entities.Core 明确 Control/Tags/Relationships 单一写所有者；临时来源带 World/Epoch/EntityId/Generation + 序号与种类；四类 Owner/Creator/Controller/Summoner 不共享角色槽位。
 - WorldInstance 负责 P18 Scope、活跃代际校验、禁止跨角色关系环、销毁全部入向引用；只导出冻结的 Tag、Control 与关系快照，供未来 P21 Visibility。
 - P19 状态 Hash 升级到 schema v3，记录来源分布及序号，不把双来源 Stun 当成单来源 Stun。
-- CI 从 9 Job 扩为 10 Job，新增真实 `WorldControlProbe`。实现、独立 REVIEW、正式 ACCEPTED 各自必须完整通过。
+- CI 从 9 Job 扩为 10 Job，新增真实 `WorldControlProbe`。实现 HEAD #192 已 10/10 SUCCESS；独立 REVIEW 和正式 ACCEPTED HEAD 仍须分别核验。
 - 生产 Host/网络授权 P60、P21 Visibility Enter/Leave、P25 Stats、P62.F 完整回放、P64 性能仍未完成；未预设通过结论。
 
 ## 下一安全动作
 
-等待初始 HEAD 真实十 Job CI，失败就修复，之后独立 REVIEW HEAD 和 ACCEPTED HEAD 另行核验。入口：[PROGRESS](PROGRESS.md)、[P26](progress/P26.md)、[WORLD_CONTROL](modules/WORLD_CONTROL.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)、[恢复规范](RECOVERY_WORKFLOW.md)。
+核验独立 P26 REVIEW HEAD 的十 Job CI，通过后正式 ACCEPTED 并对验收 HEAD 另跑十 Job；P21 尚未解锁。入口：[PROGRESS](PROGRESS.md)、[P26](progress/P26.md)、[WORLD_CONTROL](modules/WORLD_CONTROL.md)、[ROADMAP](DEVELOPMENT_ROADMAP.md)、[ARCHITECTURE](ARCHITECTURE.md)、[恢复规范](RECOVERY_WORKFLOW.md)。
