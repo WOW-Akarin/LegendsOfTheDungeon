@@ -86,8 +86,25 @@ internal static class RepositoryAssemblyInspector
                         exposures);
                 }
 
+                foreach (var genericArgument in type.GetGenericArguments())
+                {
+                    foreach (var constraint in genericArgument.GetGenericParameterConstraints())
+                    {
+                        AddTypeExposure(
+                            sourcePath,
+                            $"type {type.FullName} generic constraint",
+                            constraint,
+                            projectByAssemblyName,
+                            exposures);
+                    }
+                }
+
                 foreach (var constructor in type.GetConstructors(
-                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
+                    BindingFlags.Public
+                    | BindingFlags.NonPublic
+                    | BindingFlags.Instance
+                    | BindingFlags.Static)
+                    .Where(IsExternallyVisible))
                 {
                     foreach (var parameter in constructor.GetParameters())
                     {

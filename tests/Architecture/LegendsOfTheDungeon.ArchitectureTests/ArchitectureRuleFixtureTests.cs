@@ -29,19 +29,25 @@ public sealed class ArchitectureRuleFixtureTests
     {
         var contract = Project("src/Contracts/C.csproj", ArchitectureRole.Contract);
         var adapter = Project("src/Platform/Adapter.csproj", ArchitectureRole.PlatformAdapter);
+        var host = Project("src/Hosts/ServerHost.csproj", ArchitectureRole.Host);
         var domain = Project(
             "src/Domain/D.csproj",
             ArchitectureRole.Domain,
-            allowedReferences: [contract.Path, adapter.Path]);
+            allowedReferences: [contract.Path, adapter.Path, host.Path]);
 
         var positive = Graph([domain, contract], [(domain.Path, contract.Path)]);
         Assert.DoesNotContain(
             ArchitectureRuleEngine.CheckForbiddenProjectReferences(positive),
             violation => violation.RuleId == ArchitectureRuleEngine.DomainIsolationRule);
 
-        var negative = Graph([domain, contract, adapter], [(domain.Path, adapter.Path)]);
+        var adapterNegative = Graph([domain, contract, adapter], [(domain.Path, adapter.Path)]);
         Assert.Contains(
-            ArchitectureRuleEngine.CheckForbiddenProjectReferences(negative),
+            ArchitectureRuleEngine.CheckForbiddenProjectReferences(adapterNegative),
+            violation => violation.RuleId == ArchitectureRuleEngine.DomainIsolationRule);
+
+        var hostNegative = Graph([domain, contract, host], [(domain.Path, host.Path)]);
+        Assert.Contains(
+            ArchitectureRuleEngine.CheckForbiddenProjectReferences(hostNegative),
             violation => violation.RuleId == ArchitectureRuleEngine.DomainIsolationRule);
     }
 
@@ -61,6 +67,11 @@ public sealed class ArchitectureRuleFixtureTests
         var moduleBInfrastructure = Project(
             "src/Modules/B/Infrastructure/B.Infrastructure.csproj",
             ArchitectureRole.Infrastructure,
+            module: "B");
+
+        var moduleBInternal = Project(
+            "src/Modules/B/Internal/B.Internal.csproj",
+            ArchitectureRole.Internal,
             module: "B");
 
         var positive = Graph(
@@ -88,6 +99,19 @@ public sealed class ArchitectureRuleFixtureTests
 
         Assert.Contains(
             ArchitectureRuleEngine.CheckForbiddenProjectReferences(negative),
+            violation => violation.RuleId == ArchitectureRuleEngine.CrossModuleImplementationRule);
+
+        var internalNegativeSource = moduleA with
+        {
+            AllowedProjectReferences = Set(moduleBInternal.Path)
+        };
+
+        var internalNegative = Graph(
+            [internalNegativeSource, moduleBInternal],
+            [(internalNegativeSource.Path, moduleBInternal.Path)]);
+
+        Assert.Contains(
+            ArchitectureRuleEngine.CheckForbiddenProjectReferences(internalNegative),
             violation => violation.RuleId == ArchitectureRuleEngine.CrossModuleImplementationRule);
     }
 
@@ -213,6 +237,20 @@ public sealed class ArchitectureRuleFixtureTests
                 positive,
                 [new FriendAccess(source.Path, "A.OtherProduction")]),
             violation => violation.RuleId == ArchitectureRuleEngine.InternalsVisibleToRule);
+    }
+
+    [Fact]
+    public void NamesAloneDoNotCreateArchitectureViolations()
+    {
+        var misleadingName = Project(
+            "src/Common/Utils/CentralManager.csproj",
+            ArchitectureRole.Core);
+
+        var graph = Graph([misleadingName], []);
+
+        Assert.Empty(ArchitectureRuleEngine.CheckForbiddenProjectReferences(graph));
+        Assert.Empty(ArchitectureRuleEngine.CheckSharedHubReviews(graph));
+        Assert.Empty(ArchitectureRuleEngine.CheckAcyclicReferences(graph));
     }
 
     [Fact]
