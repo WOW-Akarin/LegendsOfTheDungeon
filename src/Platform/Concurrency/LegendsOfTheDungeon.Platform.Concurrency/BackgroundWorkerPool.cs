@@ -135,6 +135,12 @@ public sealed class BackgroundWorkerPool : IAsyncDisposable
         {
             await foreach (var item in _queue.ReadAllAsync(_stop.Token))
             {
+                // Channel 在取消与已缓冲数据竞态时仍可能交付一项；超时后不再启动新工作。
+                if (_stop.IsCancellationRequested)
+                {
+                    break;
+                }
+
                 _queue.MarkRunning(item.Id);
                 using var linked = CancellationTokenSource.CreateLinkedTokenSource(
                     _stop.Token, item.CancellationToken);
