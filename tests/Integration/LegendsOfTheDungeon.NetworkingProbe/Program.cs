@@ -13,6 +13,7 @@ await CheckAsync("peer-disconnect-releases-connection", DisconnectAsync);
 await CheckAsync("receive-rate-limiting", IncomingRateAsync);
 await CheckAsync("slow-reader-send-backpressure", SlowReaderBackpressureAsync);
 await CheckAsync("unauthorized-frames-never-reach-world-write", UnauthorizedAsync);
+await CheckAsync("shutdown-reports-unknown-inflight-write", UncooperativeWriteAsync);
 Console.WriteLine("P13_NETWORKING_LOOPBACK_PASS");
 
 static async Task CheckAsync(string name, Func<Task> probe)
@@ -312,5 +313,80 @@ static async Task UnauthorizedAsync()
     finally
     {
         listener.Stop();
+    }
+}
+
+
+static async Task UncooperativeWriteAsync()
+{
+    var controlledStream = new BlockingWriteStream();
+    await using var transport = new FramedStreamTransport(
+        controlledStream, Options(maxPayload: 64, frames: 2, bufferedBytes: 128));
+    Check(transport.OfferSend(new byte[] { 1, 2, 3 }) == FrameOfferStatus.Accepted,
+        "cannot prepare controlled in-flight frame");
+    await controlledStream.Started.WaitAsync(TimeSpan.FromSeconds(2));
+    try
+    {
+        var report = await transport.StopAsync(TimeSpan.FromMilliseconds(60));
+        Check(!report.Drained, "uncooperative sender was incorrectly marked drained");
+        Check(report.DeliveryUnknown, "in-flight partial send must be delivery-unknown");
+        Check(report.WrittenFrames == 0, "no completed write is possible before release");
+        Check(transport.OfferSend(new byte[] { 9 }) == FrameOfferStatus.Closed,
+            "shutdown must reject subsequent frames");
+        await transport.DisposeAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(1));
+    }
+    finally
+    {
+        controlledStream.Release();
+    }
+}
+
+// 故意无视 CancellationToken 的测试替身，验证关闭不会假定外部流自动配合取消。
+file sealed class BlockingWriteStream : Stream
+{
+    private readonly TaskCompletionSource<bool> _started =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource<bool> _release =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    internal Task Started => _started.Task;
+
+    internal void Release() => _release.TrySetResult(true);
+
+    public override bool CanRead => true;
+
+    public override bool CanSeek => false;
+
+    public override bool CanWrite => true;
+
+    public override long Length => throw new NotSupportedException();
+
+    public override long Position
+    {
+        get => throw new NotSupportedException();
+        set => throw new NotSupportedException();
+    }
+
+    public override void Flush() { }
+
+    public override int Read(byte[] buffer, int offset, int count) => 0;
+
+    public override ValueTask<int> ReadAsync(
+        Memory<byte> buffer, CancellationToken cancellationToken = default) =>
+        ValueTask.FromResult(0);
+
+    public override long Seek(long offset, SeekOrigin origin) =>
+        throw new NotSupportedException();
+
+    public override void SetLength(long value) => throw new NotSupportedException();
+
+    public override void Write(byte[] buffer, int offset, int count) =>
+        throw new NotSupportedException();
+
+    public override ValueTask WriteAsync(
+        ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+    {
+        _started.TrySetResult(true);
+        return new ValueTask(_release.Task);
     }
 }
