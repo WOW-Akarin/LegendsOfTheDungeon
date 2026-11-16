@@ -25,7 +25,7 @@
 
 ## 当前停点
 
-P05 run #24 已越过 build/Unit/Architecture/P04 Gate；仅 Strong ID compile Gate 正例因脚本错误的 RestorePackagesWithLockFile=false 引发 NU1005。正在移除该全局覆盖，不改变 Kernel lock 策略。
+P05 run #25 复现同一 NU1005；确认上一轮正则替换未命中实际单行脚本。现已精确删除正/负例两条 build 命令上的 RestorePackagesWithLockFile=false。
 
 ## 下一步（最多 5 项）
 

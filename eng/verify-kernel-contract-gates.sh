@@ -102,7 +102,7 @@ EOF
 } >"$SUMMARY"
 
 POSITIVE_LOG="$LOG_ROOT/positive.log"
-if ! dotnet build "$FIXTURE_ROOT/positive/Fixture.csproj"   --configuration Release   --nologo   -p:RestorePackagesWithLockFile=false   >"$POSITIVE_LOG" 2>&1; then
+if ! dotnet build "$FIXTURE_ROOT/positive/Fixture.csproj" --configuration Release --nologo >"$POSITIVE_LOG" 2>&1; then
   echo "ERROR: 合法 Strong ID 使用应成功编译。" | tee -a "$SUMMARY"
   cat "$POSITIVE_LOG"
   exit 1
@@ -110,7 +110,7 @@ fi
 echo "PASS: 合法 Strong ID 使用可编译。" | tee -a "$SUMMARY"
 
 MISUSE_LOG="$LOG_ROOT/misuse.log"
-if dotnet build "$FIXTURE_ROOT/misuse/Fixture.csproj"   --configuration Release   --nologo   -p:RestorePackagesWithLockFile=false   >"$MISUSE_LOG" 2>&1; then
+if dotnet build "$FIXTURE_ROOT/misuse/Fixture.csproj" --configuration Release --nologo >"$MISUSE_LOG" 2>&1; then
   echo "ERROR: 跨类型 Strong ID 误用应在编译期失败。" | tee -a "$SUMMARY"
   cat "$MISUSE_LOG"
   exit 1
