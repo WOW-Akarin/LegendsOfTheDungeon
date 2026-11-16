@@ -39,10 +39,10 @@
 | P14 诊断 Worker / P13 TCP Loopback | PASS |
 | 六 Job 汇总 | **6/6 SUCCESS** |
 | REVIEW HEAD 六 Job | **6/6 SUCCESS**，run #164，216 Unit / 16 Architecture |
-| ACCEPTED HEAD 六 Job | NOT_RUN |
+| ACCEPTED HEAD 六 Job | **6/6 SUCCESS**，run #165，216 Unit / 16 Architecture |
 
 ## 范围限定与结论
 
 P24 B 技术出口所要求的基础能力、领域模块边界与现有 P18 同步世界写门禁的集成单测均有真实实现 CI 证据。没有把实体创建误说成世界注册、将目标四元组静态匹配误说成活动 Registry 校验、或将死亡标记冒充完整 Health/战斗结算。
 
-独立 REVIEW 文档与实现代码分离；run #164 六 Job 全部 SUCCESS，P24 技术 B 必需未解决项为 0，正式 ACCEPTED。P17 的前置依赖已满足；P17 仍须独立实现与验证，P24 的验收不代表 P17 完成。
+独立 REVIEW 文档与实现代码分离；run #164 六 Job 全部 SUCCESS，P24 技术 B 必需未解决项为 0，正式 ACCEPTED。正式 ACCEPTED HEAD `e4aaf50b18d9f059946d2bf3f4b9c3af76f9e61c` 的 run #165 六 Job 再次全部 SUCCESS。P17 的前置依赖已满足；P17 仍须独立实现与验证，P24 的验收不代表 P17 完成。

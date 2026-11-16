@@ -26,4 +26,4 @@
 ## 实现 Gate 证据
 
 - HEAD `52088378c23c320796e669760dfc1a1ffc4f350e`，GitHub Actions run #163 六 Job SUCCESS：216/216 Unit，16/16 Architecture，真实 WorldExecution/Persistence/StaticData/PostgreSQL/Diagnostics/Networking 集成正常；负向构建、测试、架构以及中文文档 Gate 均 PASS。
-- 独立四视角审查见 [P24_ENTITIES_REVIEW](../reviews/P24_ENTITIES_REVIEW.md)。独立 REVIEW HEAD CI #164 六 Job SUCCESS；P24(B) ACCEPTED，正式验收 HEAD CI 待核验。
+- 独立四视角审查见 [P24_ENTITIES_REVIEW](../reviews/P24_ENTITIES_REVIEW.md)。独立 REVIEW HEAD CI #164 六 Job SUCCESS；P24(B) ACCEPTED，正式 ACCEPTED HEAD `e4aaf50b18d9f059946d2bf3f4b9c3af76f9e61c` CI #165 六 Job SUCCESS。

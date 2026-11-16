@@ -18,9 +18,9 @@ P00–P16、P18 和 P24（B）已 ACCEPTED。P18 具有真实 WorldExecutor Guar
 
 ## P24 当前进展和停点
 
-本次建立 `Entities.Core` 领域薄能力：四元组不可变身份、Transform 唯一位置真相、只读 LifeState、窄 TargetState、同步 World Demand Guard；固定组合容器不提供可变能力集合或服务定位。已编写 `EntityCapabilitiesTests`，并调整 Solution、P03 白名单、NuGet locked 图；实现 HEAD `5208837` CI #163 与独立 REVIEW HEAD `b5af3d4` CI #164 六 Job SUCCESS（216 Unit、16 Architecture）；P24(B) 正式 ACCEPTED。
+本次建立 `Entities.Core` 领域薄能力：四元组不可变身份、Transform 唯一位置真相、只读 LifeState、窄 TargetState、同步 World Demand Guard；固定组合容器不提供可变能力集合或服务定位。已编写 `EntityCapabilitiesTests`，并调整 Solution、P03 白名单、NuGet locked 图；实现 HEAD `5208837` CI #163、独立 REVIEW HEAD `b5af3d4` CI #164、正式 ACCEPTED HEAD `e4aaf50` CI #165 三次均六 Job SUCCESS（216 Unit、16 Architecture）；P24(B) 已完整验收。
 
-下一安全动作：核验 P24 正式 ACCEPTED HEAD CI；然后推进 P17 WorldInstance/Registry/Lifecycle，并在 P17 接线后补真实活跃目标 Generation 校验。
+下一安全动作：推进 P17 WorldInstance/Registry/Lifecycle，建立跨世界唯一归属、实体创建/移除/销毁状态机，并在 P17 接线后补真实活跃目标 Generation 校验。
 
 仍未完成：P17 世界注册/实体生命周期、真实 Target 存在性、Transform/Spatial 原子协调、P19 Tick、P32 Health、生产授权 Host、P62 回放、P64/P66 性能长稳。
 
