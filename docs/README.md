@@ -36,7 +36,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M1 基础。  
-当前阶段：P14 — Metrics / Diagnostics，**REVIEW**。P00–P13 已验收；P14 代码及 CI #112 全绿，独立审查/最终验收 HEAD 尚待 CI，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P14 — Metrics / Diagnostics，**ACCEPTED**。P00–P14 已验收；下一阶段 P15 — Static Data Schema / Loader 尚未开始，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 
