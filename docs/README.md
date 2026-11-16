@@ -25,13 +25,14 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [modules/CONCURRENCY.md](modules/CONCURRENCY.md)：P12 有界并发与关闭恢复契约
 - [modules/NETWORKING.md](modules/NETWORKING.md)：P13 通用帧、TCP Loopback、安全边界契约
 - [progress/P13.md](progress/P13.md)：P13 网络传输阶段证据
+- [reviews/P13_NETWORKING_REVIEW.md](reviews/P13_NETWORKING_REVIEW.md)：P13 独立四视角审查
 - [reviews/P12_CONCURRENCY_REVIEW.md](reviews/P12_CONCURRENCY_REVIEW.md)：P12 独立四视角审查
 - [reviews/P11_PERSISTENCE_REVIEW.md](reviews/P11_PERSISTENCE_REVIEW.md)：P11 四视角独立代码审查
 
 ## 当前状态
 
 当前里程碑：M1 基础。  
-当前阶段：P13 — Networking.Transport，**IN_PROGRESS**。P00–P12 已验收，P13 正在开发，阶段出口尚未验证，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P13 — Networking.Transport，**REVIEW**。P00–P12 已验收；P13 实现 CI #99 已全绿，独立 REVIEW HEAD/ACCEPTED HEAD 尚待验证，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 

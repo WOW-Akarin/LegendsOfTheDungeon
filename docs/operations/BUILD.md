@@ -103,3 +103,17 @@ P05 使用独立编译夹具证明 Strong ID 的 CLR 类型隔离，而不是只
 - 容器实际启动日志确认 PostgreSQL 18.7（Debian 18.7-1.pgdg13+2），并经 docker image inspect 验证 digest。
 - Integration Job 会上传 persistence-integration/report.txt artifact（保留 14 天）。该报告不含连接串和参数秘密；只记录通过探针组。
 - P65.F 仅初始确认丢失模拟，后续业务/断电/消息恢复需单独记录证据。
+
+## P13 TCP Loopback Integration
+
+- 独立技术程序集：`src/Platform/Networking/LegendsOfTheDungeon.Platform.Networking`，无第三方 NuGet 包；通过 Security.Contracts 的 P60.F 默认拒绝安全 Port 限定边界。
+- `networking-loopback` CI Job 与 `persistence-integration` 并行依赖基础 `build-test`；Ubuntu Linux x64 / SDK 10.0.404 / Release、锁文件模式。
+- 首先在干净工作区执行：
+
+```bash
+dotnet restore tests/Integration/LegendsOfTheDungeon.NetworkingProbe/LegendsOfTheDungeon.NetworkingProbe.csproj --locked-mode
+dotnet run --project tests/Integration/LegendsOfTheDungeon.NetworkingProbe/LegendsOfTheDungeon.NetworkingProbe.csproj --configuration Release --no-restore
+```
+
+- Probe 仅监听 127.0.0.1 随机端口，真实 Socket 验证半包/粘包、慢报头、截断/EOF、超大长度、断线、双向客户端/服务端适配器、入站限流、慢接收方背压、未授权拦截；额外使用故意忽略取消的流替身验证停止结果未知。通过时输出 `P13_NETWORKING_LOOPBACK_PASS`，CI 上传 `artifacts/networking-loopback/report.txt`。
+- 最终实现 run #99（43835963119）三 Job SUCCESS，Unit 139/139、Architecture 16/16，网络探针 10/10、PG 集成 PASS。独立 REVIEW/ACCEPTED HEAD 证据见 [P13 阶段记录](../progress/P13.md)。
