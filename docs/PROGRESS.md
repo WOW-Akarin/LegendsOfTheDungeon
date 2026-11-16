@@ -23,14 +23,14 @@
 
 ## 当前停点
 
-P02 首次 CI 已完成：SDK 10.0.404 与 restore 通过，Release build 被 xUnit2020 分析器正确阻止；已按分析器要求修复 Assert.Fail，等待下一次 CI。
+P02 CI run #2 已全绿。为强化干净环境可复现性，正在由 CI 生成 NuGet packages.lock.json；生成后提交并切换 --locked-mode 再做最终 Review。
 
 ## 下一步（最多 5 项）
 
-1. 读取修复提交触发的下一次 GitHub Actions run。
-2. 若仍失败，从新的第一个真实失败继续修复。
-3. CI 全绿后记录 Unit/Architecture/负向 Gate 与 artifact。
-4. 更新 ADR-0002 的精确 SDK 验证事实。
+1. 读取锁文件生成 CI，并下载 nuget-lock-files artifact。
+2. 将生成的 packages.lock.json 提交到对应 4 个项目。
+3. 把正式 restore 切换到 --locked-mode 并再次跑 CI。
+4. 更新 ADR-0002/BUILD 文档与 P02 验收证据。
 5. 独立 Review 通过后将 P02 ACCEPTED。
 
 ## 修改文件及原因

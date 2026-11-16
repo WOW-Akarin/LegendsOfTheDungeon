@@ -20,10 +20,10 @@ jobs:
       CI: 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup .NET 10.0.404
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '10.0.404'
 
@@ -39,9 +39,19 @@ jobs:
       - name: Verify negative build and test gates
         run: ./eng/verify-negative-gates.sh
 
+      - name: Upload generated NuGet lock files
+        uses: actions/upload-artifact@v6
+        with:
+          name: nuget-lock-files
+          path: |
+            src/**/packages.lock.json
+            tests/**/packages.lock.json
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: test-results
           path: artifacts/test-results/**/*.trx
