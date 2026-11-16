@@ -1,6 +1,6 @@
 # P20 — Spatial / Cell / Grid 技术契约
 
-状态：IN_PROGRESS（目标 C）；依赖 P19 与 P24 已正式 ACCEPTED。本阶段首次实现需要通过 9 Job 真实 CI，独立 REVIEW 和 ACCEPTED CI 均另行执行。
+状态：REVIEW（目标 C）；依赖 P19 与 P24 已正式 ACCEPTED。稳定实现 HEAD `875f0cd64c2dbcf34985c0c2de3a1bbc90c7921b` 的 CI #185 九 Job SUCCESS；独立 REVIEW HEAD 和 ACCEPTED HEAD 尚需各自验证。
 
 ## 唯一 Transform 真相与派生索引
 
@@ -27,3 +27,10 @@
 ## 非 P20 完成项
 
 P21 Visibility、P27 移动碰撞/速度、P29 Terrain/Navigation、P60 Host、P62 全链路 Replay、P64 性能压测和 P66 长期运行均未通过。当前 Grid 没有动态流式地形内存分页或分布式多节点拥有者，只对单 World 内已加载/已卸载 Cell 的状态负责。
+
+## 实现验证与明确风险
+
+- #183 `Math.Hypot` 编译 FAIL 保留，#184 首次九 Job 全绿；#185 两个加固单测后 257 Unit / 16 Architecture、9/9 CI 再次 SUCCESS。
+- #185 首版基准：`P20_BENCHMARK_V1` 在 Ubuntu 26.04.1 LTS、4 CPU、.NET 10 Release，1600 Entity / 700 Move / 400 Nearby，seed=2071；Move p50/p95/p99=0.0040/0.0093/0.0198 ms；Query p50/p95/p99=0.1866/0.3860/0.4764 ms，当前线程分配 7,325,944 bytes，GC0/1/2 均 0。原始证据在 #185 的 `world-spatial` Artifact。
+- 当前查询的 Cell 候选是遍历已分配桶的 O(CellCount) 粗筛，真实上限 16,384；空 Cell 即使 Unloaded 也暂留 tombstone 至 Stop，会消耗预算。这是 P64 优化、未来 Grid 生命周期接线的风险，不得伪称大规模最优或无限地图动态分页。
+- Faulted 允许 P17 单体真相快照供可信诊断，但拒绝 Nearby/Range；生产 Host 恢复、跨节点所有权、P21 可见域仍待后续工作。
