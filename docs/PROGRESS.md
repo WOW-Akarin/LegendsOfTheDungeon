@@ -25,19 +25,19 @@
 
 ## 当前停点
 
-P05 已启动，尚未提交 Kernel 业务实现。
+P05 第一批实现已准备落库：9 个强类型值、Result/Error/ValidationIssue、Unit 边界测试、三类跨 ID 编译失败 Gate 和 CI evidence。
 
 ## 下一步（最多 5 项）
 
-1. 实现 9 个强类型身份/代际值类型及 canonical parse/format。
-2. 实现 Error / ValidationIssue / Result / Result<T>。
-3. 添加 Unit 边界测试和跨类型编译失败 Gate。
-4. 接入 CI 并记录 artifact；若 Analyzer/P04 Gate 失败，从首个真实错误修复。
-5. 独立自审后进入 REVIEW。
+1. 提交 P05 Kernel primitives、Unit 与 compile-negative Gate。
+2. 读取首次 CI 的 P04 XML/Analyzer/Unit/Architecture/compile-negative 真实结果。
+3. 若失败，从第一个真实错误修复，不添加 ID 转换或 suppress。
+4. 记录 Unit 数量、CS1503 负例和 kernel-contract-gate artifact。
+5. 独立自审契约/序列化/default 语义后进入 REVIEW。
 
 ## 修改文件及原因
 
-本次启动提交新增 P05 阶段证据与 Kernel 契约说明，并切换恢复索引到 P05。
+新增 Kernel primitives、Unit、compile-negative Gate、CI artifact，并同步 BUILD/P05 证据。
 
 ## 契约、数据所有权与 ADR 变化
 

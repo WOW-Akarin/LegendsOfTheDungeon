@@ -78,3 +78,14 @@ Gate 负向自测：
 ## CI 证据
 
 GitHub Actions 在干净 Ubuntu runner 上执行同一验证链。测试 TRX 作为 `test-results` artifact 保存 14 天；P04 文档 Gate 日志与摘要作为 `documentation-gate` artifact 保存 14 天。
+
+
+## Kernel Strong ID compile Gate
+
+P05 使用独立编译夹具证明 Strong ID 的 CLR 类型隔离，而不是只做运行时类型比较：
+
+```bash
+./eng/verify-kernel-contract-gates.sh
+```
+
+正例必须成功编译；负例同时尝试 `EntityId → ActorId`、`ItemDefinitionId → ItemInstanceId`、`WorldId → WorldEpoch`，要求至少出现 3 个 `CS1503`。日志与摘要输出到 `artifacts/kernel-contract-gate/` 并由 CI 保存 14 天。

@@ -31,7 +31,7 @@ jobs:
         run: dotnet --info
 
       - name: Enable verification scripts
-        run: chmod +x eng/verify.sh eng/verify-negative-gates.sh eng/verify-documentation-gates.sh
+        run: chmod +x eng/verify.sh eng/verify-negative-gates.sh eng/verify-documentation-gates.sh eng/verify-kernel-contract-gates.sh
 
       - name: Restore, build, unit and architecture tests
         run: ./eng/verify.sh
@@ -48,6 +48,18 @@ jobs:
         with:
           name: documentation-gate
           path: artifacts/documentation-gate/**
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify Kernel Strong ID compile contracts
+        run: ./eng/verify-kernel-contract-gates.sh
+
+      - name: Upload Kernel contract gate evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: kernel-contract-gate
+          path: artifacts/kernel-contract-gate/**
           if-no-files-found: warn
           retention-days: 14
 
