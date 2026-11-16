@@ -20,13 +20,13 @@
 - #121/#122：Unit 尚未注册引用；#123：CA1720/CA1512；#124/#125：CA1859；#126：CS1503；#127：P03-006 公共技术实现泄漏，均按实际日志逐一修复。
 - #128/#129/#130/#131 实现连续 SUCCESS。最终实现 #131：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43847291783 — 174/174 Unit、16/16 Architecture、7 项 P15 真实 PG Probe、既有 P11/P13/P14 集成及全部质量 Gate PASS。
 - 独立 REVIEW HEAD #132：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43847835022 — 五 Job 全部 SUCCESS。
-- 四视角必需未解决项 0，P15 正式 ACCEPTED；正式 ACCEPTED HEAD 的五 Job CI 尚待复核。
+- 正式 ACCEPTED HEAD 39918e8 的 run #133：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43848207249 — 五 Job 全部 SUCCESS。
+- 四视角必需未解决项 0；独立 REVIEW #132 和正式 ACCEPTED #133 均五 Job PASS，P15 已完整收口。
 
 ## 当前停点和后续
 
-1. 对正式 ACCEPTED HEAD 执行完整五 Job CI 后归档验收证据。
-2. P16 — Catalog Validator/Freeze/Reload 仍未开始；下一步应研究跨 Catalog 引用、循环检测、版本整包/原子替换与失败保持旧快照。
-3. P64 性能与 P66 长稳仍 NOT_RUN，P15 的只读 Hash 不替代全系统版本重载验收。
+1. 按路线图从 P16 — Catalog Validator/Freeze/Reload 开启下一阶段（当前 NOT_STARTED），研究跨 Catalog 引用、循环检测、版本整包/原子替换与失败保持旧快照。
+2. P64 性能与 P66 长稳仍 NOT_RUN，P15 的只读 Hash 不替代全系统版本重载验收。
 
 ## 恢复
 

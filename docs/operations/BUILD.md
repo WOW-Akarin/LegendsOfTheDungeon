@@ -146,3 +146,7 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.StaticDataProbe/Legen
 - Probe 自建仅用于测试的 `public.lotd_static_catalog_versions` / `public.lotd_static_catalog_rows` 中立表；验证同一内容 JSONB/JSON 完全相同 Hash、错误版本、未知字段定位、id 不一致、长度/记录数硬预算及取消后的单连接池释放。通过时输出 `P15_STATICDATA_POSTGRES_PASS`；CI 上传 `artifacts/staticdata-postgres/report.txt`。
 - 固定表 DDL 和所有权策略见 [STATIC_DATA 模块契约](../modules/STATIC_DATA.md)。使用生产数据库前必须由 P11 Migration 机制交付可审计 DDL；P15 测试表不构成真正生产业务表。
 - 状态/CI 和独立审查结论以 [P15 阶段记录](../progress/P15.md) 为准。
+
+- P15 最终实现 run #131：五 Job SUCCESS，Unit 174/174、Architecture 16/16、7 项真实 PostgreSQL 18 静态数据探针、全部既有回归 PASS。
+- 独立 REVIEW HEAD run #132：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43847835022 — 五 Job SUCCESS。
+- 正式 ACCEPTED HEAD run #133：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43848207249 — 五 Job SUCCESS，P15 技术目标 C 已 ACCEPTED。
