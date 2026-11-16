@@ -5,7 +5,7 @@ namespace LegendsOfTheDungeon.Kernel;
 /// </summary>
 public readonly record struct Duration : IComparable<Duration>
 {
-    internal const long MaximumMilliseconds =
+    internal static readonly long MaximumMilliseconds =
         TimeSpan.MaxValue.Ticks / TimeSpan.TicksPerMillisecond;
 
     /// <summary>
