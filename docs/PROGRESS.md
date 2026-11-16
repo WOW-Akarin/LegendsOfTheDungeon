@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `34446eb8aec0a57fcfa4f0aa1ea68dc1d15eea08` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P06 / Kernel Geometry / REVIEW / B
+阶段 / 任务 / 状态 / 目标完成度：P06 / Kernel Geometry / ACCEPTED / B
 
 ## 目标与成功条件
 
@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P06 最终实现 CI run #32 已全绿：Unit 48/48、Architecture 16/16、P04/P05 Gate 全部通过；纯数学依赖与数值语义自审通过，当前进入独立 REVIEW。
+P06 已完成独立 Review 并 ACCEPTED；P07 尚未开始。
 
 ## 下一步（最多 5 项）
 
-1. 独立读取 REVIEW HEAD 的 Geometry 源码、Unit 与 kernel.geometry.v1 文档。
-2. 核对 REVIEW HEAD 自身 Unit 48+、Architecture、P04/P05 Gate 全绿。
-3. 核对生产 Geometry 无 Runtime/World/System.Text.Json 引用，Kernel 仍无高层引用。
-4. 核对角度、边界距离、非有限数、零向量、溢出和 wire 回读测试仍存在。
-5. 无必需问题后将 P06 ACCEPTED，再进入下一可执行 Kernel 阶段。
+1. 开始 P07 — Kernel Time。
+2. 实现 IClock / FakeClock / Duration / Tick / Timer 基础值与可控逻辑时间。
+3. 区分逻辑 Tick、单调经过时间和审计 UTC，Domain 不直接依赖系统时钟。
+4. 覆盖同 Tick 到期、零时长、取消、溢出与无真实 Sleep 的确定性测试。
+5. 所有新 Public API 继续受 P04 XML Gate 与 P03 Architecture Gate 约束。
 
 ## 修改文件及原因
 
@@ -66,7 +66,7 @@ P06 最终实现 CI run #32 已全绿：Unit 48/48、Architecture 16/16、P04/P0
 2. 核对 main HEAD 与 P06 起始 SHA `34446eb8aec0a57fcfa4f0aa1ea68dc1d15eea08`。
 3. 打开 `src/Kernel` Geometry 文件和对应 Unit。
 4. 读取最新 CI；失败时从第一个真实编译/Analyzer/Test 诊断修复，不 suppress P04/Analyzer。
-5. P06 已进入 REVIEW；按 progress/P06.md 当前停点做独立审查。
+5. P06 已 ACCEPTED；下一任务从 DEVELOPMENT_ROADMAP 的 P07 开始。
 
 ## 不应重复执行的操作
 
