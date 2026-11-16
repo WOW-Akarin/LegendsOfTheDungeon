@@ -27,6 +27,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 - [progress/P13.md](progress/P13.md)：P13 网络传输阶段证据
 - [progress/P14.md](progress/P14.md)：P14 指标、诊断阶段证据
 - [modules/DIAGNOSTICS.md](modules/DIAGNOSTICS.md)：P14 固定维度指标、健康、Trace 与慢操作契约
+- [reviews/P14_DIAGNOSTICS_REVIEW.md](reviews/P14_DIAGNOSTICS_REVIEW.md)：P14 独立四视角审查
 - [operations/P64_BASELINE.md](operations/P64_BASELINE.md)：P64.F 测试环境和负载准备清单（尚未测量）
 - [reviews/P13_NETWORKING_REVIEW.md](reviews/P13_NETWORKING_REVIEW.md)：P13 独立四视角审查
 - [reviews/P12_CONCURRENCY_REVIEW.md](reviews/P12_CONCURRENCY_REVIEW.md)：P12 独立四视角审查
@@ -35,7 +36,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M1 基础。  
-当前阶段：P14 — Metrics / Diagnostics，**IN_PROGRESS**。P00–P13 已验收；P14 已开始，出口证据尚待验证，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P14 — Metrics / Diagnostics，**REVIEW**。P00–P13 已验收；P14 代码及 CI #112 全绿，独立审查/最终验收 HEAD 尚待 CI，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 

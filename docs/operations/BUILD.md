@@ -117,3 +117,17 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.NetworkingProbe/Legen
 
 - Probe 仅监听 127.0.0.1 随机端口，真实 Socket 验证半包/粘包、慢报头、截断/EOF、超大长度、断线、双向客户端/服务端适配器、入站限流、慢接收方背压、未授权拦截；额外使用故意忽略取消的流替身验证停止结果未知。通过时输出 `P13_NETWORKING_LOOPBACK_PASS`，CI 上传 `artifacts/networking-loopback/report.txt`。
 - 最终实现 run #99（43835963119）三 Job SUCCESS，Unit 139/139、Architecture 16/16，网络探针 10/10、PG 集成 PASS。独立 REVIEW HEAD run #100 三 Job SUCCESS，正式 ACCEPTED HEAD run #101 三 Job SUCCESS。完整证据见 [P13 阶段记录](../progress/P13.md)。
+
+## P14 Diagnostics Integration
+
+- `Platform.Diagnostics` 是零第三方 NuGet 包的独立技术 Assembly，包含固定维度、有限历史、默认健康 Unknown、CrashContext 与安全格式化输出。
+- `diagnostics-integration` Job 在 `build-test` 后与 P11 PostgreSQL 及 P13 TCP Loopback 并行，Ubuntu Linux x64 / SDK 10.0.404 / `Release` / locked-mode。
+- 统一 Solution 的 `./eng/verify.sh` 已包含 Diagnostics Unit 和 Architecture。独立实际 Worker 测试命令：
+
+```bash
+dotnet restore tests/Integration/LegendsOfTheDungeon.DiagnosticsProbe/LegendsOfTheDungeon.DiagnosticsProbe.csproj --locked-mode
+dotnet run --project tests/Integration/LegendsOfTheDungeon.DiagnosticsProbe/LegendsOfTheDungeon.DiagnosticsProbe.csproj --configuration Release --no-restore
+```
+
+- 实际 P12 BackgroundWorkerPool 200 项任务、Sink 故意失败、取消、超时阈值、50,000 个不同关联采样固定指标槽位、健康与 CrashContext 全部通过后打印 `P14_DIAGNOSTICS_INTEGRATION_PASS`，CI 上传 `artifacts/diagnostics-integration/report.txt`。
+- 最终实现 run #112（43841708511）四 Job SUCCESS：Unit 151/151、Architecture 16/16、6 项 Diagnostics Probe、现有 PG 18 和 TCP Loopback 全部通过。独立 REVIEW/ACCEPTED HEAD 记录见 [P14](../progress/P14.md)。
