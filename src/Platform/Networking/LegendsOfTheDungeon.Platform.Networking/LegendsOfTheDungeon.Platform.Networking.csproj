@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../../Security/Contracts/LegendsOfTheDungeon.Security.Contracts/LegendsOfTheDungeon.Security.Contracts.csproj" />
+  </ItemGroup>
+</Project>
