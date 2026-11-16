@@ -11,8 +11,8 @@ public sealed class StaticDataTests
     private static StaticCatalogSchema Schema() => new("test_catalog", 2,
     [
         new StaticFieldSchema("label", StaticFieldType.Text, true, 60),
-        new StaticFieldSchema("quantity", StaticFieldType.Int64, true),
-        new StaticFieldSchema("cost", StaticFieldType.Decimal, false),
+        new StaticFieldSchema("quantity", StaticFieldType.WholeNumber, true),
+        new StaticFieldSchema("cost", StaticFieldType.FixedPoint, false),
         new StaticFieldSchema("enabled", StaticFieldType.Boolean, false)
     ]);
 

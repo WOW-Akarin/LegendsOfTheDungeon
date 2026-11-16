@@ -24,7 +24,7 @@ Console.WriteLine("P15_STATICDATA_POSTGRES_PASS");
 static StaticCatalogSchema Schema() => new("fixture_catalog", 3,
 [
     new StaticFieldSchema("name", StaticFieldType.Text, true, 100),
-    new StaticFieldSchema("amount", StaticFieldType.Decimal, true),
+    new StaticFieldSchema("amount", StaticFieldType.FixedPoint, true),
     new StaticFieldSchema("active", StaticFieldType.Boolean, false)
 ]);
 

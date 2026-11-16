@@ -233,14 +233,14 @@ public static class JsonStaticCatalogLoader
 
                 return scalar;
             }
-            case StaticFieldType.Int64 when value.ValueKind == JsonValueKind.Number:
+            case StaticFieldType.WholeNumber when value.ValueKind == JsonValueKind.Number:
                 if (value.TryGetInt64(out var number))
                 {
                     return StaticScalar.FromInt64(number);
                 }
 
                 break;
-            case StaticFieldType.Decimal when value.ValueKind == JsonValueKind.Number:
+            case StaticFieldType.FixedPoint when value.ValueKind == JsonValueKind.Number:
                 if (value.TryGetDecimal(out var amount))
                 {
                     return StaticScalar.FromDecimal(amount);

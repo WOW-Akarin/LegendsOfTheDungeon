@@ -10,9 +10,9 @@ public enum StaticFieldType
     /// <summary>UTF-8 文本，Unicode NFC 规范化。</summary>
     Text,
     /// <summary>有符号 64 位整数。</summary>
-    Int64,
+    WholeNumber,
     /// <summary>高精度 Decimal，无平台浮点误差。</summary>
-    Decimal,
+    FixedPoint,
     /// <summary>逻辑布尔值。</summary>
     Boolean
 }
@@ -190,10 +190,7 @@ public sealed class StaticCatalogException : Exception
             throw new ArgumentException("来源标识无效。", nameof(sourceName));
         }
 
-        if (rowIndex < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(rowIndex));
-        }
+        ArgumentOutOfRangeException.ThrowIfNegative(rowIndex);
 
         if (!StaticIdentifier.IsValid(fieldName))
         {
@@ -239,11 +236,11 @@ public sealed class StaticScalar
 
     /// <summary>整数使用文化无关的十进制文本。</summary>
     public static StaticScalar FromInt64(long value) =>
-        new(StaticFieldType.Int64, value.ToString(CultureInfo.InvariantCulture));
+        new(StaticFieldType.WholeNumber, value.ToString(CultureInfo.InvariantCulture));
 
     /// <summary>Decimal 统一去除无意义的尾部零，避免 JSON 1.00 与 SQL 1.0 Hash 不一致。</summary>
     public static StaticScalar FromDecimal(decimal value) =>
-        new(StaticFieldType.Decimal, value.ToString("G29", CultureInfo.InvariantCulture));
+        new(StaticFieldType.FixedPoint, value.ToString("G29", CultureInfo.InvariantCulture));
 
     /// <summary>布尔值固定为小写 true/false。</summary>
     public static StaticScalar FromBoolean(bool value) =>
