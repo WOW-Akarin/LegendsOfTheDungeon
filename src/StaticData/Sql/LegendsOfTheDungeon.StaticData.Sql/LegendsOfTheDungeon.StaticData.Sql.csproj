@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../Abstractions/LegendsOfTheDungeon.StaticData.Abstractions/LegendsOfTheDungeon.StaticData.Abstractions.csproj" />
+    <ProjectReference Include="../../Core/LegendsOfTheDungeon.StaticData.Core/LegendsOfTheDungeon.StaticData.Core.csproj" />
+    <ProjectReference Include="../../Json/LegendsOfTheDungeon.StaticData.Json/LegendsOfTheDungeon.StaticData.Json.csproj" />
+    <ProjectReference Include="../../../Platform/Persistence/LegendsOfTheDungeon.Platform.Persistence/LegendsOfTheDungeon.Platform.Persistence.csproj" />
+  </ItemGroup>
+</Project>
