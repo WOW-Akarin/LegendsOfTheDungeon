@@ -27,7 +27,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M1 基础。  
-当前阶段：P11 — Platform Persistence，**REVIEW**。P00–P10 已 ACCEPTED；P11 真实 PostgreSQL 集成已由 run #72 通过，最终验收 HEAD 尚待验证，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P11 — Platform Persistence，**ACCEPTED**。P00–P11 已完成验收；下一阶段 P12 — Platform Concurrency 尚未开始，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 

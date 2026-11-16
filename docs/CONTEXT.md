@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M1 基础  
-当前阶段：P11 — REVIEW
+当前阶段：P11 — ACCEPTED（下一阶段 P12 NOT_STARTED）
 
 ## 当前范围
 
@@ -39,11 +39,11 @@ P00/P01 文档基线已验收；P02 建立 .NET 10 Solution；截至 P10 已验�
 
 ## 当前任务与下一步
 
-P00–P10 已 ACCEPTED。P11 已进入 REVIEW；代码审查基线 0a092260，GitHub Actions run #72 SUCCESS（Unit 109/109、Architecture 16/16、真实 PostgreSQL 18 Integration 全绿）。ConnectionFactory、参数化命令、事务 Unknown、Migration、BoundedBulkLoader、P65.F 初始注入与幂等消歧均有可追溯代码和真实测试。REVIEW 文档 HEAD CI 与 ACCEPTED HEAD CI 尚未运行，因此 P11 尚未 ACCEPTED。
+P00–P10 已 ACCEPTED。P11 已 ACCEPTED：实现基线 0a092260，run #72 Unit 109/109、Architecture 16/16、真实 PostgreSQL 18 Integration 全绿；独立 REVIEW HEAD 270022e 的 run #73 两个 job 全绿。ConnectionFactory、参数化命令、事务 Unknown、Migration、BoundedBulkLoader、P65.F 初始注入与幂等消歧已形成可复现证据。本次 ACCEPTED 文档 HEAD CI 待复核。下一阶段 P12 NOT_STARTED。
 
 ## 阻塞与技术债
 
-本阶段已确认的必需实现阻塞：0。留存风险：模拟确认丢失而非实际物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。保留现有架构不变量和不记录秘密的约束。下一安全动作：验证 REVIEW HEAD CI → 正式验收并验证 ACCEPTED HEAD。
+P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。下一安全动作：验证 ACCEPTED HEAD CI，再从 P12 进入下一阶段。
 
 ## 关键入口
 

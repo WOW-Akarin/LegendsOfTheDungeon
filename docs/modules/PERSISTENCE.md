@@ -1,6 +1,6 @@
 # P11 — Platform Persistence 技术契约
 
-状态：P11 REVIEW，代码审查基线 0a092260，真实 PostgreSQL 18 run #72 SUCCESS。本文件只描述技术层已证实的范围，P11 最终 ACCEPTED 仍待独立 HEAD 检查。
+状态：P11 ACCEPTED，技术层目标 C。实现基线 0a092260，真实 PostgreSQL 18 run #72 SUCCESS，独立 REVIEW HEAD run #73 SUCCESS。仍不代表真实业务持久化或 P65/P64 等其他阶段完成。
 
 ## 所有权与依赖
 

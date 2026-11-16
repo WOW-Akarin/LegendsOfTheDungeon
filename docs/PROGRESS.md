@@ -1,44 +1,37 @@
 # 当前进度
 
 更新时间：2026-11-16 +08:00
-分支：main（按用户要求直接提交，不创建分支）
-阶段 / 状态 / 目标：P11 — Platform Persistence / REVIEW / C
-任务起始 HEAD：0e0ab46f99a16f27b404d233105cc512dcd13dc2
+分支：main（按用户要求直接提交）
+阶段 / 状态 / 目标：P11 — Platform Persistence / ACCEPTED / C
+下阶段：P12 — Platform Concurrency（NOT_STARTED）
+阶段起始 SHA：0e0ab46f99a16f27b404d233105cc512dcd13dc2
 实现审查基线：0a092260c20f826b5126e2e83422b125b0b27cc5
+独立 REVIEW HEAD：270022efe8db40e04c5bc5737fa13c3e1330bf99
 
-## 当前交付
+## 已验收交付
 
-- 独立 Platform.Persistence / ADO.NET 工厂、参数化命令和事务 Unknown 状态。
-- PostgreSQL 技术迁移账本、校验和验证、事务级 advisory lock、有界命令/参数批量写入。
-- 实际 Npgsql 10.0.3 + PostgreSQL 18 集成、固定镜像 digest、locked NuGet 图。
-- P65.F 最小 BeforeCommit / AfterCommit / AfterRollback 注入及真实数据库幂等恢复探针。
-- P11 Unit、Architecture、功能与失败恢复证明见 [P11 阶段证据](progress/P11.md)、[独立代码审查](reviews/P11_PERSISTENCE_REVIEW.md)。
+- Provider-neutral Platform.Persistence：ADO.NET ConnectionFactory、参数化命令、隔离事务、Unknown 提交语义、连接释放。
+- PostgreSQL 技术 Migration：连续版本、SHA-256 校验和、advisory lock、事务账本；重复迁移幂等、错误迁移整事务回滚。
+- BoundedBulkLoader：命令/参数预算、整批回滚；不声称 COPY 或 P64 性能指标。
+- PostgreSQL 18 + Npgsql 10.0.3 真实集成 Probe；镜像 digest 与 NuGet lock 固定。
+- P65.F 基础故障注入和回执丢失后幂等账本消歧；不把 P65 父阶段提前验收。
 
-## 最近真实验证
+## 验证与验收结论
 
-- Actions run #69：FAIL，CA1822；已按分析器修复，不 suppress。
-- Actions run #70：SUCCESS（Migration / Bulk 真实集成）。
-- Actions run #71：SUCCESS（提交回执未知 / 回滚回执未知 / 账本消歧）。
-- Actions run #72：SUCCESS，Ubuntu Linux x64 / SDK 10.0.404；locked restore、Release build、109/109 Unit、16/16 Architecture、负向/文档/Kernel Gate，PostgreSQL 集成全部 PASS，并上传集成报告 artifact。
-- PostgreSQL image digest：2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbc；Probe 确认 major version 18。
-- 审查代码基线是 0a092260；REVIEW 文档 HEAD CI 尚未执行，不等于 ACCEPTED。
+- #69：CA1822 构建 FAIL，已修复且未降低质量 Gate。
+- #70、#71、#72：代码与 PostgreSQL 集成 SUCCESS。
+- 实现 HEAD #72：Unit 109/109、Architecture 16/16，PG 集成 PASS、全部适用 Gate PASS。
+- 独立 REVIEW HEAD #73：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43824564517 — SUCCESS（build-test 和 persistence-integration 均成功）。
+- 四视角审查 PASS，P11 C 的必需未解决项 0。正式状态 ACCEPTED；本次 ACCEPTED HEAD CI 仍待最终确认。
+- 完整记录：[P11 阶段证据](progress/P11.md)、[Persistence 契约](modules/PERSISTENCE.md)、[代码 Review](reviews/P11_PERSISTENCE_REVIEW.md)。
 
-## 当前停点及下一步
+## 当前停点与下一步
 
-1. REVIEW 文档提交后验证 main HEAD 的完整 CI，若出现失败按首个真实诊断修复。
-2. 完成文档/契约及四视角审查，确保真实测试和追溯材料一致。
-3. REVIEW HEAD 全绿后把阶段转为 ACCEPTED。
-4. 再验证 ACCEPTED HEAD 的完整 CI，回写最终证据。
-5. P11 完成后启动 P12 — Platform Concurrency（不提前交付）。
+1. 验证 ACCEPTED HEAD 完整 CI，再记录最终结果。
+2. 启动 P12 — Platform Concurrency，先从路线图/架构确认队列上界与关停语义（本次未实现 P12）。
+3. 保留 P65.F 基础故障点，在真实世界/经济落库时扩展场景。
+4. P64 阶段独立验证性能；不由本阶段推断。
 
-## 风险及未验证事项
+## 风险与恢复
 
-- P65.F 只开始故障点，不能当完整经济/崩溃恢复验收。
-- 当前 BulkLoader 为有界命令批处理，非 COPY 性能基准；性能属于后续 P64。
-- 提交确认丢失通过真实 PG 提交后故意抛超时模拟，尚无物理断网试验。
-- 无生产 Host、业务表、真实认证或持久化业务模块，留给后续阶段。
-- 当前执行环境无本地 dotnet，正式构建与报告来自 GitHub Actions。
-
-## 恢复
-
-PROJECT_SPEC → ARCHITECTURE → CONTEXT → 本文 → progress/P11.md → modules/PERSISTENCE.md → reviews/P11_PERSISTENCE_REVIEW.md，再核对 main HEAD/CI。NOT_RUN 不得当 PASS。
+P11 没有生产业务持久化模块或 ServerHost；确认丢失故障注入不等于物理网络断线；BulkLoader 不等于 PostgreSQL COPY。恢复按 PROJECT_SPEC → ARCHITECTURE → CONTEXT → PROGRESS → progress/P11.md 读取状态和证据，先核对 main HEAD 与真实 Actions 结果。

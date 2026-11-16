@@ -1,8 +1,8 @@
 # P11 Persistence 独立代码审查
 
-- 审查阶段：REVIEW
+- 审查阶段：ACCEPTED（P11 目标 C）
 - 审查代码基线：0a092260c20f826b5126e2e83422b125b0b27cc5
-- 实际测试证据：GitHub Actions run #72（SUCCESS）
+- 实际测试证据：GitHub Actions run #72（SUCCESS）、独立 REVIEW HEAD run #73（SUCCESS）
 - 时间：2026-11-16 +08:00
 - 目标：不降低 P03/P04/Analyzer 或 PostgreSQL C 出口。
 
@@ -32,4 +32,4 @@
 
 ## 独立 REVIEW 判定
 
-实现范围与路线图 P11 技术层目标一致；实际 PostgreSQL、事务和恢复语义有 CI 证据；自审未发现 P11 必需未解决缺陷（0）。本文件尚需走一次独立文档 HEAD CI 后才能把 P11 转入 ACCEPTED。该结论不取代后续业务层/性能/安全验收。
+实现范围与路线图 P11 技术层目标一致；实际 PostgreSQL、事务和恢复语义有 CI 证据；自审未发现 P11 必需未解决缺陷（0）。独立 REVIEW HEAD 270022e 的 run #73 两个 Job 全绿，P11 技术层目标 C 的必需未解决项 0，正式转入 ACCEPTED。本次验收提交 HEAD 的最终 CI 仍需再确认。该结论不取代后续业务层、性能或安全验收。
