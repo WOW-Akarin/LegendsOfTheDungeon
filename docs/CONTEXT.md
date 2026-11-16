@@ -13,9 +13,9 @@ P17 归档 HEAD `fa2f4a3c3ea704a9d76e8b5445fa01c96535c8e6`，CI #175 7/7 SUCCESS
 
 - Domain：`Runtime.World/WorldTickPipeline` 固定四相位、Phase/Key 稳定排序；FakeClock CurrentTick 控制到期；P17 `SnapshotForTick` 的稳定 SHA256 哈希，以 World/Epoch/Tick 和按 ID 排序的 EntityIdentity/Generation/Transform/Life/Target 为输入。
 - Adapter：`Platform.WorldScheduling` 只依赖 Runtime.Abstractions 的 `IWorldTickDispatchPort`，由 P18 WorldExecutor 实现，最多 64 世界、8 Worker、每世界每轮至多 8 Tick、RunBatch ≤1024；邮箱背压和队列待执行区分，慢 Tick 单调测量不入 Hash。
-- Tests：新增 P19 单元/真实 Worker Probe，CI 从七 Job 增为八 Job。实现 #179、独立 REVIEW #180 均 8/8 SUCCESS，P19 C 已正式 ACCEPTED。
+- Tests：新增 P19 单元/真实 Worker Probe，CI 从七 Job 增为八 Job。实现 #179、独立 REVIEW #180、正式 ACCEPTED #181 均 8/8 SUCCESS，P19 C 已完整验收。
 - P19 不能当作 P20 Spatial/P27 移动、P62.F 完整回放、P64.F 性能、P60 生产 Host 已完成；10 World/10,000 Entity/50ms 是未达到验证的目标。
 
 ## 下一安全动作
 
-核验 P19 正式 ACCEPTED HEAD 的全部八 Job 并归档，然后按依赖进入 P20 Spatial；不提前宣称 P62 Replay 或 P64 性能通过。入口：[PROGRESS](PROGRESS.md) / [P19 记录](progress/P19.md) / [WorldTick 契约](modules/WORLD_TICK.md) / [ROADMAP](DEVELOPMENT_ROADMAP.md) / [ARCHITECTURE](ARCHITECTURE.md) / [恢复规则](RECOVERY_WORKFLOW.md)。
+P19 完整验收已结束，进入 P20 Spatial 的独立实施阶段；本次归档提交的自身 CI 仍将按八 Job 核验。P62 Replay / P64 性能仍未完成。入口：[PROGRESS](PROGRESS.md) / [P19 记录](progress/P19.md) / [WorldTick 契约](modules/WORLD_TICK.md) / [ROADMAP](DEVELOPMENT_ROADMAP.md) / [ARCHITECTURE](ARCHITECTURE.md) / [恢复规则](RECOVERY_WORKFLOW.md)。

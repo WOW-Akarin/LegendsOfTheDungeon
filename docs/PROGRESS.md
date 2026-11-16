@@ -24,8 +24,16 @@
 - 实现 HEAD `630615a915fe0e976314e94c2b88fad7c7f501ff`，CI #179（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43897180562）**8/8 SUCCESS**，242/242 Unit、16/16 Architecture。
 - 新 `world-tick` 集成 Probe 四类场景 PASS：真实 P18 阶段顺序/Hash 一致、两 World Worker 并行、有界慢 Tick 追赶、Mailbox 背压无虚假提交。
 - P11/P13/P14/P15/P16/P17/P18 旧有集成均通过。保留 CI #176–#178 三次真实失败和 CA1305、Faulted 状态一致性、P03-006 修复过程。
-- 独立四视角审查：[P19 Review](reviews/P19_WORLD_TICK_REVIEW.md)。独立 REVIEW HEAD `b31c2ffcd2431628897fdd43dd87376092e14bcc` CI #180（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43897969071）8/8 SUCCESS，P19 C 正式 ACCEPTED；ACCEPTED HEAD 的 CI 尚待复核。
+- 独立四视角审查：[P19 Review](reviews/P19_WORLD_TICK_REVIEW.md)。独立 REVIEW HEAD `b31c2ffcd2431628897fdd43dd87376092e14bcc` CI #180（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43897969071）8/8 SUCCESS，P19 C 正式 ACCEPTED；ACCEPTED HEAD `5aa029b9b356079b159383a2e539a1078940ecfc` CI #181 8/8 SUCCESS（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43898491359），P19 C 已完整验收。
 
 ## 下一安全动作
 
-核验本次 P19 正式 ACCEPTED HEAD 八 Job CI，随后归档真实证据。下一开发阶段 P20 Spatial，后续完整 P62 Replay 和 P64 性能仍需单独验收。后续 P20 Spatial/P62.F Replay/P64.F Benchmark 不得提前宣称完成。
+实现 #179、独立 REVIEW #180、正式 ACCEPTED #181 均八 Job 全绿。归档本阶段证据后，下一开发阶段 P20 Spatial。P62.F 完整 Replay 和 P64.F 性能仍须独立完成。后续 P20 Spatial/P62.F Replay/P64.F Benchmark 不得提前宣称完成。
+
+## P19 完整验收证据
+
+- 实现 HEAD `630615a915fe0e976314e94c2b88fad7c7f501ff` CI #179：8/8 SUCCESS。
+- 独立 REVIEW HEAD `b31c2ffcd2431628897fdd43dd87376092e14bcc` CI #180：8/8 SUCCESS。
+- 正式 ACCEPTED HEAD `5aa029b9b356079b159383a2e539a1078940ecfc` CI #181：8/8 SUCCESS（242/242 Unit、16/16 Architecture）。
+- 失败记录 #176 CA1305、#177 同世界 Faulted 状态、#178 P03-006 平台公共 API 泄漏均已保留并实际修复。正式 B/C 出口没有跳过质量 Gate。
+- 本次归档 HEAD CI 尚待提交后单独核验；不影响三次独立代码/审查/验收结论。

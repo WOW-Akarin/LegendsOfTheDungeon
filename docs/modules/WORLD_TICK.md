@@ -1,6 +1,6 @@
 # P19 — WorldTick / Scheduler 确定性技术契约
 
-状态：ACCEPTED；目标 C；依赖 P07/P08/P14/P17 均已接受。实现 #179、独立 REVIEW #180 均 8/8 SUCCESS，正式 ACCEPTED HEAD CI 待复核。
+状态：ACCEPTED；目标 C；依赖 P07/P08/P14/P17 均已接受。实现 #179、独立 REVIEW #180 均 8/8 SUCCESS，正式 ACCEPTED HEAD `5aa029b9b356079b159383a2e539a1078940ecfc` CI #181 8/8 SUCCESS。
 
 ## 固定相位与状态真相
 
@@ -32,4 +32,4 @@
 
 - CI #179（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43897180562）：8/8 SUCCESS，242/242 Unit、16/16 Architecture，P19 真实 WorldTickProbe 四场景 PASS，原有七 Job 回归全绿。
 - P03-006 导致修改为 `IWorldTickDispatchPort` 而非豁免；新增项目仅直接引用 Kernel、Runtime.Abstractions、Runtime.World；需要可信组合根提供 P18 实现，防止从网络端获取此调度权能。
-- 独立四视角审查：`docs/reviews/P19_WORLD_TICK_REVIEW.md`；独立 REVIEW HEAD `b31c2ffcd2431628897fdd43dd87376092e14bcc` CI #180 八 Job SUCCESS；P19 技术 C 已正式 ACCEPTED，完整 P62/P64 证据仍不存在。
+- 独立四视角审查：`docs/reviews/P19_WORLD_TICK_REVIEW.md`；独立 REVIEW HEAD `b31c2ffcd2431628897fdd43dd87376092e14bcc` CI #180 八 Job SUCCESS；正式 ACCEPTED HEAD CI #181 八 Job 再次 SUCCESS，P19 技术 C 已完整验收；完整 P62/P64 证据仍不存在。
