@@ -131,3 +131,18 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.DiagnosticsProbe/Lege
 
 - 实际 P12 BackgroundWorkerPool 200 项任务、Sink 故意失败、取消、超时阈值、50,000 个不同关联采样固定指标槽位、健康与 CrashContext 全部通过后打印 `P14_DIAGNOSTICS_INTEGRATION_PASS`，CI 上传 `artifacts/diagnostics-integration/report.txt`。
 - 最终实现 run #112（43841708511）四 Job SUCCESS：Unit 151/151、Architecture 16/16、6 项 Diagnostics Probe、现有 PG 18 和 TCP Loopback 全部通过。独立 REVIEW HEAD run #113 和正式 ACCEPTED HEAD run #114 均四 Job SUCCESS；完整证据见 [P14](../progress/P14.md)。
+
+## P15 Static Data JSON / PostgreSQL Integration
+
+- 四个生产 Assembly：`StaticData.Abstractions/Core/Json/Sql`，各自独立锁文件、P03 生产白名单和 Solution 登记；静态数据不引用 Ability/Item 业务定义、DBC 或 World 状态。
+- P15.J 严格 JSON + 通用 Builder 的 Unit 已纳入 `./eng/verify.sh`；P15.S 独立 CI `staticdata-postgres` 使用与 P11 相同固定 digest 的 PostgreSQL 18、SDK 10.0.404、Npgsql 10.0.3 和临时数据库。
+- 仅在具有临时专用 PostgreSQL 环境变量 `LOTD_TEST_POSTGRES` 的非生产环境执行：
+
+```bash
+dotnet restore tests/Integration/LegendsOfTheDungeon.StaticDataProbe/LegendsOfTheDungeon.StaticDataProbe.csproj --locked-mode
+dotnet run --project tests/Integration/LegendsOfTheDungeon.StaticDataProbe/LegendsOfTheDungeon.StaticDataProbe.csproj --configuration Release --no-restore
+```
+
+- Probe 自建仅用于测试的 `public.lotd_static_catalog_versions` / `public.lotd_static_catalog_rows` 中立表；验证同一内容 JSONB/JSON 完全相同 Hash、错误版本、未知字段定位、id 不一致、长度/记录数硬预算及取消后的单连接池释放。通过时输出 `P15_STATICDATA_POSTGRES_PASS`；CI 上传 `artifacts/staticdata-postgres/report.txt`。
+- 固定表 DDL 和所有权策略见 [STATIC_DATA 模块契约](../modules/STATIC_DATA.md)。使用生产数据库前必须由 P11 Migration 机制交付可审计 DDL；P15 测试表不构成真正生产业务表。
+- 状态/CI 和独立审查结论以 [P15 阶段记录](../progress/P15.md) 为准。
