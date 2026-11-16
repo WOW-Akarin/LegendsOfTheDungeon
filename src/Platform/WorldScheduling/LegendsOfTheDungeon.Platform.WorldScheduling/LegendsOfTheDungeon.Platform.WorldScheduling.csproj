@@ -3,6 +3,5 @@
     <ProjectReference Include="../../../Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj" />
     <ProjectReference Include="../../../Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj" />
     <ProjectReference Include="../../../Runtime/World/LegendsOfTheDungeon.Runtime.World/LegendsOfTheDungeon.Runtime.World.csproj" />
-    <ProjectReference Include="../../WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution/LegendsOfTheDungeon.Platform.WorldExecution.csproj" />
   </ItemGroup>
 </Project>

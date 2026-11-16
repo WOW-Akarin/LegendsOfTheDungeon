@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using LegendsOfTheDungeon.Kernel;
-using LegendsOfTheDungeon.Platform.WorldExecution;
 using LegendsOfTheDungeon.Runtime.Abstractions;
 using LegendsOfTheDungeon.Runtime.World;
 
@@ -35,7 +34,7 @@ public sealed class WorldTickBinding
     /// <summary>绑定世界、运行它的执行器及唯一 Tick Pipeline；三者的 World/Epoch 必须一致。</summary>
     /// <param name="executor">不得交给未授权网络代码的 P18 执行器。</param>
     /// <param name="pipeline">属于同世界的确定性 Tick 阶段。</param>
-    public WorldTickBinding(WorldExecutor executor, WorldTickPipeline pipeline)
+    public WorldTickBinding(IWorldTickDispatchPort executor, WorldTickPipeline pipeline)
     {
         Executor = executor ?? throw new ArgumentNullException(nameof(executor));
         Pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
@@ -44,16 +43,13 @@ public sealed class WorldTickBinding
             throw new ArgumentException("WorldExecutor and WorldTickPipeline must have matching World/Epoch.");
         }
 
-        Producer = executor.CreateTrustedProducer();
     }
 
     /// <summary>绑定的世界执行器。</summary>
-    public WorldExecutor Executor { get; }
+    public IWorldTickDispatchPort Executor { get; }
 
     /// <summary>属于该世界的固定 Tick Pipeline。</summary>
     public WorldTickPipeline Pipeline { get; }
-
-    internal TrustedWorldProducer Producer { get; }
 
     /// <summary>绑定世界 ID。</summary>
     public WorldId World => Pipeline.World.World;
@@ -255,10 +251,10 @@ public sealed class WorldTickScheduler
 
                 var next = pipeline.LastCommittedTick.Add(1);
                 pending = new TickAction(pipeline, next, _meter);
-                var offer = binding.Producer.Offer(pending);
-                if (offer != WorldAdmissionStatus.Accepted)
+                var offer = binding.Executor.OfferTick(pending);
+                if (offer != WorldTickAdmissionStatus.Accepted)
                 {
-                    status = offer == WorldAdmissionStatus.Busy
+                    status = offer == WorldTickAdmissionStatus.Busy
                         ? WorldTickLaneStatus.Backpressured : WorldTickLaneStatus.Closed;
                     break;
                 }
@@ -266,7 +262,7 @@ public sealed class WorldTickScheduler
                 binding.Pending = pending;
             }
 
-            var run = binding.Executor.RunBatch(_batchBudget);
+            var run = binding.Executor.RunTickBatch(_batchBudget);
             if (pending.Completed)
             {
                 completed++;
@@ -279,19 +275,19 @@ public sealed class WorldTickScheduler
                 binding.Pending = null;
             }
 
-            if (run.Status == WorldRunStatus.Faulted || binding.Executor.IsFaulted)
+            if (run == WorldTickBatchStatus.Faulted || binding.Executor.IsFaulted)
             {
                 status = WorldTickLaneStatus.Faulted;
                 break;
             }
 
-            if (run.Status == WorldRunStatus.Busy)
+            if (run == WorldTickBatchStatus.Busy)
             {
                 status = WorldTickLaneStatus.Busy;
                 break;
             }
 
-            if (run.Status == WorldRunStatus.Closed && !pending.Completed)
+            if (run == WorldTickBatchStatus.Closed && !pending.Completed)
             {
                 status = WorldTickLaneStatus.Closed;
                 break;

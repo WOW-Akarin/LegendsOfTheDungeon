@@ -175,8 +175,7 @@
         "dependencies": {
           "LegendsOfTheDungeon.Kernel": "[1.0.0, )",
           "LegendsOfTheDungeon.Runtime.Abstractions": "[1.0.0, )",
-          "LegendsOfTheDungeon.Runtime.World": "[1.0.0, )",
-          "LegendsOfTheDungeon.Platform.WorldExecution": "[1.0.0, )"
+          "LegendsOfTheDungeon.Runtime.World": "[1.0.0, )"
         }
       }
     }

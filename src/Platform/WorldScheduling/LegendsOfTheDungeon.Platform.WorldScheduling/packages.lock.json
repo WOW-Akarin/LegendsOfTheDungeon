@@ -25,24 +25,6 @@
           "LegendsOfTheDungeon.Runtime.Abstractions": "[1.0.0, )",
           "LegendsOfTheDungeon.Entities.Core": "[1.0.0, )"
         }
-      },
-      "legendsofthedungeon.platform.concurrency": {
-        "type": "Project"
-      },
-      "legendsofthedungeon.security.contracts": {
-        "type": "Project",
-        "dependencies": {
-          "LegendsOfTheDungeon.Kernel": "[1.0.0, )"
-        }
-      },
-      "legendsofthedungeon.platform.worldexecution": {
-        "type": "Project",
-        "dependencies": {
-          "LegendsOfTheDungeon.Kernel": "[1.0.0, )",
-          "LegendsOfTheDungeon.Runtime.Abstractions": "[1.0.0, )",
-          "LegendsOfTheDungeon.Platform.Concurrency": "[1.0.0, )",
-          "LegendsOfTheDungeon.Security.Contracts": "[1.0.0, )"
-        }
       }
     }
   }

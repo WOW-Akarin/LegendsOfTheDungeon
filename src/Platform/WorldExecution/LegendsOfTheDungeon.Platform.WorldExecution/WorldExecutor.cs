@@ -117,7 +117,7 @@ public sealed class TrustedWorldProducer
 /// <summary>
 /// 逐世界唯一同步写执行器，复用 P12 双车道 Mailbox；不会在任何后台线程签发可异步传播的写入权。
 /// </summary>
-public sealed class WorldExecutor
+public sealed class WorldExecutor : IWorldTickDispatchPort
 {
     private const string OperationCode = "world.execute";
     private const int MaximumTrackedEntities = 10_000;
@@ -193,6 +193,26 @@ public sealed class WorldExecutor
 
     /// <summary>取得只供可信组合根/内部 Worker 保管的投递能力，不向网络用户泄露。</summary>
     public TrustedWorldProducer CreateTrustedProducer() => _trusted;
+
+    // P19 仅通过 Runtime.Abstractions Port 驱动 P18，避免向其它平台 Adapter 泄漏 WorldExecutor。
+    WorldTickAdmissionStatus IWorldTickDispatchPort.OfferTick(IWorldAction action) =>
+        OfferTrusted(action) switch
+        {
+            WorldAdmissionStatus.Accepted => WorldTickAdmissionStatus.Accepted,
+            WorldAdmissionStatus.Busy => WorldTickAdmissionStatus.Busy,
+            _ => WorldTickAdmissionStatus.Closed
+        };
+
+    WorldTickBatchStatus IWorldTickDispatchPort.RunTickBatch(int maximumItems) =>
+        RunBatch(maximumItems).Status switch
+        {
+            WorldRunStatus.Completed => WorldTickBatchStatus.Completed,
+            WorldRunStatus.Busy => WorldTickBatchStatus.Busy,
+            WorldRunStatus.Closed => WorldTickBatchStatus.Closed,
+            WorldRunStatus.Faulted => WorldTickBatchStatus.Faulted,
+            _ => WorldTickBatchStatus.Faulted
+        };
+
 
     /// <summary>不可信外部入口须同时具备生产身份和命令授权；接纳与执行前均重复检查。</summary>
     /// <param name="identity">由 P60.F 可信 Adapter 绑定的生产身份。</param>

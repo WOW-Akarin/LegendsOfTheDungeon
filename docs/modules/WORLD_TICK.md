@@ -23,3 +23,7 @@
 - `WorldTickTests`：相位排序与重复拒绝、FakeClock、有界慢 Tick、确定状态 Hash、旧写租约拒绝、重复/跳号 Faulted、邮箱满/先入队工作、并发调度拒绝、两世界真实并行、超限拒绝。
 - `WorldTickProbe`：真实 P18 Executor 中的阶段顺序和跨重建 Hash 一致/输入改变差异、两世界有限 Worker 并行、32 Tick 积压有界追赶与慢 Tick、邮箱背压无假成功。成功必须输出 `P19_WORLD_TICK_INTEGRATION_PASS`。
 - CI 从七 Job 扩展为八 Job，新增 `world-tick` 独立阻断真实探针。P62.F 完整回放/录制、P64.F 10 World 性能基线、P20 Spatial、P27 Player 移动、P60 生产 Host 均留给后续任务。测量到“慢 Tick”不代表满足 50ms 负载性能目标。
+
+## P03 架构纠偏
+
+初始实现的 `WorldTickBinding(WorldExecutor,...)` 让 P19 平台适配器的公共 API 泄漏了 P18 具体实现类型。现新增 Runtime.Abstractions 的 `IWorldTickDispatchPort`（仅 World/Epoch/IsFaulted/OfferTick/RunTickBatch），P18 `WorldExecutor` 显式实现接口，P19 不再引用 `Platform.WorldExecution` Project；无 P03 例外、阈值降低或隐藏具体平台类型。
