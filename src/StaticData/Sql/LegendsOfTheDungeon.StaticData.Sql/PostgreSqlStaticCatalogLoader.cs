@@ -29,13 +29,14 @@ public sealed class PostgreSqlStaticCatalogLoader
         LIMIT @record_limit
         """;
 
-    private readonly DatabaseConnectionFactory _factory;
+    private readonly Func<CancellationToken, Task<DbConnection>> _openConnection;
 
-    /// <summary>仅注入 P11 通用连接工厂；Npgsql 由组合根选择，不进入生产项目包引用。</summary>
-    /// <param name="factory">会释放连接并隐藏连接串的 P11 工厂。</param>
-    public PostgreSqlStaticCatalogLoader(DatabaseConnectionFactory factory)
+    /// <summary>仅注入受信任的 ADO.NET 连接打开 Port；组合根可传入 P11 工厂 OpenAsync 方法。</summary>
+    /// <param name="openConnection">调用者拥有的安全开连接委托；本类型负责释放返回的连接。</param>
+    public PostgreSqlStaticCatalogLoader(
+        Func<CancellationToken, Task<DbConnection>> openConnection)
     {
-        _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+        _openConnection = openConnection ?? throw new ArgumentNullException(nameof(openConnection));
     }
 
     /// <summary>在只读逻辑的可重复读事务中校验版本并取得有限行，统一 JSON 规范化与冻结 Hash。</summary>
@@ -63,7 +64,7 @@ public sealed class PostgreSqlStaticCatalogLoader
         cancellationToken.ThrowIfCancellationRequested();
         try
         {
-            await using var connection = await _factory.OpenAsync(cancellationToken);
+            await using var connection = await _openConnection(cancellationToken);
             await using var transaction = await connection.BeginTransactionAsync(
                 IsolationLevel.RepeatableRead, cancellationToken);
 

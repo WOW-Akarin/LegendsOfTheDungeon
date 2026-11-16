@@ -9,7 +9,7 @@ using Npgsql;
 var connectionString = Environment.GetEnvironmentVariable("LOTD_TEST_POSTGRES")
     ?? throw new InvalidOperationException("LOTD_TEST_POSTGRES is required.");
 var factory = new DatabaseConnectionFactory(NpgsqlFactory.Instance, connectionString);
-var loader = new PostgreSqlStaticCatalogLoader(factory);
+var loader = new PostgreSqlStaticCatalogLoader(factory.OpenAsync);
 await InitializeAsync();
 
 await CheckAsync("postgresql-json-same-content-same-sha256", EquivalenceAsync);
