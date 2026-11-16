@@ -2,7 +2,7 @@
 
 更新时间（含时区）：2026-11-16 +08:00  
 代码基线 / Branch / 工作区：任务开始 `f4da375411e827bab07f23f134ddf1124be01e1b` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
-阶段 / 任务 / 状态 / 目标完成度：P04 / 中文注释与文档质量 Gate / REVIEW / 文档基线+B（检查器）
+阶段 / 任务 / 状态 / 目标完成度：P04 / 中文注释与文档质量 Gate / ACCEPTED / 文档基线+B（检查器）
 
 ## 目标与成功条件
 
@@ -24,15 +24,15 @@
 
 ## 当前停点
 
-P04 最终实现 CI run #18 已全绿：九组文档 Gate、Solution build、Unit 3/3、Architecture 16/16 和既有三类负向 Gate 全部通过；当前进入独立 REVIEW。
+P04 已完成独立 Review 并 ACCEPTED；P05 尚未开始。
 
 ## 下一步（最多 5 项）
 
-1. 独立读取 REVIEW HEAD 的 Directory.Build.props/targets、文档 Gate 脚本、CI 和 Review Checklist。
-2. 核对 REVIEW HEAD 自身九组文档 Gate、Unit/Architecture 和旧负向 Gate 全绿。
-3. 核对 P04/BUILD/CONTEXT/README 状态与相对链接一致。
-4. 确认当前真实 Public 业务 API 抽查仍为有理由的 N/A，而不是漏检。
-5. 无必需问题后将 P04 ACCEPTED，再进入 P05。
+1. 开始 P05 — Kernel Strong IDs 与 Result。
+2. 实现 EntityId / ActorId / WorldId / AbilityId / ItemDefinitionId / ItemInstanceId / TaskId 等强类型标识，并明确 default/空值与序列化边界。
+3. 实现 Result / Error / ValidationIssue，定义稳定错误码和序列化语义。
+4. 用编译期/测试证明不同 ID 不可隐式混用，并覆盖越界、空 ID 与跨类型误用。
+5. 所有新 Public API 同时受 P04 中文 XML Gate 与人工语义 Review。
 
 ## 修改文件及原因
 
@@ -70,7 +70,7 @@ P04 不改变业务公共契约和状态所有权。新增工程级文档质量 
 2. 核对 main HEAD 与 P04 起始 SHA `f4da375411e827bab07f23f134ddf1124be01e1b`。
 3. 打开 `Directory.Build.targets`、`eng/verify-documentation-gates.sh` 与 CI workflow。
 4. 若 CI 失败，从第一个真实 compiler/MSBuild/脚本失败修复，不 suppress CS1591、不降低 WarningsAsErrors。
-5. P04 已进入 REVIEW；按 progress/P04.md 当前停点做独立审查。
+5. P04 已 ACCEPTED；下一任务从 DEVELOPMENT_ROADMAP 的 P05 开始。
 
 ## 不应重复执行的操作
 
