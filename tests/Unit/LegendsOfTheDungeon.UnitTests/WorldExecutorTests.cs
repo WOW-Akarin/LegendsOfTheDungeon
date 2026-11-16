@@ -171,7 +171,7 @@ public sealed class WorldExecutorTests
         }));
         One(world);
         Assert.Equal(WorldAdmissionStatus.Stale,
-            port.OfferReply(ticket!, new Work(_ => throw new Exception("must not run"))));
+            port.OfferReply(ticket!, new Work(_ => throw new InvalidOperationException("must not run"))));
     }
 
     [Fact]
