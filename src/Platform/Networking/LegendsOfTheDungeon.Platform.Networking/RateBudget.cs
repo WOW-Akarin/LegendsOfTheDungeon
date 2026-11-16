@@ -38,10 +38,7 @@ public sealed class FrameRateBudget
                 _windowStart = elapsedMilliseconds;
             }
 
-            if (elapsedMilliseconds < _windowStart)
-            {
-                throw new ArgumentOutOfRangeException(nameof(elapsedMilliseconds));
-            }
+            ArgumentOutOfRangeException.ThrowIfLessThan(elapsedMilliseconds, _windowStart);
 
             if (elapsedMilliseconds - _windowStart >= 1000)
             {
