@@ -19,7 +19,8 @@ P18 独立 REVIEW HEAD：04c862cfe52991701e8011c0f67a2da3d31c5565
 
 - 实现 #159：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43868940960 — 六 Job 全绿，210/210 Unit、16/16 Architecture、真实 Worker 世界执行器 5 项与原 P11/P13/P14/P15/P16 集成 PASS。
 - 独立 REVIEW HEAD #160：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43880202422 — 全六 Job SUCCESS。
-- P18 技术 C 必需未解决项 0，正式 ACCEPTED；本次 ACCEPTED 文档 HEAD 仍待完整 CI 核验。
+- 正式 ACCEPTED HEAD 95d2e30 run #161：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43880688909 — 六 Job 全部 SUCCESS。
+- P18 必需未解决项 0，独立 REVIEW #160 和正式 ACCEPTED #161 均六 Job PASS，P18 技术 C 正式收口。
 
 ## 后续依赖
 

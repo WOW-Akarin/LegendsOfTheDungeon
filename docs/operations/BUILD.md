@@ -174,3 +174,6 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/L
 
 - `world-execution` CI Job 在 `build-test` 后与 P11/P13/P14/P15/P16 回归并行；通过输出 `P18_WORLD_EXECUTION_INTEGRATION_PASS`，包含后台线程只能回送一次性票据、两个世界并行、过期 Epoch/Generation/重放、未授权拒绝与回调故障隔离。
 - 实现 CI #159：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43868940960 — 六 Job SUCCESS，Unit 210、Architecture 16；独立 REVIEW / ACCEPTED HEAD CI 证据以 [P18](../progress/P18.md) 为准。
+
+- P18 独立 REVIEW HEAD run #160：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43880202422 — 六 Job 全部 SUCCESS。
+- P18 正式 ACCEPTED HEAD run #161：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43880688909 — 六 Job 全部 SUCCESS，210 Unit、16 Architecture、WorldExecutionProbe 及全部前置集成通过。
