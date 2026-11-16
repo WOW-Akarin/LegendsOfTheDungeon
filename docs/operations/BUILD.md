@@ -161,3 +161,16 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.StaticDataProbe/Legen
 - P16 最终实现 run #144：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43852130534 — 191 Unit、16 Architecture、P15/P16 PostgreSQL 静态数据 9 项及全部五 Job SUCCESS。
 - P16 独立 REVIEW HEAD run #145：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43852742260 — 五 Job SUCCESS。
 - P16 正式 ACCEPTED HEAD run #146：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43853211242 — 五 Job SUCCESS，P16 技术 C 正式 ACCEPTED。
+
+## P18 WorldExecution
+
+- `Runtime.Abstractions` 同步世界 Port 与 `Platform.WorldExecution` 技术 Adapter 已在 Solution、P03 Manifest、NuGet locked graph 中登记；世界 Guard 单测属完整 `./eng/verify.sh`。
+- 单独真实后台线程 Probe：
+
+```bash
+dotnet restore tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/LegendsOfTheDungeon.WorldExecutionProbe.csproj --locked-mode
+dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/LegendsOfTheDungeon.WorldExecutionProbe.csproj --configuration Release --no-restore
+```
+
+- `world-execution` CI Job 在 `build-test` 后与 P11/P13/P14/P15/P16 回归并行；通过输出 `P18_WORLD_EXECUTION_INTEGRATION_PASS`，包含后台线程只能回送一次性票据、两个世界并行、过期 Epoch/Generation/重放、未授权拒绝与回调故障隔离。
+- 实现 CI #159：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43868940960 — 六 Job SUCCESS，Unit 210、Architecture 16；独立 REVIEW / ACCEPTED HEAD CI 证据以 [P18](../progress/P18.md) 为准。

@@ -3,7 +3,7 @@
 更新时间：2026-11-16 +08:00  
 分支：`main`（用户要求持续直接更新，不创建工作分支）  
 当前里程碑：M1 基础  
-当前阶段：P18 — IN_PROGRESS（P17 依赖 P18/P24）
+当前阶段：P18 — REVIEW（P17 仍依赖 P24）
 
 ## 当前范围
 
@@ -43,7 +43,7 @@ P00–P10 已 ACCEPTED。P11 已 ACCEPTED：实现基线 0a092260，run #72 Unit
 
 ## 阻塞与技术债
 
-P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。下一安全动作：完成 P18 同步写入租约、双车道 Mailbox、回执版本校验和 P60.F 写前授权及完整 CI；P17 仍需 P24；P16.F/P16.R 最终实现 HEAD 2b82a1b run #144 五 Job SUCCESS：191 Unit、16 Architecture、PG 18 P15/P16 9 项集成及既有 P11/P13/P14 回归均 PASS。独立 REVIEW HEAD 651b5ccb 的 CI #145 五 Job 完整 SUCCESS，P16 已正式 ACCEPTED；正式 ACCEPTED HEAD 7620aa8 的 run #146 五 Job 完整 SUCCESS。P16 引用校验/热重载仍未开始。真实业务 Host 埋点仍属后续阶段。生产认证和 WorldExecutor 仍未接线。P12 不替代 P18 WorldExecutor，性能和业务恢复仍待后续阶段。
+P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网；有界 Bulk 不是 COPY 性能导入；P65.F 不是完整 P65；业务持久化、真实 Host、生产认证、P64 性能均未完成。下一安全动作：P18 技术实现 #159 六 Job 全绿，独立 REVIEW HEAD CI 待核验；通过后正式 ACCEPTED HEAD CI。P17 仍需 P24；P16.F/P16.R 最终实现 HEAD 2b82a1b run #144 五 Job SUCCESS：191 Unit、16 Architecture、PG 18 P15/P16 9 项集成及既有 P11/P13/P14 回归均 PASS。独立 REVIEW HEAD 651b5ccb 的 CI #145 五 Job 完整 SUCCESS，P16 已正式 ACCEPTED；正式 ACCEPTED HEAD 7620aa8 的 run #146 五 Job 完整 SUCCESS。P16 引用校验/热重载仍未开始。真实业务 Host 埋点仍属后续阶段。生产认证和 WorldExecutor 仍未接线。P12 不替代 P18 WorldExecutor，性能和业务恢复仍待后续阶段。
 
 ## 关键入口
 
@@ -79,6 +79,8 @@ P11 必需实现阻塞 0。留存风险：模拟回执丢失而非物理断网�
 - [P15 阶段进度](progress/P15.md)
 - [P16 阶段进度](progress/P16.md)
 - [P18 阶段进度](progress/P18.md)
+- [P18 世界执行器技术契约](modules/WORLD_EXECUTION.md)
+- [P18 独立四视角审查](reviews/P18_WORLD_EXECUTION_REVIEW.md)
 - [P16 技术契约](modules/CATALOG_RELOAD.md)
 - [P16 四视角独立审查](reviews/P16_CATALOG_REVIEW.md)
 - [P15 StaticData 模块契约](modules/STATIC_DATA.md)
