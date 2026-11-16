@@ -1,70 +1,73 @@
 # 当前进度
 
 更新时间（含时区）：2026-11-16 +08:00  
-代码基线 / Branch / 工作区：任务开始 `91c70ad6892e9702bfbb4924d0e13607d56907b9` / `main` / 通过 GitHub 直接提交，无本地未提交工作区  
-阶段 / 任务 / 状态 / 目标完成度：P01 / 开发规范、上下文与断线恢复制度 / ACCEPTED / 文档基线
+代码基线 / Branch / 工作区：任务开始 `710b995a6655bd71eafaf7d22a2cd75349e829a1` / `main` / GitHub 直接提交；当前执行容器无 dotnet SDK  
+阶段 / 任务 / 状态 / 目标完成度：P02 / Solution 与 CI 骨架 / IN_PROGRESS / B（工程）
 
 ## 目标与成功条件
 
-正式落地 CONTEXT、PROGRESS、阶段归档模板与状态迁移规则，使新的执行者只依赖仓库即可定位当前目标、已完成内容、下一步、阻塞、关键约束、失败测试/检查、工作区基线和下一成功条件。
+建立最小必要的 .NET 10 Solution、统一工程设置、集中包版本、Unit/Architecture 测试入口和 GitHub Actions CI；由真实 CI 环境安装并验证精确 SDK，完成 restore/build/test/architecture-test，并证明故意的编译/测试失败能被 Gate 检出。
 
 ## 开始前状态与已有未提交修改
 
-- P00 已于 `main` ACCEPTED，阶段证据见 [progress/P00.md](progress/P00.md)。
-- P01 开始前 HEAD：`91c70ad6892e9702bfbb4924d0e13607d56907b9`。
-- 当前工作方式为 GitHub 直接提交；没有本地未提交工作区。
-- 已存在 PROJECT_SPEC 中的恢复制度正文，但尚未形成可直接复制使用的独立模板文件和 P01 阶段证据。
+- P01 已 ACCEPTED，证据见 [progress/P01.md](progress/P01.md)。
+- P02 开始 HEAD：`710b995a6655bd71eafaf7d22a2cd75349e829a1`。
+- 本地执行 `dotnet --info` 返回 command not found，因此不得伪造“本地已验证 SDK”。
+- 2026-11-16 官方 .NET 10 下载页当前 SDK 为 `10.0.404`；将作为精确候选，由 GitHub Actions 实际安装验证。
+- 仍按用户要求直接更新 `main`，不创建任务分支。
 
 ## 已完成与证据链接
 
-- [PROJECT_SPEC](PROJECT_SPEC.md) 已定义恢复制度与状态机。
-- [P00 阶段证据](progress/P00.md) 已证明阶段归档路径可工作。
+- P00/P01 文档与恢复制度已验收。
+- [ADR-0002](decisions/ADR-0002-engineering-and-release-baseline.md) 已规定 .NET 10、精确 SDK、latestPatch 与禁止伪造 patch 的策略。
 
 ## 当前停点
 
-P01 已完成独立 Review 并 ACCEPTED；P02 尚未开始。
+P02 已启动。下一步创建工程骨架与 CI，让 CI 首次实际验证 SDK 10.0.404 和构建链路。
 
 ## 下一步（最多 5 项）
 
-1. 开始 P02 — Solution 与 CI 骨架。
-2. 先在实际执行环境核对可用 .NET 10 SDK，并据此固定 global.json。
-3. 创建最小必要 Solution/src/tests 结构、集中 Nullable/Analyzer/包策略。
-4. 建立 restore/build/test/architecture-test 的统一入口与 CI。
-5. 做故意失败的编译/测试 Gate 验证后再评审 P02。
+1. 创建 global.json、Solution、Directory.Build.props、Directory.Packages.props、NuGet.config。
+2. 仅创建 Kernel、Runtime.Abstractions 和必要测试项目，避免空项目泛滥。
+3. 创建统一验证脚本与 GitHub Actions CI。
+4. 推送后读取实际 workflow run、日志和测试产物结论。
+5. 通过独立 Review 与负向 Gate 后再将 P02 ACCEPTED。
 
 ## 修改文件及原因
 
-P01 最终交付：docs/templates 三份模板、RECOVERY_WORKFLOW、progress/P01；PROJECT_SPEC 第 9 节已正式链接这些入口。
+本次启动提交仅更新进度/上下文并创建 P02 阶段证据；工程文件在下一实现提交落库。
 
 ## 契约、数据所有权与 ADR 变化
 
-无运行时代码契约、状态所有权或 ADR 变化。P01 是开发流程与恢复制度落地。
+P02 暂不新增业务公共契约；只建立工程 Assembly 边界。若 CI 验证 SDK 成功，将把精确 SDK 证据回写 ADR-0002。
 
 ## AC 参考与已知差异（适用时）
 
-P01 不进行新的 AC 机制研究。固定 AC 基线仍为 `17f9f9d5003708136c798ab4ef8c1b9762251bad`。
+不适用。固定 AC SHA 不变。
 
 ## 验证
 
 | 命令/检查 | 环境与时间 | 结果 | 报告 |
 |---|---|---|---|
-| P00 入口状态核对 | GitHub，2026-11-16 | PASS | progress/P00.md |
-| P01 直接依赖核对 | DEVELOPMENT_ROADMAP，2026-11-16 | PASS | 本文件 |
-| dotnet restore/build/test | P01 纯文档阶段且尚无 Solution | N/A | PROJECT_SPEC 7.1 |
+| P01 依赖状态 | GitHub，2026-11-16 | PASS | progress/P01.md |
+| `dotnet --info` | 当前执行容器，2026-11-16 | FAIL（环境缺少 dotnet） | 本阶段记录 |
+| 官方 .NET 10 SDK 查询 | Microsoft，2026-11-16 | PASS：候选 10.0.404 | progress/P02.md |
+| restore/build/test | 尚未有工程 | NOT_RUN | 待 CI |
 
 ## 失败、阻塞、风险与未验证假设
 
-- 当前无 P01 阻塞。
-- P02 SDK、P11 DB、P64.F 性能事项仍属于后续阶段，不在 P01 提前验证。
+- 当前执行容器缺少 dotnet，但不阻塞使用 GitHub Actions 作为真实 P02 验证环境。
+- SDK 10.0.404 在 CI 实际安装成功前只是候选，不得写成“已验证”。
+- NuGet 包版本与 slnx 格式必须由首次 CI 真实 restore/build 证明。
 
 ## 恢复步骤
 
-1. 读取 [PROJECT_SPEC](PROJECT_SPEC.md)、[CONTEXT](CONTEXT.md)、本文件。
-2. 读取 [DEVELOPMENT_ROADMAP](DEVELOPMENT_ROADMAP.md) 的 P01。
-3. 核对 `main` 当前 HEAD 与任务起始基线 `91c70ad6892e9702bfbb4924d0e13607d56907b9` 的差异。
-4. 检查 [progress/P01.md](progress/P01.md) 的最终 Review。
-5. P01 已 ACCEPTED；下一任务从 P02 入口开始。
+1. 读取 PROJECT_SPEC、CONTEXT、PROGRESS 和 [P02 证据](progress/P02.md)。
+2. 核对 main HEAD 与任务起始 SHA `710b995a6655bd71eafaf7d22a2cd75349e829a1`。
+3. 打开 `.github/workflows/ci.yml` 与工程文件，读取最新 workflow run。
+4. 若 CI 失败，从第一个真实失败日志修复，不降低 Gate。
+5. CI、负向 Gate、干净 restore/build/test 全部通过后进入 REVIEW。
 
 ## 不应重复执行的操作
 
-P01 无数据库迁移或数据修复。不要在 P01 提前创建/固定未经实际验证的 `global.json` SDK patch；该动作属于 P02。
+不要把本地缺少 SDK 误写为工程失败；不要在未实际安装成功前把 10.0.404 标成已验证。
