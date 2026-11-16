@@ -20,13 +20,13 @@
 - #139 xUnit1031、#141 CS0165 按真实日志修复，无关闭 Gate。
 - 最终实现 run #144：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43852130534 — **Unit 191/191、Architecture 16/16**、真实 PG18 P15/P16 静态数据 **9 项**、原有 P11/P13/P14 集成与所有工程质量 Gate PASS。
 - 独立 REVIEW HEAD run #145：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43852742260 — 五 Job 全部 SUCCESS。
-- 四视角必需未解决项 0，P16 正式 ACCEPTED；本次 ACCEPTED 文档 HEAD 的五 Job CI 尚待核查。
+- 正式 ACCEPTED HEAD 7620aa8 run #146：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43853211242 — 五 Job 全部 SUCCESS。
+- 四视角必需未解决项 0，独立 REVIEW #145 和正式 ACCEPTED #146 均五 Job PASS，P16 已完整收口。
 
 ## 下一安全动作
 
-1. 检查本次正式 ACCEPTED HEAD 五 Job CI 并归档最终证据。
-2. P17 WorldInstance 直接依赖 P18/P24，当前不可越依赖开始验收；P18 WorldExecutor 的直接依赖 P09/P12 均已满足，属于可安全开始的下一阶段。
-3. P64/P66 性能/长稳、P62 跨进程历史归档尚无验收证据。
+1. 下一可启动阶段是 P18 — WorldMailbox / WorldExecutor（P09/P12 已验收），实现有效执行租约/非重入 Guard；P17 仍需等待 P18/P24。
+2. P64/P66 性能/长稳、P62 跨进程历史归档尚无验收证据。
 
 ## 恢复
 

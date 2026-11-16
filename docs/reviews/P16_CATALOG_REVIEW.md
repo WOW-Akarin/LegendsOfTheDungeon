@@ -30,4 +30,4 @@
 - 两个真实 P16 PostgreSQL 组分别覆盖 2 个 Catalog 的整包加载/准备/边界提交与错引用新包失败旧版保留。10k 长引用链、空 Catalog、超目录/规则配额、同 Tick 多读取、Pin 与历史回收均有可执行 Unit 负例。
 - 不包含实际 World Owner/Host、真实 Cast/Item 迁移、跨 SQL 源统一事务快照、长期 Replay 持久归档或 P64/P66 性能稳定性数据；这些需后续单独验收。
 
-**结论：技术 C 范围内必需未解决项 0，独立 REVIEW HEAD #145 五 Job 全部成功，P16 已正式 ACCEPTED。** 正式 ACCEPTED HEAD 需独立 CI 核查；仍保留 P18/P19 实际接线与长期存储限制。
+**结论：技术 C 范围内必需未解决项 0，独立 REVIEW HEAD #145 五 Job 全部成功，P16 已正式 ACCEPTED。** 正式 ACCEPTED HEAD 7620aa8 的 run #146 五 Job 亦完整 SUCCESS；仍保留 P18/P19 实际接线与长期存储限制。
