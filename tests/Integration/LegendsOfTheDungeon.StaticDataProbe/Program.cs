@@ -189,18 +189,22 @@ async Task PayloadLimitAsync()
 async Task RecordLimitAsync()
 {
     await ResetAsync();
-    await using var connection = new NpgsqlConnection(connectionString);
-    await connection.OpenAsync();
-    await using var insert = connection.CreateCommand();
-    insert.CommandText = """
-        INSERT INTO public.lotd_static_catalog_rows
-          (catalog_name, schema_version, data_version, record_id, payload_json)
-        SELECT @catalog, 3, 7, g::text,
-          jsonb_build_object('id',g::text,'name','x','amount',1)
-        FROM generate_series(1,10001) AS g
-        """;
-    insert.Parameters.AddWithValue("@catalog", "fixture_catalog");
-    await insert.ExecuteNonQueryAsync();
+    // 池上限为 1；写入连接在加载器打开新连接之前必须完全释放。
+    await using (var connection = new NpgsqlConnection(connectionString))
+    {
+        await connection.OpenAsync();
+        await using var insert = connection.CreateCommand();
+        insert.CommandText = """
+            INSERT INTO public.lotd_static_catalog_rows
+              (catalog_name, schema_version, data_version, record_id, payload_json)
+            SELECT @catalog, 3, 7, g::text,
+              jsonb_build_object('id',g::text,'name','x','amount',1)
+            FROM generate_series(1,10001) AS g
+            """;
+        insert.Parameters.AddWithValue("@catalog", "fixture_catalog");
+        await insert.ExecuteNonQueryAsync();
+    }
+
     var error = await FailAsync(() => loader.LoadAsync(Schema(), 7, "postgres_fixture"));
     Check(error.Fault == StaticCatalogFault.LimitExceeded
         && error.FieldName == "records"
