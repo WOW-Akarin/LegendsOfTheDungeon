@@ -326,7 +326,7 @@ public sealed class WorldExecutor
         WorldRunStatus status, int executed, int stale, int denied) =>
         new(status, executed, stale, denied, _mailbox.Count);
 
-    private WorldAdmissionStatus OfferTrusted(IWorldAction action)
+    internal WorldAdmissionStatus OfferTrusted(IWorldAction action)
     {
         ArgumentNullException.ThrowIfNull(action);
         lock (_stateGate)
@@ -335,7 +335,7 @@ public sealed class WorldExecutor
         }
     }
 
-    private WorldAdmissionStatus OfferReply(IWorldReplyTicket ticket, IWorldAction action)
+    internal WorldAdmissionStatus OfferReply(IWorldReplyTicket ticket, IWorldAction action)
     {
         ArgumentNullException.ThrowIfNull(ticket);
         ArgumentNullException.ThrowIfNull(action);
@@ -502,7 +502,7 @@ public sealed class WorldExecutor
         }
     }
 
-    private IWorldReplyTicket Issue(Scope scope, EntityId entity, EntityGeneration generation)
+    private ReplyTicket Issue(Scope scope, EntityId entity, EntityGeneration generation)
     {
         DemandEntity(scope, entity, generation);
         lock (_stateGate)
