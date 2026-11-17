@@ -2,7 +2,7 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：P27 — Movement State / Speed / Input（IN_PROGRESS，目标 C）
+当前阶段：P27 — Movement State / Speed / Input（REVIEW，目标 C）
 正式 ACCEPTED：P00–P23、P24(B)、P25(C)、P26(C)；P25 稳定实现/独立 REVIEW/正式 ACCEPTED HEAD 的 14 Job CI 均全绿。
 
 ## 基线真实证据
@@ -148,3 +148,9 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - `movement.speed` 来自 P25 原有 Attr/Modifier（上限 100 m/s），P26 Root/Stun/Fear 与 P24 死亡禁止移动；旧序号/旧 Tick/跨 4 Tick 跳变、越界空间目标拒绝不消费序号。手工世界传送/死亡显式使移动会话失效。
 - P19 WorldStateDigest 从 v4 升 v5，纳入主体来源、会话版本、最后成功序号/逻辑 Tick、当前速度与模式；旧 Hash 不可直接跨版本比对。
 - 新 Unit + 真实 P18/P17/P19/P60.F MovementProbe 五类场景及 100 实体×5 Tick 的记录型 Release 速度基准；新增第 15 个阻断 Job `world-movement`，本次实现尚未经过 CI，**NOT_RUN/NOT_ACCEPTED**。参见 [P27](progress/P27.md) 和 [WORLD_MOVEMENT](modules/WORLD_MOVEMENT.md)。
+
+## P27 稳定实现与独立四视角 REVIEW
+
+- 初始实现 #224 CS8602 Build FAIL；修复 HEAD `e401899271be3853e4a85ddea70a86669fc81d83` CI #225 **15/15 SUCCESS**（342 Unit、16 Architecture），P27 真实六类 Probe 与旧十四 Job 全 PASS。
+- 额外边界加固 HEAD `9367a9ac29076bdaabc6dc356a900e1bb5ec646c` CI #226（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44010607879）**15/15 SUCCESS**，344 Unit、16 Architecture、全部 P27/旧 CI Job PASS。
+- [P27 四视角独立审查](reviews/P27_MOVEMENT_REVIEW.md) 单独提交，本阶段进入 **REVIEW**。审查 HEAD CI 尚未运行；正式 ACCEPTED 尚未下结论。

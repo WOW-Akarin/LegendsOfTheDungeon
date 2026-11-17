@@ -1,6 +1,6 @@
 # P27 — Movement State / Speed / Input 技术契约
 
-状态：IN_PROGRESS（目标 C）；P20/P25/P26/P60.F 前置 ACCEPTED；初始实现待真实 CI 复验。
+状态：REVIEW（目标 C）；P20/P25/P26/P60.F 前置 ACCEPTED；初始实现待真实 CI 复验。
 
 ## 唯一状态真相与职责
 
@@ -23,3 +23,8 @@
 - `MovementProbe`：真正 P17 WorldInstance、P18 WorldExecutor、P20 Spatial、P25 Modifier、P26 Control 与 P60.F DenyByDefault 探针；五组功能场景 + 100 实体/500 次提交 Release 微基准，打印 `P27_MOVEMENT_INTEGRATION_PASS`。仅测数据而非宣称 P64 性能达标。
 - 旧 14 个 CI Job 全部保留，新 `world-movement` 为第 15 个阻断 Job。实现 HEAD CI、独立四视角 REVIEW HEAD CI、正式 ACCEPTED HEAD CI 均必须各自 **15/15 SUCCESS** 才能 P27 C 收口；初始提交前所有状态 NOT_RUN。
 - 风险：真实生产网关、认证/撤销会话生命周期、消息体与 BoundIdentity 绑定、P28 Motion 和 P29 反作弊并未在 P27 实现；生产入口需 P60 授权和最小命令适配而不能把外部不可信 `IWorldAction` 原样投入可信 Producer。
+
+## 实现 Gate 与独立审查
+
+- 稳定实现 HEAD `9367a9a` CI #226 **15/15 SUCCESS**，344 Unit、16 Architecture；第十五个世界移动探针六场景与全部旧 Job PASS，Release baseline #225 已记录。
+- 独立 [P27 四视角 REVIEW](../reviews/P27_MOVEMENT_REVIEW.md) 文件单独提交；审查 HEAD CI 尚未完成，正式 C 验收尚未作出。

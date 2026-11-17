@@ -73,3 +73,4 @@ P00 固定的 AzerothCore 研究 SHA：
 
 - [modules/WORLD_MOVEMENT.md](modules/WORLD_MOVEMENT.md)：P27 主体绑定、速度模型、移动基准与 P20 Spatial 同步契约
 - [progress/P27.md](progress/P27.md)：P27 真实 CI、测试和审查出口
+- [reviews/P27_MOVEMENT_REVIEW.md](reviews/P27_MOVEMENT_REVIEW.md)：P27 四视角独立 REVIEW 和 CI 验收决议

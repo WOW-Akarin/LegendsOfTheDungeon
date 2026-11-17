@@ -5,7 +5,7 @@
 
 ## 当前最新阶段
 
-P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（IN_PROGRESS）**（依赖 P20/P25/P26/P60.F），首次真实 CI 尚未运行。main 直推、不创建分支。
+P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（REVIEW）**（依赖 P20/P25/P26/P60.F），首次真实 CI 尚未运行。main 直推、不创建分支。
 
 ## 前置阶段
 
@@ -119,3 +119,7 @@ P25 稳定实现 #220、独立 REVIEW HEAD `6d66ae9` #221 **各 14/14 SUCCESS**�
 - 上一已验证基线 P25 归档 HEAD `bd10dfe75eda9fb3b1608aba1b277f73faaf32d5` CI #223 **14/14 SUCCESS**。P27 正在 main 直接实现（未创建分支）。
 - 新增 `WorldMovement` 独立部分与严格 P60.F `BoundIdentity` 依赖、P25 Speed Stat、P26 控制、P20 唯一 Transform/Spatial 重定位。P19 digest schema v5，旧 schema v4 Hash 不可直接比较；P27 新真实 MovementProbe 报告标记 `P27_MOVEMENT_INTEGRATION_PASS`，记录型 Release baseline。
 - 新增第十五个 CI Job `world-movement`。首次提交 HEAD 的 CI 尚未验证，不可正式 ACCEPTED。恢复应先检查 [P27 阶段进度](progress/P27.md) → CI → 失败修复 → 独立四视角 REVIEW HEAD CI → 正式 ACCEPTED HEAD CI → 归档 CI。
+
+## P27 进入 REVIEW
+
+P27 可信主体/会话与有序移动实现 #225 **15/15 SUCCESS**（342 Unit），边界加固 #226 **15/15 SUCCESS**（344 Unit/16 Architecture）并通过 P27 六类真实 Probe 与旧十四 Job。#224 CS8602 Build FAIL 已真实修复；四视角审查 [P27_MOVEMENT_REVIEW](reviews/P27_MOVEMENT_REVIEW.md) 已单独提交候选，审查 HEAD 需要自己取得 15/15 SUCCESS 才能正式 ACCEPTED。P60 真网关/P28 Path/P29 反作弊/P62/P64 后续独立。
