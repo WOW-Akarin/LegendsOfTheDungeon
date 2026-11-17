@@ -1,6 +1,6 @@
 # P22 — Spawn / Respawn 技术契约
 
-状态：IN_PROGRESS（目标 C）；依赖 P16.F/P19/P20/P24 均正式 ACCEPTED。本次代码尚未经过 CI，不得预先标记通过。
+状态：REVIEW（目标 C）；依赖 P16.F/P19/P20/P24 均 ACCEPTED。稳定实现 HEAD `485e94891dfd3c3c8db85196b02a6d6e755b6a26` CI #205 十二 Job SUCCESS；独立 REVIEW HEAD 尚待 CI。
 
 ## 单一写所有权和注册表语义
 
@@ -48,3 +48,8 @@
 
 - `UnloadGrid`、`SetLinkedRespawn` 和 `ConfirmRecovered` 明确要求 P17 世界仍为 Running。尤其卸载 Grid 必须在退休任何确认实例前拒绝 Draining，以免发生先 Despawn 再 UnloadCell InvalidState 的部分提交；`Despawn` 仍可在 Draining 中用于可信关闭清理。
 - 增加对应真实 P18 生命周期单测。正式 REVIEW 前必须对最新 HEAD 跑完整 12 Job；此处不表示测试已通过。
+
+## 稳定实现实证
+
+- #205（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43984436900）12/12 SUCCESS；315 Unit / 16 Architecture；P22 真实 WorldSpawnProbe 五个场景与旧全部回归通过。
+- 阶段实现首次成功 #201；#202 负向异常类型错序 FAIL；#203 修复成功；#204 Faulted/Stopped 守卫成功；#205 Draining Grid 未退休前拒绝成功。独立四视角审查：[P22](../reviews/P22_SPAWN_RESPAWN_REVIEW.md)。

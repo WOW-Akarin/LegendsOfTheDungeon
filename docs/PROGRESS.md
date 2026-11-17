@@ -2,8 +2,8 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：P22 — Spawn / Respawn（IN_PROGRESS，目标 C）
-正式 ACCEPTED：P00–P21、P24(B)、P26(C)。P22 尚未验收。
+当前阶段：P22 — Spawn / Respawn（REVIEW，目标 C）
+正式 ACCEPTED：P00–P21、P24(B)、P26(C)。P22 进入独立 REVIEW，尚未正式 ACCEPTED。
 
 ## 基线真实证据
 
@@ -44,9 +44,15 @@ P21 实现 #197、独立 REVIEW #198、正式 ACCEPTED #199 各自 11/11 SUCCESS
 - 新增 Unit 与真实 `WorldSpawnProbe` 五场景，CI 新增 `world-spawn`，总 **12 个阻断 Job**。首次代码 HEAD CI 尚未运行，不能称为成功。
 - 详见 [P22 进度](progress/P22.md) 与 [WORLD_SPAWN 技术契约](modules/WORLD_SPAWN.md)。
 
+## P22 稳定实现 CI #205 与独立审查
+
+- 稳定实现 HEAD `485e94891dfd3c3c8db85196b02a6d6e755b6a26`，CI #205（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43984436900）**12/12 SUCCESS**，315/315 Unit、16/16 Architecture，真实 P22 WorldSpawnProbe 五场景和原有十一个 Job 全 PASS。
+- 真实历程 #201 初次十二 Job PASS（307 Unit）、#202 因 Timer Tick 异常类型错序 311/312 Unit FAIL、#203 修复后十二 Job PASS（312 Unit）、#204 故障生命周期加固十二 Job PASS（314 Unit）、#205 防 Draining 部分副作用加固十二 Job PASS（315 Unit）。失败已透明保留，不豁免 Gate。
+- 独立审查 [P22 Spawn Review](reviews/P22_SPAWN_RESPAWN_REVIEW.md) 已另行提交；**本次 REVIEW HEAD CI 尚待验证**。
+
 ## 下一阶段安全动作
 
-P22 初始实现 HEAD 的 12 Job CI 需实际通过，出现失败先修复；随后独立四视角 REVIEW 和 ACCEPTED HEAD 各自跑全量 CI，不提前推进 P23。
+核验独立 REVIEW HEAD 的 12 Job CI，随后正式 ACCEPTED HEAD 再独立跑全量。C 级只验 P22 Spawn/Timer/Grid/关联/Checkpoint 防副本安全边界，不将外部 DB/Host 事务、完整 P62 Replay 或 P64 大规模负载冒充完成。
 
 ## P22 实现 HEAD 首次真实验证与加固
 
