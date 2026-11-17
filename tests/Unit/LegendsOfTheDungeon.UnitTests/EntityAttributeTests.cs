@@ -56,10 +56,10 @@ public sealed class EntityAttributeTests
     }
 
     private static decimal Stat(EntityAttributeSnapshot snapshot, AttributeKey key) =>
-        Assert.Single(snapshot.Stats.Where(x => x.Key == key)).EffectiveValue;
+        Assert.Single(snapshot.Stats, x => x.Key == key).EffectiveValue;
 
     private static AttributeResourceSnapshot Resource(EntityAttributeSnapshot snapshot, AttributeKey key) =>
-        Assert.Single(snapshot.Resources.Where(x => x.Key == key));
+        Assert.Single(snapshot.Resources, x => x.Key == key);
 
     [Fact]
     public void StablePriorityAndDerivedStatsRecomputeFromSource()
