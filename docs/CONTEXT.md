@@ -102,3 +102,7 @@ P23 **ACCEPTED（B+C）**：稳定实现 #213、独立 REVIEW #214、正式 ACCE
 ## P25 实现稳定，当前 REVIEW
 
 P25 稳定实现 `a90505a` CI #220 **14/14 SUCCESS**（334 Unit、16 Architecture、真实 P25 Probe + 原有十三项），#217/#218 失败已修复并保留。当前 **REVIEW**：独立四视角审查 [P25](reviews/P25_ENTITY_ATTRIBUTES_REVIEW.md) 另行提交，审查 HEAD 需单独 14 Job 全绿后才正式 ACCEPTED。P19 digest v4 新旧 Hash 不兼容、未来 P27/Combat/Replay/负载为后续范围。
+
+## P25 正式 ACCEPTED，接续 P27（2026-11-17）
+
+P25 稳定实现 #220、独立 REVIEW HEAD `6d66ae9` #221 **各 14/14 SUCCESS**（334 Unit/16 Architecture、真实 P25 Probe 五场景、既有十三 Job 全 PASS）；四视角 C 级必修阻塞 0，现正式 ACCEPTED。**正式状态提交自身 CI 尚未复验**，不能借 #221 代表它。下一 P27 Movement State/Speed/Input，原 World/P18 租约、P20 Spatial 与 P25/P26/P60.F 均为前置。P19 Hash v4 非向后兼容，P62 必须带构建版本比对。

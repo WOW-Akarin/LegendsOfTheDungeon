@@ -123,3 +123,10 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - P25 稳定代码 HEAD `a90505a1f4ce23dc0ac6e37c945ebb28839d5073`，CI #220（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999035617）**14/14 SUCCESS**，334 Unit、16 Architecture、真实 `entity-attributes` 五场景及原有全部 13 Job 回归通过。
 - 失败历程 #217 xUnit2031 Release Build FAIL、#218 P20 既有快照相等 330/331 Unit FAIL；#219 修复后 14 Job SUCCESS，#220 256 Modifier 限额及 Resource Decimal 溢出增强后再绿。未弱化 Gate。
 - 独立四视角审查 [P25 REVIEW](reviews/P25_ENTITY_ATTRIBUTES_REVIEW.md) 已作为单独提交候选，阶段进入 **REVIEW**；审查 HEAD 自身 CI 尚待运行，正式 ACCEPTED 尚未给出。下阶段 P27 必须等 P25 验收完成。
+
+## P25 正式 ACCEPTED 决议（提交 HEAD 待验证）
+
+- P25 稳定实现 HEAD `a90505a1f4ce23dc0ac6e37c945ebb28839d5073`，CI #220（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999035617）**14/14 SUCCESS**，334 Unit、16 Architecture、五类真实 P25 Probe。
+- 独立四视角 REVIEW HEAD `6d66ae91c0c0dec713d36214869bcccaf2d7aef7`，CI #221（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999422655）**14/14 SUCCESS**。功能、架构、失败恢复与证据均无 C 级必修阻塞。
+- 范围内 P25 Stats/Resources/Modifier 真实 World/P18/P19 功能 **正式 ACCEPTED（目标 C）**。当前本次状态提交 HEAD 的 CI **NOT_RUN**；不把 #221 假称为正式状态 HEAD 的结果。
+- 后续不包括 P32/P34 战斗血量致死、P38 经济预留、P62 全存储 Replay 或 P64 负载。下一开发阶段依路线图 **P27 — Movement State / Speed / Input**（P20/P25/P26/P60.F 依赖满足）。

@@ -1,6 +1,6 @@
 # P25 — Stats / Resources / Modifier 独立四视角审查
 
-- 状态：**REVIEW**（目标 C，尚未正式 ACCEPTED）；主线 main，不建立分支。
+- 状态：**ACCEPTED**（目标 C）；主线 main，不建立分支。
 - 稳定实现 HEAD：`a90505a1f4ce23dc0ac6e37c945ebb28839d5073`。
 - 实现 CI #220：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999035617 — **14/14 SUCCESS**，334/334 Unit、16/16 Architecture、P25 五类真实 AttributesProbe 及旧 13 Job 全部 PASS。
 - 前置 P24(B)、P07 均正式 ACCEPTED。审查文档独立提交后必须以自身 HEAD 重跑 14 Job，不能使用稳定实现 CI 代替。
@@ -50,3 +50,8 @@
 ## 当前独立审查结论
 
 功能正确性、架构所有权、错误和恢复边界、证据可复现性四个视角下，P25 目标 C 所需的同步世界属性/资源/Modifier 最小真实集成范围没有尚待修复的必修阻塞；未来 P27、P32/P34、P38、P62/P64 仍需独立验收。**本 REVIEW 文件提交自身的 CI 未运行；只有再拿到 14/14 SUCCESS 后才能正式接受该审查结论。**
+
+## 独立 REVIEW HEAD 真实验收和正式决定
+
+- REVIEW HEAD `6d66ae91c0c0dec713d36214869bcccaf2d7aef7`，CI #221（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999422655）**14/14 SUCCESS**，334 Unit、16 Architecture、新 P25 真实五场景和全部原有 13 Job 通过。
+- 功能、架构、失败和恢复、可复现证据四视角必修阻塞 0；P25 目标 C **正式 ACCEPTED**。正式状态 HEAD 的 CI 尚需单独验证，结论仍仅限本阶段。

@@ -1,6 +1,6 @@
 # P25 — Stats / Resources / Modifier 技术契约
 
-- 状态：REVIEW（目标 C），依赖 P24/P07 已 ACCEPTED；当前首次实现尚未经过新 HEAD CI。
+- 状态：ACCEPTED（目标 C），依赖 P24/P07 已 ACCEPTED；当前首次实现尚未经过新 HEAD CI。
 - 契约 ID：`P25.ENTITY_ATTRIBUTES.v1`；提供方/唯一写入所有者 `Entities.Core.EntityAttributeCapability`；调用方 `Runtime.World.WorldInstance` 的窄同步命令。无新的中心 Manager。
 
 ## 状态与数值
@@ -28,3 +28,7 @@
 ## 稳定实现证据
 
 - P25 稳定 HEAD `a90505a` CI #220 14/14 SUCCESS，334 Unit、16 Architecture，真实 P18/P19 AttributesProbe 五场景 PASS；审查见 [P25 独立 REVIEW](../reviews/P25_ENTITY_ATTRIBUTES_REVIEW.md)，REVIEW HEAD CI 尚未执行。
+
+## 正式验收依据
+
+- 实现 #220、独立四视角 REVIEW #221 各 14 Job 全绿（334 Unit / 16 Architecture）；P25 目标 C 正式 ACCEPTED。正式状态提交 HEAD CI 尚待复核。不可将独立 P62 Replay 或 P64 负载算作已完成。
