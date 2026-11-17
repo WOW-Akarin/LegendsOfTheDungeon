@@ -131,8 +131,9 @@ static void AllStrategies()
             "strategy failed to reach Completed: " + kind);
         Require(world.TryGetSnapshot(Id().Id, out var snapshot) &&
             snapshot.Motion == status, "canonical server motion snapshot not synchronized");
-        Require(world.QueryNearby(snapshot.Transform.Position, default).Count == 1,
-            "moving entity missing from P20 spatial index: " + kind);
+        Require(world.QueryNearby(snapshot.Transform.Position, default)
+            .Count(item => item.Identity == Id()) == 1,
+            "canonical moving entity missing or duplicated in P20 spatial index: " + kind);
         Console.WriteLine("MODE PASS " + kind);
     }
 }
