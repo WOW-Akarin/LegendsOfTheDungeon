@@ -467,6 +467,11 @@ public sealed class WorldSpawnRegistry : IWorldTickStep
     public IReadOnlyList<WorldSpawnActivation> Advance(IWorldWriteContext context, Tick tick)
     {
         Demand(context);
+        if (_world.State != WorldLifecycle.Running)
+        {
+            throw new InvalidOperationException("Spawn Timers requires a Running WorldInstance.");
+        }
+
         lock (_gate)
         {
             if (tick == _lastTick)
@@ -850,6 +855,10 @@ public sealed class WorldSpawnRegistry : IWorldTickStep
     {
         ArgumentNullException.ThrowIfNull(context);
         context.DemandWorld(World, Epoch);
+        if (_world.State is WorldLifecycle.Faulted or WorldLifecycle.Stopped)
+        {
+            throw new InvalidOperationException("Faulted or stopped world cannot mutate the Spawn registry.");
+        }
     }
 
     private void Changed() => _version = checked(_version + 1);

@@ -593,6 +593,50 @@ public sealed class WorldSpawnRegistryTests
         Assert.Equal(0, freshWorld.LiveCount);
     }
 
+    [Fact]
+    public void FaultedWorldRejectsSpawnRegistryWritesAndLeavesLastCheckpointUnchanged()
+    {
+        var (world, executor, clock, registry) = Create();
+        RegisterAndLoad(world, executor, registry, Def(1, 10));
+        var initial = Assert.Single(Step(executor, clock, registry));
+        WorldSpawnCheckpoint? before = null;
+        Run(executor, ctx =>
+        {
+            before = registry.Capture(ctx);
+            Assert.True(world.Fault(ctx));
+            Assert.Throws<InvalidOperationException>(() => registry.Advance(ctx, new Tick(2)));
+            Assert.Throws<InvalidOperationException>(() => registry.Despawn(ctx, Key(1)));
+            Assert.Throws<InvalidOperationException>(() =>
+                registry.SetLinkedRespawn(ctx, Key(1), null));
+            Assert.Throws<InvalidOperationException>(() => registry.Capture(ctx));
+        });
+        Assert.NotNull(before);
+        Assert.True(registry.TryGet(Key(1), out var unchanged));
+        Assert.Equal(WorldSpawnStatus.Active, unchanged.Status);
+        Assert.Equal(initial.Identity, unchanged.Current);
+        Assert.Equal(before.Version, registry.Version);
+        Assert.Equal(new Tick(1), registry.LastProcessedTick);
+    }
+
+    [Fact]
+    public void DrainingWorldDoesNotProcessSpawnTimersAndStopCannotLoadGrid()
+    {
+        var (world, executor, clock, registry) = Create();
+        RegisterAndLoad(world, executor, registry, Def(1, 10));
+        Assert.Single(Step(executor, clock, registry));
+        clock.AdvanceTicks(1);
+        Run(executor, ctx =>
+        {
+            Assert.True(world.BeginDrain(ctx));
+            Assert.Throws<InvalidOperationException>(() => registry.Advance(ctx, clock.CurrentTick));
+            Assert.True(world.Stop(ctx));
+            Assert.Throws<InvalidOperationException>(() =>
+                registry.LoadGrid(ctx, new SpatialCellKey(0, 0, 0)));
+        });
+        Assert.Equal(new Tick(1), registry.LastProcessedTick);
+        Assert.Equal(0, world.LiveCount);
+    }
+
     private sealed class Work(Action<IWorldWriteContext> action) : IWorldAction
     {
         public void Execute(IWorldWriteContext context) => action(context);

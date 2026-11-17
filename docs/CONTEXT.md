@@ -49,3 +49,8 @@ P00–P20、P24(B)、P26(C) 已正式 ACCEPTED。最新 P26 归档 HEAD `58e8443
 
 - 初次代码 HEAD `2b02cde` CI #201 12/12 SUCCESS，307 Unit、16 Architecture、P22 真实五场景 Probe。
 - 已加强 Timers Tick 连续性/过期拒绝、4096 定义上限、旧 Checkpoint 冻结及恢复 Generation 隔离；新的代码 HEAD CI 尚待重跑。
+
+## P22 实现复核
+
+- #201 12/12 SUCCESS（307 Unit）；#202 311/312 Unit FAIL（跳号/超时重叠的异常类型）；#203 修复后 12/12 SUCCESS（312 Unit / 16 Architecture）。
+- 最新安全加固将 Faulted/Stopped 下 SpawnRegistry 所有写入及 Capture 禁止，Draining 下 Tick 禁止，另增两项生命周期回归；新 HEAD CI 尚需验证。

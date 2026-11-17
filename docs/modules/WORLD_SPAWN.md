@@ -38,3 +38,8 @@
 
 - 实现 `2b02cde` CI #201：12/12 SUCCESS，307 Unit / 16 Architecture；独立 WorldSpawnProbe 验证唯一注册、FakeClock、关联环、Grid 卸载、动态点和崩溃防副本。
 - 首次成功后审查补强了跳 Tick 拒绝、4096 条定义预算、Checkpoint 旧快照冻结和完整 Generation 恢复防冒认，新 HEAD 尚需再跑全部 12 Job，**不可提前 ACCEPTED**。
+
+## 世界故障边界加固
+
+- World.State 为 Faulted/Stopped 时所有 SpawnRegistry 写 API、Capture 都拒绝；保留 `TryGet` 快照供可信诊断。Draining 期间 `Advance` 拒绝继续生成，静态/动态新增也因 P17 Running 状态拒绝。
+- 新增 P18 Scope 真实测试：Faulted 时 Tick/Despawn/SetLinkedRespawn/Capture 均不能成功，且 Version、LastProcessedTick、已确认 Current 不改变；Draining 不能推进 Spawn Timers，Stop 后不能再激活 Cell。加固 HEAD CI 仍需实际执行，不能提前宣称通过。

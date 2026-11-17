@@ -52,3 +52,8 @@ P22 初始实现 HEAD 的 12 Job CI 需实际通过，出现失败先修复；�
 
 - 初始 HEAD `2b02cde97635bc0e1943ead2987e3c691e5b0169` CI #201 **12/12 SUCCESS**，307 Unit/16 Architecture、真实 WorldSpawnProbe 五场景全部 PASS。
 - 新增持续开发修正：拒绝定时器 Tick 跳号/回拨、每 World 4096 定义预算、已确认 checkpoint 冻结和不可信 Generation 恢复负向验证。新 HEAD CI 尚未完成，不能用 #201 代替。
+
+## P22 固定 Tick 规则与故障边界
+
+- #202 跳 Tick / 超时重叠错误优先级导致 Unit 311/312 FAIL，未被任何 Gate 豁免；修复后 #203 **12/12 SUCCESS**，312 Unit / 16 Architecture。
+- 进一步加固 Faulted/Stopped World 的 Registry 写入拒绝及 Draining 不运行 Timers，新增两个专门 P18 真实回归，下一 HEAD CI 尚未验证。
