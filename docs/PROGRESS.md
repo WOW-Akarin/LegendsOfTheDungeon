@@ -2,8 +2,8 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：P23 — Terrain / Collision / Navigation Ports（ACCEPTED，目标 B+C）
-正式 ACCEPTED：P00–P21、P24(B)、P26(C)。P22(C) 正式 ACCEPTED，三阶段 CI 已全绿。
+当前阶段：P25 — Stats / Resources / Modifier（ACCEPTED，目标 C）；下一阶段 P27
+正式 ACCEPTED：P00–P23、P24(B)、P25(C)、P26(C)；P25 稳定实现/独立 REVIEW/正式 ACCEPTED HEAD 的 14 Job CI 均全绿。
 
 ## 基线真实证据
 
@@ -130,3 +130,12 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - 独立四视角 REVIEW HEAD `6d66ae91c0c0dec713d36214869bcccaf2d7aef7`，CI #221（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999422655）**14/14 SUCCESS**。功能、架构、失败恢复与证据均无 C 级必修阻塞。
 - 范围内 P25 Stats/Resources/Modifier 真实 World/P18/P19 功能 **正式 ACCEPTED（目标 C）**。当前本次状态提交 HEAD 的 CI **NOT_RUN**；不把 #221 假称为正式状态 HEAD 的结果。
 - 后续不包括 P32/P34 战斗血量致死、P38 经济预留、P62 全存储 Replay 或 P64 负载。下一开发阶段依路线图 **P27 — Movement State / Speed / Input**（P20/P25/P26/P60.F 依赖满足）。
+
+## P25 三阶段真实 CI 正式归档
+
+- 稳定实现 HEAD `a90505a1f4ce23dc0ac6e37c945ebb28839d5073`，CI #220（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999035617）**14/14 SUCCESS**。
+- 独立 REVIEW HEAD `6d66ae91c0c0dec713d36214869bcccaf2d7aef7`，CI #221（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999422655）**14/14 SUCCESS**。
+- 正式 ACCEPTED HEAD `59d8d55943e5a70d340e4d04d34ff1f3834d19d5`，CI #222（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999787227）**14/14 SUCCESS**。334 Unit、16 Architecture、P25 五类真实 AttributesProbe 与旧十三 Job 全部 PASS；P25 C 三阶段完整收口。
+- 初次 #217 xUnit2031 BUILD FAIL、#218 旧 P20 快照相等 330/331 Unit FAIL，均真实修复且保留证据，无 Gate 豁免；#219 首次 14 Job 全绿，#220 加固后全绿。
+- 现进入下个阶段 **P27 — Movement State / Speed / Input**（直接依赖 P20/P25/P26/P60.F 均已满足）。目前 P27 未实现/未测试，不能将其纳入 P25 结论。P19 digest v4 不兼容 v3 的历史 StateHash；P62/P64 仍为后续专项。
+- 本归档 HEAD 自身的 CI 需提交后独立验证，不能以 #222 代替。

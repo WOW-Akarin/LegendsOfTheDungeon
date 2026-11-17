@@ -6,9 +6,9 @@ LegendsOfTheDungeon（副本霸主）是参考 AzerothCore 可泛化机制设计
 
 ## 当前进度
 
-- P00–P22、P24(B)、P26(C) 已正式验收。
+- P00–P23、P24(B)、P25(C)、P26(C) 已正式验收。
 - 已验收：**P23 — Terrain / Collision / Navigation Ports（ACCEPTED）**。三类通用查询 Port 与真实平面障碍参考 Adapter 已实现；稳定实现 CI #213、独立 REVIEW CI #214、正式 ACCEPTED CI #215 各 13/13 SUCCESS（322 Unit、16 Architecture），P23 B+C 正式验收完成。
-- 当前：**P25 — Stats / Resources / Modifier（ACCEPTED）**。已加入基础/派生属性、来源修饰与资源账本的实现候选，稳定实现 #220 和独立 REVIEW #221 各 14/14 SUCCESS（334 Unit/16 Architecture），目标 C 正式 ACCEPTED；状态提交 HEAD CI 待复验。
+- 当前：**P25 — Stats / Resources / Modifier（ACCEPTED）**。已加入基础/派生属性、来源修饰与资源账本的实现候选，稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD #222 各 14/14 SUCCESS（334 Unit/16 Architecture），P25 目标 C 已完成正式验收。
 - 后续 P27/P28 Movement/Path、真实 3D NavMesh、网络 Host、全链路 Replay、性能长稳测试并未完成。
 
 ## 文档

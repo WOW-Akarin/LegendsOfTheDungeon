@@ -1,6 +1,6 @@
 # P25 — Stats / Resources / Modifier 技术契约
 
-- 状态：ACCEPTED（目标 C），依赖 P24/P07 已 ACCEPTED；当前首次实现尚未经过新 HEAD CI。
+- 状态：ACCEPTED（目标 C），依赖 P24/P07 已 ACCEPTED；已有实现 #220、独立 REVIEW #221、正式 ACCEPTED #222 三阶段真实 CI 全绿。
 - 契约 ID：`P25.ENTITY_ATTRIBUTES.v1`；提供方/唯一写入所有者 `Entities.Core.EntityAttributeCapability`；调用方 `Runtime.World.WorldInstance` 的窄同步命令。无新的中心 Manager。
 
 ## 状态与数值
@@ -23,12 +23,16 @@
 
 - 单元：优先级与派生重算、并存来源精确撤销与幂等、资源最大值缩减/增长、不越界、死亡保护、溢出不发布部分值、真实旧代际/租约、Round AwayFromZero、冻结快照、Hash 来源敏感。
 - 真实 `AttributesProbe`：使用 P17 WorldInstance 中**同一 canonical EntityCapabilities**，在真实 P18 WorldExecutor 内写入与回收、触发 P19 WorldTickPipeline Hash；五组场景（多来源、资源死亡、代际与旧租约、Overflow、确定性 replay）。成功后输出 `P25_ATTRIBUTES_INTEGRATION_PASS`。
-- P25 首次实现 CI 尚未运行，13 个原有 Job + 新第 14 Job 必须全部 SUCCESS，之后独立四视角 REVIEW HEAD 与正式 ACCEPTED HEAD 再分别复验。
+- P25 当前 14 个阻断 CI Job 已在实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD #222 全部 SUCCESS。
 
 ## 稳定实现证据
 
-- P25 稳定 HEAD `a90505a` CI #220 14/14 SUCCESS，334 Unit、16 Architecture，真实 P18/P19 AttributesProbe 五场景 PASS；审查见 [P25 独立 REVIEW](../reviews/P25_ENTITY_ATTRIBUTES_REVIEW.md)，REVIEW HEAD CI 尚未执行。
+- P25 稳定 HEAD `a90505a` CI #220 14/14 SUCCESS，334 Unit、16 Architecture，真实 P18/P19 AttributesProbe 五场景 PASS；审查见 [P25 独立 REVIEW](../reviews/P25_ENTITY_ATTRIBUTES_REVIEW.md)，REVIEW HEAD #221 14/14 SUCCESS。
 
 ## 正式验收依据
 
-- 实现 #220、独立四视角 REVIEW #221 各 14 Job 全绿（334 Unit / 16 Architecture）；P25 目标 C 正式 ACCEPTED。正式状态提交 HEAD CI 尚待复核。不可将独立 P62 Replay 或 P64 负载算作已完成。
+- 实现 #220、独立四视角 REVIEW #221 各 14 Job 全绿（334 Unit / 16 Architecture）；P25 目标 C 正式 ACCEPTED。正式状态提交 HEAD #222 14/14 SUCCESS。不可将独立 P62 Replay 或 P64 负载算作已完成。
+
+## 完整三阶段实证
+
+实现 #220 / REVIEW #221 / ACCEPTED #222 均 **14/14 SUCCESS**；334 Unit、16 Architecture、真实五场景 P25 AttributesProbe 和此前十三项回归全部 PASS。下阶段 P27，并非 P25 C 隐含已完成。

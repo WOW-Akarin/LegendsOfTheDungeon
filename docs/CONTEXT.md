@@ -5,7 +5,7 @@
 
 ## 当前最新阶段
 
-P00–P22、P24(B)、P26(C) 均正式 ACCEPTED（P22 目标 C）。P22 稳定实现 #205、独立 REVIEW #206、正式 ACCEPTED HEAD `3eb5167` #207 均 12/12 SUCCESS，315 Unit / 16 Architecture。现准备下一阶段 **P23 Terrain / Collision / Navigation Ports**（路线图直接依赖 P06/P09）。没有新分支，所有提交在 main。
+P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前下一阶段 **P27 Movement State / Speed / Input**（依赖 P20/P25/P26/P60.F），未开始。main 直推、不创建分支。
 
 ## 前置阶段
 
@@ -106,3 +106,10 @@ P25 稳定实现 `a90505a` CI #220 **14/14 SUCCESS**（334 Unit、16 Architectur
 ## P25 正式 ACCEPTED，接续 P27（2026-11-17）
 
 P25 稳定实现 #220、独立 REVIEW HEAD `6d66ae9` #221 **各 14/14 SUCCESS**（334 Unit/16 Architecture、真实 P25 Probe 五场景、既有十三 Job 全 PASS）；四视角 C 级必修阻塞 0，现正式 ACCEPTED。**正式状态提交自身 CI 尚未复验**，不能借 #221 代表它。下一 P27 Movement State/Speed/Input，原 World/P18 租约、P20 Spatial 与 P25/P26/P60.F 均为前置。P19 Hash v4 非向后兼容，P62 必须带构建版本比对。
+
+## P25 最终验收与下一安全动作（2026-11-17）
+
+- P25 稳定实现 `a90505a` #220、独立 REVIEW `6d66ae9` #221、正式 ACCEPTED `59d8d55` #222 **各 14/14 SUCCESS**，334/334 Unit、16/16 Architecture，P25 真实五场景与先前十三项集成全 PASS。
+- P19 状态摘要已由 v3 升 v4，加入实体属性/派生/资源/来源序号；快照版本需要按构建区分。没有引入 WoW 专属值、数据库事务或不可信入口。
+- 下一按 [P27 路线图](DEVELOPMENT_ROADMAP.md) 设计 MovementState、SpeedModel、含主体与序号的 MovementIntent，真正调用 P18 WorldExecutor 内 P20 Relocate，严格 P60.F 授权与 P25/P26 状态读取。P27 未开始，绝不把 P25 的 Probe 说成移动输入已通过。
+- 最终归档 HEAD CI 尚需另行检查；实时可信结果以本段和 [P25 阶段记录](progress/P25.md) 为准。

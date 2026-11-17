@@ -55,3 +55,8 @@
 
 - REVIEW HEAD `6d66ae91c0c0dec713d36214869bcccaf2d7aef7`，CI #221（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999422655）**14/14 SUCCESS**，334 Unit、16 Architecture、新 P25 真实五场景和全部原有 13 Job 通过。
 - 功能、架构、失败和恢复、可复现证据四视角必修阻塞 0；P25 目标 C **正式 ACCEPTED**。正式状态 HEAD 的 CI 尚需单独验证，结论仍仅限本阶段。
+
+## 正式 ACCEPTED HEAD CI 复核
+
+- P25 正式 ACCEPTED HEAD `59d8d55943e5a70d340e4d04d34ff1f3834d19d5`，CI #222（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999787227）**14/14 SUCCESS**，334/334 Unit、16/16 Architecture，P25 五组真实 Probe 和全部旧集成继续成功。
+- 因此实现 #220、独立 REVIEW #221、正式 ACCEPTED #222 均各自全绿，P25 目标 C 已收口。P27/P62/P64 的验收范围独立。

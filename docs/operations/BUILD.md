@@ -184,9 +184,9 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/L
 - `environment-query` 是新第 13 个阻断 Job：`dotnet restore tests/Integration/LegendsOfTheDungeon.EnvironmentProbe/LegendsOfTheDungeon.EnvironmentProbe.csproj --locked-mode` 后运行对应 `dotnet run --configuration Release --no-restore`。
 - 预期标记 `P23_ENVIRONMENT_INTEGRATION_PASS`，Artifact `environment-query/report.txt`。经独立真实 CI #213 实现、#214 REVIEW、#215 ACCEPTED HEAD 三轮 13/13 SUCCESS；322 Unit、16 Architecture，五类 P23 探针 PASS。
 
-## P25 Entity Attributes（首次实现尚待 CI）
+## P25 Entity Attributes（正式 ACCEPTED）
 
 - 使用既有 `Entities.Core`、`Runtime.World` 与 `Runtime.Abstractions`、`Kernel`，**不新增生产程序集/第三方依赖**。P19 WorldStateDigest schema 从 3 升至 4，明确将 Stats/Resources/Modifier 来源纳入稳定 Hash。
 - 新增独立 `tests/Integration/LegendsOfTheDungeon.AttributesProbe`，复用 P26 WorldControlProbe 的现有已锁定项目依赖图，新独立阻断 CI Job `entity-attributes` 使总 Job 数达到 14。
 - `dotnet restore tests/Integration/LegendsOfTheDungeon.AttributesProbe/LegendsOfTheDungeon.AttributesProbe.csproj --locked-mode` 后运行 `dotnet run --project tests/Integration/LegendsOfTheDungeon.AttributesProbe/LegendsOfTheDungeon.AttributesProbe.csproj --configuration Release --no-restore`；成功标记 `P25_ATTRIBUTES_INTEGRATION_PASS`，报告保存为 `artifacts/entity-attributes/report.txt`。
-- `./eng/verify.sh` 包括 Unit 与 Architecture，全部既有 Integration CI 仍阻断；初次实现未取得 CI 结果，暂 NOT_RUN。
+- `./eng/verify.sh` 包括 Unit 与 Architecture，全部既有 Integration CI 仍阻断；实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD #222 均 14/14 SUCCESS（334 Unit、16 Architecture、P25 五类真实 Probe + 旧十三项回归），可在对应 Actions run / artifact 复现。

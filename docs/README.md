@@ -69,4 +69,4 @@ P00 固定的 AzerothCore 研究 SHA：
 
 - P23 正式决议基于实现 #213 与独立审查 #214 两轮 13 Job 全绿；状态提交 HEAD #215 亦已 13/13 SUCCESS。下一阶段 P25 Stats / Resources / Modifier。
 
-- P25 实现 #220、独立 REVIEW #221 均 14/14 SUCCESS；正式状态 HEAD CI 单独核验中。下一阶段 P27 Movement State / Speed / Input。
+- P25 实现 #220、独立 REVIEW #221 均 14/14 SUCCESS；正式状态 HEAD #222 亦 14/14 SUCCESS。下一阶段 P27 Movement State / Speed / Input。
