@@ -86,3 +86,7 @@ P22 正式 ACCEPTED 后，P23 B+C 已启动（IN_PROGRESS），三种环境查�
 ## P23 稳定实现与 REVIEW（2026-11-17）
 
 P23 B+C 稳定实现 HEAD `cd9e804` CI #213 **13/13 SUCCESS**（322 Unit、16 Architecture、P23 五真实 Probe、全部旧集成）。状态 REVIEW；独立审查 [P23 REVIEW](reviews/P23_ENVIRONMENT_REVIEW.md) 已单独提交，其 HEAD CI 尚需运行。历史 #209/#210/#211 的失败在 [P23](progress/P23.md) 保留。不得称 P28 Movement/AI 已有调用方、不得混淆逻辑截止 Tick 与硬实时超时。
+
+## P23 正式 ACCEPTED，下一阶段 P25（2026-11-17）
+
+P23 加固实现 #213、独立四视角审查 #214 两轮 13/13 SUCCESS（322 Unit、16 Architecture、真实五场景 EnvironmentProbe）。P23 B+C 无必修技术阻塞，现正式 ACCEPTED；**本状态提交 HEAD 自身的 CI 待核验**。下一优先 P25 — Stats / Resources / Modifier（P24/P07 依赖已满足），而非重做已验收 P26。未来 P28/AI 与真实 NavMesh 另验。

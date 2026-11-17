@@ -1,6 +1,6 @@
 # P23 — Terrain / Collision / Navigation Ports 独立四视角审查
 
-- 状态：**REVIEW**（目标 B+C）；审查与实现分开提交，直接 main。
+- 状态：**ACCEPTED**（目标 B+C）；审查与实现分开提交，直接 main。
 - 稳定实现 HEAD：`cd9e804b944a3ae2ea0a5103bcede1e593b91e33`。
 - 稳定实现 CI #213：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43995006336，**13/13 SUCCESS**，322/322 Unit、16/16 Architecture，新 P23 EnvironmentProbe 五类真实场景 PASS。
 - 直接依赖 P06/P09 已 ACCEPTED；没有 WoW Map/VMap/MMap 兼容义务。审查文档 HEAD 必须独立验证 CI，不能把实现 #213 视作审查 HEAD 的结果。
@@ -46,3 +46,8 @@
 ## 当前结论
 
 P23 定义的三 Port、Fake、真实平面障碍 Adapter 和无路/预算/逻辑超时/取消结果均有代码与运行证据，**目前四视角未发现 P23 B+C 范围内未关闭的技术阻塞**。不把 N/A 的未来 Movement/AI 调用方、真实 3D NavMesh、硬实时抢占或 P64 性能冒充完成。审查 HEAD 必须再次 13 Job 全绿才能形成正式 REVIEW 通过证据；之后另起正式 ACCEPTED 状态提交并单独验证。
+
+## 独立审查结束与正式状态决定
+
+- REVIEW HEAD `dc568e4fe317810a544e4bf8895089e2e84e4746`，CI #214（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43995437055）**13/13 SUCCESS**，322/322 Unit、16/16 Architecture、P23 探针和所有原有 CI 全绿。
+- 四个审查视角必修阻塞 0；P23 B+C 仅限 Port 与真实二维参考 Adapter、Fake 及失败边界，正式 **ACCEPTED**。正式状态 HEAD CI 尚待单独复核；保留未来 Motion/AI、真实 3D NavMesh 与 P64 性能独立验收。

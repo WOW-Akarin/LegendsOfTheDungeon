@@ -45,7 +45,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M3 世界补齐。  
-当前阶段：P23 — Terrain / Collision / Navigation Ports，**REVIEW**（目标 B+C）；P00–P22、P24(B)、P26(C) 已 ACCEPTED。实时状态、分阶段 CI 与限制以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P23 — Terrain / Collision / Navigation Ports，**ACCEPTED**（目标 B+C）；P00–P22、P24(B)、P26(C) 已 ACCEPTED。实时状态、分阶段 CI 与限制以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 
@@ -63,3 +63,5 @@ P00 固定的 AzerothCore 研究 SHA：
 - [progress/P23.md](progress/P23.md)：P23 真实 CI 与验收状态
 
 - [reviews/P23_ENVIRONMENT_REVIEW.md](reviews/P23_ENVIRONMENT_REVIEW.md)：P23 功能、架构、失败恢复和证据四视角独立审查
+
+- P23 正式决议基于实现 #213 与独立审查 #214 两轮 13 Job 全绿；状态提交 HEAD CI 仍须独立核验。下一阶段 P25 Stats / Resources / Modifier。
