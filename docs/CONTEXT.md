@@ -78,3 +78,7 @@ P00–P20、P24(B)、P26(C) 已正式 ACCEPTED。最新 P26 归档 HEAD `58e8443
 - 原始历史 #202 311/312 Unit FAIL（Tick 错误组合返回类型），#203 修复后 12/12 PASS，#204/#205 增强 Faulted/Stopped/Draining 防部分提交后全绿。
 - 唯一实体/坐标真相保持 P17/P24/P20，P22 没有增加 DB、网络或后台世界写入口。Checkpoint 只做受信任内存快照与防副本确认安全闸，跨存储原子落盘和 P62 全链路 StateHash 尚未完成。
 - 归档提交自身 CI 待运行；下阶段 P23 环境查询契约/参考 Adapter，而不是网络 Packet。
+
+## P23 恢复入口（2026-11-17）
+
+P22 正式 ACCEPTED 后，P23 B+C 已启动（IN_PROGRESS），三种环境查询 Port + 静态平面真实 Adapter、Unit/Fake 和 EnvironmentProbe 已就绪。预计 13 Job，但尚无真实 CI 通过证据；后续依次执行实现验证、独立 REVIEW、正式 ACCEPTED。P28 Motion/AI 生产调用方未实现，不能冒充生产链路已集成。以 [P23](progress/P23.md) 为准。

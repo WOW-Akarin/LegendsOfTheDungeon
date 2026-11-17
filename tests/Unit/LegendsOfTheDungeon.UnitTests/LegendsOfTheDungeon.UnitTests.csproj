@@ -18,6 +18,7 @@
     <ProjectReference Include="../../../src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj" />
     <ProjectReference Include="../../../src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj" />
     <ProjectReference Include="../../../src/Runtime/World/LegendsOfTheDungeon.Runtime.World/LegendsOfTheDungeon.Runtime.World.csproj" />
+    <ProjectReference Include="../../../src/Runtime/Environment/LegendsOfTheDungeon.Runtime.Environment/LegendsOfTheDungeon.Runtime.Environment.csproj" />
     <ProjectReference Include="../../../src/Runtime/Core/LegendsOfTheDungeon.Runtime.Core/LegendsOfTheDungeon.Runtime.Core.csproj" />
     <ProjectReference Include="../../../src/Platform/LegendsOfTheDungeon.Platform/LegendsOfTheDungeon.Platform.csproj" />
     <ProjectReference Include="../../../src/Platform/Concurrency/LegendsOfTheDungeon.Platform.Concurrency/LegendsOfTheDungeon.Platform.Concurrency.csproj" />

@@ -78,3 +78,12 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - 正式 ACCEPTED HEAD `3eb5167cdb7492e5a7a79492c28c4c01e3b8bfe5`，CI #207 **12/12 SUCCESS**，315 Unit / 16 Architecture + P22 真实五场景 Probe + 原有十一项回归全部 PASS。
 - 实现期间 #202 Tick 异常边界 311/312 Unit FAIL 已真实修复；其余正反质量 Gate 未降低；本次归档 HEAD 自身的 CI 待提交后运行核验，不提前伪称通过。
 - 下一阶段 **P23 Terrain / Collision / Navigation Ports**（目标 B+C），直接依赖 P06/P09 已具备；不能将 P23 误写为网络 Packet。
+
+## P23 首次实现（IN_PROGRESS，未经 CI）
+
+- P22 三阶段 CI #205/#206/#207 全部 12/12 SUCCESS，归档 HEAD `803aba72c02efa09c9fad7cc10240ff47cf9357c`；P23 直接依赖 P06/P09 已 ACCEPTED。
+- 新增 `ITerrainQuery`/`ICollisionQuery`/`INavigationQuery`，只通过 Kernel 米坐标与明确失败状态交互，绝不读 WoW Map/VMap/MMap。
+- `PlanarGridEnvironment` 是真实有限平面 + 静态格障碍参考 Adapter：确定性四邻域 BFS、线段阻挡检查、版本快照、防御性路径复制；Fake 仅保留在 Port 测试。
+- 明确区分区域外、阻挡、不可达、预算耗尽、逻辑截止 Tick、取消；不提供真实 NavMesh、复杂 3D 地形或 P28 Movement 集成。
+- 首批 P23 Unit 和独立 EnvironmentProbe 已接入 `environment-query` CI 阻断 Job（预计 13 Job），但**尚未得到提交 HEAD 的 CI 证据；不能 ACCEPTED**。
+- 详见 [P23](progress/P23.md) 与 [ENVIRONMENT_QUERIES](modules/ENVIRONMENT_QUERIES.md)。

@@ -232,6 +232,21 @@
         "src/Runtime/World/LegendsOfTheDungeon.Runtime.World/LegendsOfTheDungeon.Runtime.World.csproj"
       ],
       "allowedInternalsVisibleTo": []
+    },
+    {
+      "path": "src/Runtime/Environment/LegendsOfTheDungeon.Runtime.Environment/LegendsOfTheDungeon.Runtime.Environment.csproj",
+      "assemblyName": "LegendsOfTheDungeon.Runtime.Environment",
+      "role": "PlatformAdapter",
+      "module": null,
+      "allowedProjectReferences": [
+        "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj",
+        "src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj"
+      ],
+      "allowedPublicApiReferences": [
+        "src/Kernel/LegendsOfTheDungeon.Kernel/LegendsOfTheDungeon.Kernel.csproj",
+        "src/Runtime/Abstractions/LegendsOfTheDungeon.Runtime.Abstractions/LegendsOfTheDungeon.Runtime.Abstractions.csproj"
+      ],
+      "allowedInternalsVisibleTo": []
     }
   ]
 }
