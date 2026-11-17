@@ -15,7 +15,7 @@ public sealed class WorldMovementTests
     private static EntityIdentity Identity(ulong generation = 1) =>
         new(new WorldId(3), new WorldEpoch(8), new EntityId(7), new EntityGeneration(generation));
 
-    private static (WorldInstance World, WorldExecutor Executor, EntityIdentity Identity) Start()
+    private static (WorldInstance World, WorldExecutor Executor, EntityIdentity Identity) Start(bool defineSpeed = true)
     {
         var world = new WorldInstance(new WorldId(3), new WorldEpoch(8), new WorldOwnershipRegistry());
         var executor = new WorldExecutor(world.World, world.Epoch,
@@ -27,8 +27,11 @@ public sealed class WorldMovementTests
             Assert.Equal(WorldEntityResult.Spawned,
                 world.Spawn(ctx, new WorldEntitySeed(Identity(),
                     new Transform(new Position(31.75, 0, 0), new Angle(0)))));
-            Assert.Equal(WorldEntityResult.AttributeChanged,
-                world.SetBaseAttribute(ctx, Identity(), Speed, 10m));
+            if (defineSpeed)
+            {
+                Assert.Equal(WorldEntityResult.AttributeChanged,
+                    world.SetBaseAttribute(ctx, Identity(), Speed, 10m));
+            }
         });
         return (world, executor, Identity());
     }
@@ -251,6 +254,59 @@ public sealed class WorldMovementTests
                 world.BindMovementSubject(ctx, actual, BoundIdentity.CreateLocalTest("alice"), new Tick(0),
                     new Duration(0), out _));
         });
+    }
+
+    [Fact]
+    public void MissingOrInvalidSpeedCannotBindAndZeroSpeedOnlyAllowsIdleInput()
+    {
+        var (world, executor, identity) = Start(defineSpeed: false);
+        Run(executor, ctx =>
+        {
+            Assert.Equal(WorldEntityResult.MovementInvalidSpeed,
+                world.BindMovementSubject(ctx, identity, BoundIdentity.CreateLocalTest("alice"),
+                    new Tick(0), new Duration(50), out var refused));
+            Assert.Equal(0UL, refused);
+            world.SetBaseAttribute(ctx, identity, Speed, 101m);
+            Assert.Equal(WorldEntityResult.MovementInvalidSpeed,
+                world.BindMovementSubject(ctx, identity, BoundIdentity.CreateLocalTest("alice"),
+                    new Tick(0), new Duration(50), out refused));
+            world.SetBaseAttribute(ctx, identity, Speed, 0m);
+        });
+        var version = Bind(world, executor, identity);
+        Run(executor, ctx =>
+        {
+            Assert.Equal(WorldEntityResult.MovementSpeedExceeded,
+                world.SubmitMovement(ctx, Intent(identity, "alice", version, 1, 1, 31.76)));
+            Assert.Equal(WorldEntityResult.MovementAccepted,
+                world.SubmitMovement(ctx, Intent(identity, "alice", version, 1, 1, 31.75)));
+            world.SetBaseAttribute(ctx, identity, Speed, 101m);
+            Assert.Equal(WorldEntityResult.MovementInvalidSpeed,
+                world.SubmitMovement(ctx, Intent(identity, "alice", version, 2, 2, 31.75)));
+        });
+        Assert.True(world.TryGetMovement(identity, out var after));
+        Assert.Equal(1UL, after.LastSequence);
+        Assert.Equal(new Tick(1), after.LastTick);
+    }
+
+    [Fact]
+    public void RevivalDoesNotRestoreDeadMovementSession()
+    {
+        var (world, executor, identity) = Start();
+        var session = Bind(world, executor, identity);
+        Run(executor, ctx =>
+        {
+            Assert.Equal(WorldEntityResult.LifeChanged, world.MarkDead(ctx, identity));
+            Assert.Equal(WorldEntityResult.LifeChanged, world.Revive(ctx, identity));
+            Assert.Equal(WorldEntityResult.MovementUnbound,
+                world.SubmitMovement(ctx, Intent(identity, "alice", session, 1, 1, 32)));
+        });
+        var next = Bind(world, executor, identity, baseline: 10);
+        Assert.Equal(session + 1, next);
+        Run(executor, ctx => Assert.Equal(WorldEntityResult.MovementAccepted,
+            world.SubmitMovement(ctx, Intent(identity, "alice", next, 1, 11, 32))));
+        Assert.True(world.TryGetMovement(identity, out var state));
+        Assert.Equal(1UL, state.LastSequence);
+        Assert.Equal(next, state.SessionVersion);
     }
 
     [Fact]
