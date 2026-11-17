@@ -147,7 +147,7 @@ public sealed class EnvironmentQueryTests
             new(EnvironmentQueryStatus.OutsideBounds, default, 1);
 
         public CollisionQueryResult TraceSegment(
-            Position start, Position end, CancellationToken cancellationToken = default) =>
+            Position start, Position destination, CancellationToken cancellationToken = default) =>
             new(EnvironmentQueryStatus.Blocked, true, 1);
 
         public NavigationPathResult FindPath(

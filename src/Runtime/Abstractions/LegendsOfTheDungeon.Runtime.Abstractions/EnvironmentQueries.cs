@@ -52,10 +52,10 @@ public interface ICollisionQuery
 {
     /// <summary>检测世界米坐标的闭线段是否与固体相交。</summary>
     /// <param name="start">线段起点，单位米。</param>
-    /// <param name="end">线段终点，单位米。</param>
+    /// <param name="destination">线段终点，单位米。</param>
     /// <param name="cancellationToken">取消信号。</param>
     /// <returns>清晰或阻挡的版本化状态；区域未知不得默认放行。</returns>
-    CollisionQueryResult TraceSegment(Position start, Position end, CancellationToken cancellationToken = default);
+    CollisionQueryResult TraceSegment(Position start, Position destination, CancellationToken cancellationToken = default);
 }
 
 /// <summary>路径请求；RequestVersion 由调用方递增，异步回送时必须由 P18/P28 验证是否仍最新。</summary>

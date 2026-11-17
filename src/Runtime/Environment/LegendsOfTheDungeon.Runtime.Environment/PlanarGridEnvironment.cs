@@ -94,14 +94,14 @@ public sealed class PlanarGridEnvironment : ITerrainQuery, ICollisionQuery, INav
 
     /// <inheritdoc />
     public CollisionQueryResult TraceSegment(
-        Position start, Position end, CancellationToken cancellationToken = default)
+        Position start, Position destination, CancellationToken cancellationToken = default)
     {
         if (cancellationToken.IsCancellationRequested)
         {
             return new CollisionQueryResult(EnvironmentQueryStatus.Cancelled, false, _version);
         }
 
-        if (!TryLocate(start, out _) || !TryLocate(end, out _))
+        if (!TryLocate(start, out _) || !TryLocate(destination, out _))
         {
             return new CollisionQueryResult(EnvironmentQueryStatus.OutsideBounds, false, _version);
         }
@@ -113,7 +113,7 @@ public sealed class PlanarGridEnvironment : ITerrainQuery, ICollisionQuery, INav
                 return new CollisionQueryResult(EnvironmentQueryStatus.Cancelled, false, _version);
             }
 
-            if (Intersects(start, end, cell))
+            if (Intersects(start, destination, cell))
             {
                 return new CollisionQueryResult(EnvironmentQueryStatus.Success, true, _version);
             }
