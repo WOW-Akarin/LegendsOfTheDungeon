@@ -197,3 +197,9 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/L
 - 额外 `tests/Integration/LegendsOfTheDungeon.MovementProbe` 只引用已存在的生产项目，在 `--locked-mode` 下验证真正 P17/P18/P19/P20/P25/P26 交互和本地测试身份拒绝。
 - `dotnet restore tests/Integration/LegendsOfTheDungeon.MovementProbe/LegendsOfTheDungeon.MovementProbe.csproj --locked-mode` 后 `dotnet run --project tests/Integration/LegendsOfTheDungeon.MovementProbe/LegendsOfTheDungeon.MovementProbe.csproj --configuration Release --no-restore`；标记 `P27_MOVEMENT_INTEGRATION_PASS`，写入 `artifacts/world-movement/report.txt`。
 - 第十五个阻断 CI Job `world-movement` 包含有 100 实体 × 5 Tick × 50ms 逻辑时钟、500 次真正移动输入的 Release p50/p95/p99 记录型基准。仅记录 SDK/运行时/CPU/OS/数量及样本，不设置未论证的性能通过阈值，P64 仍待后续专项。
+
+## P27 完整三阶段 CI 验收归档
+
+- .NET 10.0.404，全部严格 `--locked-mode`，P03 manifest 与公开 API Security.Contracts 引用核验通过。
+- 稳定实现 #226、独立 REVIEW #227、正式 ACCEPTED HEAD #228 均 **15/15 SUCCESS**，344 Unit / 16 Architecture，P27 六类真实 Probe + 全部旧十四项 CI PASS；原始 `world-movement` Artifact 保存首版基准与 PASS。
+- #224 Nullable CS8602 真失败修复后未抑制分析器；P27 微基准记录而不设阈值，不能冒充 P64。下一 P28 Motion/Path。

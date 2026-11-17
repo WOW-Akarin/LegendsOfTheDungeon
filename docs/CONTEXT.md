@@ -5,7 +5,7 @@
 
 ## 当前最新阶段
 
-P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（ACCEPTED）**（依赖 P20/P25/P26/P60.F），首次真实 CI 尚未运行。main 直推、不创建分支。
+P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（ACCEPTED，C）** 已具备三阶段真实 CI；下一 **P28 Server Motion / Path**（依赖 P23/P27 均 ACCEPTED），尚未开始。main 直推、不创建分支。
 
 ## 前置阶段
 
@@ -127,3 +127,10 @@ P27 可信主体/会话与有序移动实现 #225 **15/15 SUCCESS**（342 Unit�
 ## P27 正式 ACCEPTED 决议（待验证自身 HEAD）
 
 稳定实现 #226 与独立四视角审查 #227 分别 **15/15 SUCCESS**（344/344 Unit、16/16 Architecture，P27 六场景与旧十四 Job）。P27 C 目标正式 ACCEPTED，正式验收状态提交 HEAD CI 尚待独立复核。下一安全开发 P28 Server Motion / Path，直接依赖 P23 Terrain/Collision/Navigation 与 P27 Movement 均 ACCEPTED。注意 P60 真实生产网关/P29 Violation/P62/P64 另行验收；严禁通过外部反序列化任意 IWorldAction 绕过可信绑定。
+
+## P27 三阶段全绿与下一阶段 P28（2026-11-17）
+
+- P27 加固稳定实现 `9367a9a` CI #226、独立四视角 REVIEW `d40b21b` CI #227、正式 ACCEPTED `df3e192` CI #228，**各 15/15 SUCCESS**（344 Unit、16 Architecture、P27 真 MovementProbe 五功能场景 + 500 Move 记录型 baseline、此前十四 Job 全绿）。
+- P27 所拥有的真实 P20 Canonical Move/Spatial、P25 动态速度、P26 控制/死亡、P60.F `BoundIdentity`、顺序 Tick、v5 同 Tick 来源敏感 Hash 均已正式验收；P60 正式生产 Socket/Host 并未实现，不能外部伪称已开放身份输入。
+- 参照 [P28 任务卡](DEVELOPMENT_ROADMAP.md) 下一步开始通用 Point/Random/Chase/Follow/Flee/Home/Waypoint、NavigationPort 请求版本与抢占/取消，不修改 P27 唯一 Transform 真相；真实 Spline/Jump/Knockback 在 P28 分批范围中另列。
+- 当前最终归档提交自身尚需单独完整 CI 验证，基线历史结果 #226/#227/#228 已确实全绿。禁止不经 CI 直接宣称 P28 ACCEPTED。

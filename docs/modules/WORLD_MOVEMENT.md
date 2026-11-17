@@ -31,5 +31,9 @@
 
 ## P27 正式验收
 
-- 稳定实现 CI #226、独立 REVIEW CI #227 各 **15/15 SUCCESS**（344 Unit / 16 Architecture、真实 P27六类 Probe 和原有十四 Job）。本阶段目标 C 正式 ACCEPTED；正式状态 HEAD CI 待单独检验。
+- 稳定实现 CI #226、独立 REVIEW CI #227 各 **15/15 SUCCESS**（344 Unit / 16 Architecture、真实 P27六类 Probe 和原有十四 Job）。本阶段目标 C 正式 ACCEPTED；正式状态 HEAD #228 15/15 SUCCESS。
 - 下一 P28 Motion/Navigation，切勿把 P27 基础速度预算当成完整 P29 反作弊校验。
+
+## 最终三阶段证据
+
+实现 #226、独立 REVIEW #227、正式 ACCEPTED #228 **各 15/15 SUCCESS**（344 Unit、16 Architecture、六类 P27 真实 Probe/Benchmark 和旧十四项）；P27 C 收口。P19 v5 StateHash 与 v4 不兼容；生产认证网络入口归 P60，P28 Motion/P29 Violation/P64 性能独立。
