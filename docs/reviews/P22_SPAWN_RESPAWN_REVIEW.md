@@ -4,7 +4,7 @@
 - 稳定实现 HEAD：`485e94891dfd3c3c8db85196b02a6d6e755b6a26`
 - 实现 CI #205：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43984436900，**12/12 SUCCESS**。
 - 独立 REVIEW HEAD：`fd099e818851c255cbb125457d455eaca4b6d39c`，CI #206（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43984888412）12/12 SUCCESS。
-- 正式 ACCEPTED HEAD：本次状态提交，CI NOT_RUN。
+- 正式 ACCEPTED HEAD：`3eb5167cdb7492e5a7a79492c28c4c01e3b8bfe5`，CI #207（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43985257531）12/12 SUCCESS。
 - 直接依赖 P16.F、P19、P20、P24 均已正式 ACCEPTED，P17/P18 世界生命周期及 P21 Visibility 也有独立 CI 证据；遵循 main 直推、不创建分支。
 
 ## 1. 领域功能与确定性语义
@@ -51,7 +51,7 @@
 | 之前十一项集成与文档门禁 | PASS |
 | 完整实现 HEAD CI | **12/12 SUCCESS** |
 | 独立 REVIEW HEAD CI | **12/12 SUCCESS**，run #206，315 Unit/16 Architecture |
-| 正式 ACCEPTED HEAD CI | NOT_RUN |
+| 正式 ACCEPTED HEAD CI | **12/12 SUCCESS**，run #207，315 Unit/16 Architecture |
 
 失败链：初次 #201 12/12 PASS；#202 真实 `SkippedAndHistoricalTimersTicks` 负向测试发现 Tick 同时跳号又超时的异常类型优先级错误，311/312 Unit PASS、一个 FAIL；#203 调整验证顺序后 12/12 PASS；#204 Faulted/Stopped 与 Draining 的生命周期守卫后 12/12 PASS；#205 防止 Draining 下卸载先退休造成部分提交后 12/12 PASS。**没有放松质量门禁或把不合格实现伪称验收。**
 
@@ -59,4 +59,8 @@
 
 阶段 P22 C 的 SpawnRegistry、固定重生时钟、LinkedRespawn、动态一次性 Spawn、Grid 加载/卸载、防重复以及可信 Checkpoint 重建防副本均有真实 Unit + P18/P19/P20 集成证据；当前 C 技术出口没有未关闭的实现阻塞。
 
-独立 REVIEW HEAD run #206 十二 Job 全绿，P22 C 必需阻塞 0，**正式 ACCEPTED**；正式 ACCEPTED HEAD 自身仍需独立 12 Job 核验。真实 PostgreSQL 事务、P62 Replay 完整状态 Hash、P64 性能不包含在 C 阶段结论里。
+独立 REVIEW HEAD run #206 十二 Job 全绿，P22 C 必需阻塞 0，**正式 ACCEPTED**；正式 ACCEPTED HEAD `3eb5167cdb7492e5a7a79492c28c4c01e3b8bfe5` 的 run #207 也 12 Job SUCCESS，P22 C 完整验收。真实 PostgreSQL 事务、P62 Replay 完整状态 Hash、P64 性能不包含在 C 阶段结论里。
+
+## 正式收口
+
+实现 #205、独立 REVIEW #206、正式 ACCEPTED HEAD #207 均 12/12 SUCCESS。315 Unit / 16 Architecture 和全部真实 Spawn/Grid/Checkpoint/WorldTick 集成通过，C 级必需缺口 0；不含 PostgreSQL 实盘跨事务恢复和 P62/P64 大规模结论。

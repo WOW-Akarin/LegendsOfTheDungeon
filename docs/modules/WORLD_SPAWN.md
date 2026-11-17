@@ -1,6 +1,6 @@
 # P22 — Spawn / Respawn 技术契约
 
-状态：ACCEPTED（目标 C）；依赖 P16.F/P19/P20/P24 均 ACCEPTED。实现 #205、独立 REVIEW HEAD `fd099e818851c255cbb125457d455eaca4b6d39c` CI #206 均 12/12 SUCCESS；正式 ACCEPTED HEAD CI 待核验。
+状态：ACCEPTED（目标 C）；依赖 P16.F/P19/P20/P24 均 ACCEPTED。实现 #205、独立 REVIEW HEAD `fd099e818851c255cbb125457d455eaca4b6d39c` CI #206 均 12/12 SUCCESS；正式 ACCEPTED HEAD `3eb5167cdb7492e5a7a79492c28c4c01e3b8bfe5` CI #207 十二 Job SUCCESS。
 
 ## 单一写所有权和注册表语义
 
@@ -56,4 +56,8 @@
 
 ## 独立 REVIEW 成功与正式接受
 
-[P22 四视角审查](../reviews/P22_SPAWN_RESPAWN_REVIEW.md) HEAD `fd099e818851c255cbb125457d455eaca4b6d39c` 的 CI #206 十二 Job SUCCESS，315 Unit、16 Architecture，当前 C 阶段必修阻塞 0，正式 ACCEPTED。验收状态 HEAD 自身仍需跑完整 12 Job。
+[P22 四视角审查](../reviews/P22_SPAWN_RESPAWN_REVIEW.md) HEAD `fd099e818851c255cbb125457d455eaca4b6d39c` 的 CI #206 十二 Job SUCCESS，315 Unit、16 Architecture，当前 C 阶段必修阻塞 0，正式 ACCEPTED。正式 ACCEPTED HEAD #207 12 Job 全绿，P22 C 已完整收口。
+
+## 正式验收证据
+
+稳定实现 #205、独立 REVIEW #206、正式 ACCEPTED HEAD #207 各 12/12 SUCCESS，315 Unit / 16 Architecture；失败 #202 已保留并修复。P22 的 C 级 Spawn/Respawn 范围已正式通过；外部 DB 原子恢复、P62 跨子系统 Replay 及 P64 负载仍是后续独立工作。

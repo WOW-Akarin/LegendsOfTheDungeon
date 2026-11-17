@@ -3,6 +3,10 @@
 更新时间：2026-11-17；GitHub `WOW-Akarin/LegendsOfTheDungeon`；main 直推、不创建分支。
 项目：通用 .NET 10 游戏服务器；非 WoW 3.3.5a 客户端兼容。架构基线：模块化单体、World Actor 独占同步 Scope、领域唯一真相、P03 严格依赖边界。
 
+## 当前最新阶段
+
+P00–P22、P24(B)、P26(C) 均正式 ACCEPTED（P22 目标 C）。P22 稳定实现 #205、独立 REVIEW #206、正式 ACCEPTED HEAD `3eb5167` #207 均 12/12 SUCCESS，315 Unit / 16 Architecture。现准备下一阶段 **P23 Terrain / Collision / Navigation Ports**（路线图直接依赖 P06/P09）。没有新分支，所有提交在 main。
+
 ## 前置阶段
 
 P00–P20、P24(B)、P26(C) 已正式 ACCEPTED。最新 P26 归档 HEAD `58e84431d5acf70a743f5a3ffc6a38be90bf7e65`，CI #195 10/10 SUCCESS（275 Unit/16 Architecture）。P17 WorldInstance、P18 WorldExecutor、P19 确定性 Tick、P20 Spatial Grid、P26 控制/标签均具备真实验证。
@@ -67,3 +71,10 @@ P00–P20、P24(B)、P26(C) 已正式 ACCEPTED。最新 P26 归档 HEAD `58e8443
 - 稳定实现 `485e948` CI #205 12/12 SUCCESS，独立 REVIEW `fd099e8` CI #206 12/12 SUCCESS；315 Unit / 16 Architecture、P22 真实 Probe。
 - **P22 正式 ACCEPTED（目标 C）**，本次正式状态提交 HEAD CI 尚需独立 12 Job 完整核验。
 - P23 — Terrain / Collision / Navigation Ports 是后续可独立展开的候选阶段，直接依赖 P06/P09；P22 不代表 P23 已完成。
+
+## P22 正式验收与归档证据
+
+- #205 稳定实现、#206 独立 REVIEW、#207 正式 ACCEPTED HEAD **均 12/12 SUCCESS**。真实 P22 WorldSpawnProbe 验证防重复、FakeClock/Timer、LinkedRespawn、动态一次生成、Grid 与 Crash Checkpoint RecoveryHold。
+- 原始历史 #202 311/312 Unit FAIL（Tick 错误组合返回类型），#203 修复后 12/12 PASS，#204/#205 增强 Faulted/Stopped/Draining 防部分提交后全绿。
+- 唯一实体/坐标真相保持 P17/P24/P20，P22 没有增加 DB、网络或后台世界写入口。Checkpoint 只做受信任内存快照与防副本确认安全闸，跨存储原子落盘和 P62 全链路 StateHash 尚未完成。
+- 归档提交自身 CI 待运行；下阶段 P23 环境查询契约/参考 Adapter，而不是网络 Packet。

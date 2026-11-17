@@ -3,7 +3,7 @@
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
 当前阶段：P22 — Spawn / Respawn（ACCEPTED，目标 C）
-正式 ACCEPTED：P00–P21、P24(B)、P26(C)。P22(C) 正式 ACCEPTED；状态提交 CI 尚待核验。
+正式 ACCEPTED：P00–P21、P24(B)、P26(C)。P22(C) 正式 ACCEPTED，三阶段 CI 已全绿。
 
 ## 基线真实证据
 
@@ -52,7 +52,7 @@ P21 实现 #197、独立 REVIEW #198、正式 ACCEPTED #199 各自 11/11 SUCCESS
 
 ## 下一阶段安全动作
 
-核验本次正式 ACCEPTED HEAD 的 12 Job CI，归档三阶段结果。C 级只验 P22 Spawn/Timer/Grid/关联/Checkpoint 防副本安全边界，不将外部 DB/Host 事务、完整 P62 Replay 或 P64 大规模负载冒充完成。
+P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS。下一安全阶段是 **P23 — Terrain / Collision / Navigation Ports**，路线图依赖 P06/P09 已 ACCEPTED；P22 的 DB/Host 原子恢复和 P62 全链路 Replay 仍属后续专项。C 级只验 P22 Spawn/Timer/Grid/关联/Checkpoint 防副本安全边界，不将外部 DB/Host 事务、完整 P62 Replay 或 P64 大规模负载冒充完成。
 
 ## P22 实现 HEAD 首次真实验证与加固
 
@@ -69,4 +69,12 @@ P21 实现 #197、独立 REVIEW #198、正式 ACCEPTED #199 各自 11/11 SUCCESS
 - 实现 HEAD `485e94891dfd3c3c8db85196b02a6d6e755b6a26`：CI #205 **12/12 SUCCESS**，315 Unit / 16 Architecture。
 - 独立 REVIEW HEAD `fd099e818851c255cbb125457d455eaca4b6d39c`：CI #206 **12/12 SUCCESS**，315 Unit / 16 Architecture。
 - P22 C 必需 Spawn/Respawn/LinkedRespawn/Grid/Checkpoint 防副本证据齐备，必修技术阻塞 0，**正式 ACCEPTED**。
-- 本次验收状态提交自身必须另跑 12 Job。真实 DB 跨事务恢复、完整 P62 Replay、P64 负载仍不在 P22 C 结论内。
+- 正式 ACCEPTED HEAD `3eb5167cdb7492e5a7a79492c28c4c01e3b8bfe5` CI #207（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43985257531）**12/12 SUCCESS**。真实 DB 跨事务恢复、完整 P62 Replay、P64 负载仍不在 P22 C 结论内。
+
+## P22 三阶段与归档实证
+
+- 稳定实现 HEAD `485e94891dfd3c3c8db85196b02a6d6e755b6a26`，CI #205 **12/12 SUCCESS**。
+- 独立 REVIEW HEAD `fd099e818851c255cbb125457d455eaca4b6d39c`，CI #206 **12/12 SUCCESS**。
+- 正式 ACCEPTED HEAD `3eb5167cdb7492e5a7a79492c28c4c01e3b8bfe5`，CI #207 **12/12 SUCCESS**，315 Unit / 16 Architecture + P22 真实五场景 Probe + 原有十一项回归全部 PASS。
+- 实现期间 #202 Tick 异常边界 311/312 Unit FAIL 已真实修复；其余正反质量 Gate 未降低；本次归档 HEAD 自身的 CI 待提交后运行核验，不提前伪称通过。
+- 下一阶段 **P23 Terrain / Collision / Navigation Ports**（目标 B+C），直接依赖 P06/P09 已具备；不能将 P23 误写为网络 Packet。
