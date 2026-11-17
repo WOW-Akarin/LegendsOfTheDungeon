@@ -13,9 +13,9 @@ public sealed class EnvironmentQueryTests
     [Fact]
     public void TerrainAndCollisionUseMetresAndRejectUnknownCoverage()
     {
-        ITerrainQuery terrain = new PlanarGridEnvironment(-2, -2, 5, 3, 1, 7.5,
+        var terrain = new PlanarGridEnvironment(-2, -2, 5, 3, 1, 7.5,
             [new PlaneCell(2, 0)], environmentVersion: 42);
-        ICollisionQuery collision = (ICollisionQuery)terrain;
+        var collision = terrain;
         var surface = terrain.SampleSurface(new Position(-0.1, -0.1, 88));
         Assert.Equal(EnvironmentQueryStatus.Success, surface.Status);
         Assert.Equal(new Position(-0.1, -0.1, 7.5), surface.Surface);
@@ -36,7 +36,7 @@ public sealed class EnvironmentQueryTests
     {
         var adapter = new PlanarGridEnvironment(0, 0, 5, 3, 1, 0,
             [new PlaneCell(2, 0)], 8);
-        INavigationQuery navigation = adapter;
+        var navigation = adapter;
         var path = navigation.FindPath(new NavigationRequest(Start, Goal, 5));
         Assert.Equal(EnvironmentQueryStatus.Success, path.Status);
         Assert.Equal(5, path.RequestVersion);

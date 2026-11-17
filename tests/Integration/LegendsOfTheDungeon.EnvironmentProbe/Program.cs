@@ -3,9 +3,7 @@ using LegendsOfTheDungeon.Runtime.Abstractions;
 using LegendsOfTheDungeon.Runtime.Environment;
 
 var adapter = new PlanarGridEnvironment(0, 0, 5, 3, 1, 0, [new PlaneCell(2, 0)], 99);
-ITerrainQuery terrain = adapter;
-ICollisionQuery collision = adapter;
-INavigationQuery navigation = adapter;
+var (terrain, collision, navigation) = BindPorts(adapter);
 var start = new Position(0.5, 0.5, 0);
 var goal = new Position(4.5, 0.5, 0);
 Check(terrain.SampleSurface(start).Status == EnvironmentQueryStatus.Success,
@@ -57,3 +55,7 @@ static void Check(bool condition, string message)
         throw new InvalidOperationException(message);
     }
 }
+
+// 强制经公开 Port 注入，避免测试消费者依赖具体适配器。
+static (ITerrainQuery Terrain, ICollisionQuery Collision, INavigationQuery Navigation) BindPorts(
+    PlanarGridEnvironment source) => (source, source, source);
