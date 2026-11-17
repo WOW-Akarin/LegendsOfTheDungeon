@@ -523,3 +523,34 @@ jobs:
           path: artifacts/environment-query/report.txt
           if-no-files-found: warn
           retention-days: 14
+
+  entity-attributes:
+    needs: build-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      CI: 'true'
+      DOTNET_NOLOGO: '1'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Setup .NET 10.0.404
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.404'
+      - name: Locked restore P25 attributes probe graph
+        run: dotnet restore tests/Integration/LegendsOfTheDungeon.AttributesProbe/LegendsOfTheDungeon.AttributesProbe.csproj --locked-mode
+      - name: Verify canonical world stats resources modifier revocation and replay hash
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/entity-attributes
+          dotnet run --project tests/Integration/LegendsOfTheDungeon.AttributesProbe/LegendsOfTheDungeon.AttributesProbe.csproj --configuration Release --no-restore | tee artifacts/entity-attributes/report.txt
+      - name: Upload P25 attributes real integration evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: entity-attributes
+          path: artifacts/entity-attributes/report.txt
+          if-no-files-found: warn
+          retention-days: 14

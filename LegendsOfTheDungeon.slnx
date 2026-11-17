@@ -18,6 +18,7 @@
   <Project Path="src/StaticData/Sql/LegendsOfTheDungeon.StaticData.Sql/LegendsOfTheDungeon.StaticData.Sql.csproj" />
   <Project Path="src/Security/Contracts/LegendsOfTheDungeon.Security.Contracts/LegendsOfTheDungeon.Security.Contracts.csproj" />
   <Project Path="tests/Unit/LegendsOfTheDungeon.UnitTests/LegendsOfTheDungeon.UnitTests.csproj" />
+  <Project Path="tests/Integration/LegendsOfTheDungeon.AttributesProbe/LegendsOfTheDungeon.AttributesProbe.csproj" />
   <Project Path="tests/Integration/LegendsOfTheDungeon.EnvironmentProbe/LegendsOfTheDungeon.EnvironmentProbe.csproj" />
   <Project Path="tests/Integration/LegendsOfTheDungeon.WorldTickProbe/LegendsOfTheDungeon.WorldTickProbe.csproj" />
   <Project Path="tests/Integration/LegendsOfTheDungeon.WorldSpatialProbe/LegendsOfTheDungeon.WorldSpatialProbe.csproj" />

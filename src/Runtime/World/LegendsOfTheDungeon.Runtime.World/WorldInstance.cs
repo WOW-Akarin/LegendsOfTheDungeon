@@ -96,7 +96,17 @@ public enum WorldEntityResult
     /// <summary>关系目标不存在、过期、已退休或属于其它世界。</summary>
     RelationUnavailable,
     /// <summary>关系会造成跨角色循环或自指。</summary>
-    RelationCycle
+    RelationCycle,
+    /// <summary>基础或派生属性已更新。</summary>
+    AttributeChanged,
+    /// <summary>临时属性修饰成功授予。</summary>
+    ModifierAdded,
+    /// <summary>精确来源属性修饰已撤销。</summary>
+    ModifierRemoved,
+    /// <summary>资源当前值确实改变。</summary>
+    ResourceChanged,
+    /// <summary>资源超出当前最大值或小于零。</summary>
+    ResourceOutOfRange
 }
 
 /// <summary>注册前的不可变实体创建意图，不向调用方交付实体可变能力。</summary>
@@ -131,7 +141,8 @@ public readonly record struct WorldEntitySnapshot
         EntityControlEffects control, IReadOnlyList<string> tags, EntityRelations relationships,
         IReadOnlyList<EntityControlGrantSnapshot> controlGrants,
         IReadOnlyList<EntityTagGrantSnapshot> tagGrants,
-        IReadOnlyList<string> permanentTags, ulong controlSequence, ulong tagSequence)
+        IReadOnlyList<string> permanentTags, ulong controlSequence, ulong tagSequence,
+        EntityAttributeSnapshot attributes)
     {
         Identity = identity;
         Lifecycle = lifecycle;
@@ -146,6 +157,7 @@ public readonly record struct WorldEntitySnapshot
         PermanentTags = permanentTags;
         ControlSequence = controlSequence;
         TagSequence = tagSequence;
+        Attributes = attributes;
     }
 
     /// <summary>包含代际的实体身份。</summary>
@@ -186,6 +198,9 @@ public readonly record struct WorldEntitySnapshot
 
     /// <summary>此代际标签来源单调递增的最大序号。</summary>
     public ulong TagSequence { get; }
+
+    /// <summary>当前基础/派生属性、来源修饰及资源的不可变快照。</summary>
+    public EntityAttributeSnapshot Attributes { get; }
 }
 
 /// <summary>可选同步清理回调；供未来 Timer、订阅和异步请求撤销器接入。</summary>
@@ -200,7 +215,7 @@ public interface IWorldEntityCleanup
 /// 一个 WorldId/Epoch 内唯一的可变实体 Registry；只通过 P18 同步租约进行生命周期变化。
 /// 对外只有快照与明确定义的命令，不暴露 EntityCapabilities 或可变集合。
 /// </summary>
-public sealed class WorldInstance
+public sealed partial class WorldInstance
 {
     private const int MaximumEntities = 10_000;
     private const int MaximumCleanupHooks = 16;
@@ -445,7 +460,8 @@ public sealed class WorldInstance
             entry.Capabilities.Relationships.State,
             entry.Capabilities.Control.ActiveGrants, entry.Capabilities.Tags.ActiveGrants,
             entry.Capabilities.Tags.PermanentTags,
-            entry.Capabilities.Control.LastSequence, entry.Capabilities.Tags.LastSequence);
+            entry.Capabilities.Control.LastSequence, entry.Capabilities.Tags.LastSequence,
+            entry.Capabilities.Attributes.Capture());
 
     private static bool IsWithin(Position point, Position center, double radius) =>
         WorldSpatialIndex.IsWithin(point, center, radius);

@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.Security.Cryptography;
+using System.Globalization;
 using System.Text;
 using LegendsOfTheDungeon.Entities.Core;
 using LegendsOfTheDungeon.Kernel;
@@ -184,7 +185,7 @@ internal static class WorldStateDigest
         IReadOnlyList<WorldEntitySnapshot> snapshots, WorldId world, WorldEpoch epoch, Tick tick)
     {
         using var digest = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
-        Add(digest, 3); // P26: include all source leases and monotone tokens, not just effective state
+        Add(digest, 4); // P25: add source-sensitive attribute/resource ledger to deterministic digest
         Add(digest, world.Value);
         Add(digest, epoch.Value);
         Add(digest, tick.Value);
@@ -245,6 +246,45 @@ internal static class WorldStateDigest
             AddRelated(digest, item.Relationships.Creator);
             AddRelated(digest, item.Relationships.Controller);
             AddRelated(digest, item.Relationships.Summoner);
+            var attributes = item.Attributes;
+            Add(digest, attributes.LastModifierSequence);
+            Add(digest, (ulong)attributes.Stats.Count);
+            foreach (var stat in attributes.Stats)
+            {
+                AddText(digest, stat.Key.Value);
+                AddDecimal(digest, stat.BaseValue);
+                AddDecimal(digest, stat.EffectiveValue);
+                Add(digest, stat.IsDerived ? 1UL : 0UL);
+            }
+
+            Add(digest, (ulong)attributes.Derived.Count);
+            foreach (var rule in attributes.Derived)
+            {
+                AddText(digest, rule.Key.Value);
+                AddText(digest, rule.Source.Value);
+                AddDecimal(digest, rule.Factor);
+                AddDecimal(digest, rule.Offset);
+            }
+
+            Add(digest, (ulong)attributes.Modifiers.Count);
+            foreach (var mod in attributes.Modifiers)
+            {
+                Add(digest, mod.Handle.Sequence);
+                Add(digest, mod.Source.Value);
+                AddText(digest, mod.Key.Value);
+                Add(digest, (ulong)mod.Operation);
+                AddDecimal(digest, mod.Amount);
+                Add(digest, unchecked((ulong)mod.Priority));
+            }
+
+            Add(digest, (ulong)attributes.Resources.Count);
+            foreach (var resource in attributes.Resources)
+            {
+                AddText(digest, resource.Key.Value);
+                AddText(digest, resource.MaximumStat.Value);
+                AddDecimal(digest, resource.Current);
+                AddDecimal(digest, resource.Maximum);
+            }
         }
 
         return Convert.ToHexString(digest.GetHashAndReset());
@@ -268,6 +308,9 @@ internal static class WorldStateDigest
             Add(digest, value.Generation.Value);
         }
     }
+
+    private static void AddDecimal(IncrementalHash digest, decimal value) =>
+        AddText(digest, value.ToString("G29", CultureInfo.InvariantCulture));
 
     private static void AddDouble(IncrementalHash digest, double value) =>
         Add(digest, unchecked((ulong)BitConverter.DoubleToInt64Bits(value)));

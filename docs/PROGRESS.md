@@ -109,3 +109,11 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - 正式 ACCEPTED HEAD `82851e7ef97b22d28a16c6eb275ec0ecb330a966`，CI #215（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43995827389）**13/13 SUCCESS**。基线 322/322 Unit、16/16 Architecture、新 P23 真实五场景及原有十二项阻断 Job 全 PASS；三阶段证据齐全。
 - #209/#210/#211 三次编译失败与修复记录保留，未降低 CS1591/分析器/架构/负向 Gate。P23 目标 B+C 正式收口，未来 P28/P37 真消费方、3D NavMesh 与 P64 性能单独验收。
 - 下阶段按依赖图推进 **P25 Stats / Resources / Modifier**（前置 P24/P07 ACCEPTED）；本归档提交自身的 CI 不预先声称已通过。
+
+## P25 首次实现（IN_PROGRESS，未验收）
+
+- 前置 P24(B)/P07 均已 ACCEPTED；P23 三阶段与最终归档 #216 全部 13/13 SUCCESS。入口 main HEAD `84b43c1c59c1d22c14669dce68f41fb65c91b099`。
+- `Entities.Core.EntityAttributeCapability` 拥有基础/一层派生属性、来源修饰句柄、ResourcePool 唯一可写状态。只有 P18 同步 Scope 能变更；世界通过 P17 canonical `WorldInstance` 的窄能力命令路由，不交付可变实体引用。
+- 同步重算采用 decimal 两位小数 AwayFromZero、优先级与句柄序号稳定排序、最多 64 属性/64 资源/256 来源；先验证候选，成功后才提交。最大资源降低裁剪 Current、不凭空回复；死亡拒绝资源消费/回复。
+- P19 `WorldStateDigest` schema v4 纳入全部属性/派生公式/来源修饰/资源账本及末尾句柄序号，区分相同有效值不同来源。
+- 新增 Unit 和真实 P18/P17/P19 `AttributesProbe` 五场景，第 14 个阻断 CI Job `entity-attributes`。本次首次提交的 CI **NOT_RUN**，不可将完成代码视为阶段验收。参见 [P25](progress/P25.md) 与 [ENTITY_ATTRIBUTES](modules/ENTITY_ATTRIBUTES.md)。

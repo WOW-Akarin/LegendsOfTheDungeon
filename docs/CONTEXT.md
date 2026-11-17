@@ -94,3 +94,7 @@ P23 加固实现 #213、独立四视角审查 #214 两轮 13/13 SUCCESS（322 Un
 ## P23 三阶段 CI 完成归档与恢复点（2026-11-17）
 
 P23 **ACCEPTED（B+C）**：稳定实现 #213、独立 REVIEW #214、正式 ACCEPTED HEAD `82851e7` #215 均为 **13/13 SUCCESS**（322 Unit、16 Architecture；五项真实环境 Probe + 前置全部回归）；#215 https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43995827389。三阶段已完成，本归档 HEAD CI 仍需单独核验。下一 P25 属性/资源/Modifier（P24/P07 依赖已满足）；P27 需先有 P25。详见 [P23](progress/P23.md)。
+
+## P25 当前安全入口（2026-11-17）
+
+最新完整绿色基线 P23 归档 HEAD `84b43c1`、CI #216 **13/13 SUCCESS**；P00–P23、P24(B)、P26(C) ACCEPTED。P25 Stats/Resources/Modifier 当前 **IN_PROGRESS（目标 C）**，依赖 P24/P07 已满足。P25 增加 Entities 属性资源账本与 WorldInstance 窄写路由，P19 状态 Hash schema v4，Unit + 真实 AttributesProbe 及第 14 个 CI Job。首次实现 HEAD CI 尚未运行，不能 ACCEPTED。恢复顺序：查看 [P25](progress/P25.md) → CI → 修正 → 独立四视角 REVIEW → 正式 ACCEPTED；始终只在 main 推送。
