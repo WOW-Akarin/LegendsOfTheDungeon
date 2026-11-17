@@ -84,3 +84,5 @@ P27 三阶段 CI #226/#227/#228 各 15/15 SUCCESS，344 Unit/16 Architecture，�
 - [reviews/P28_SERVER_MOTION_REVIEW.md](reviews/P28_SERVER_MOTION_REVIEW.md)：P28 独立四视角质量审查与正式验收证据
 
 P28 正式 ACCEPTED（目标 C）：稳定实现 #235、独立四视角 REVIEW #236 各 16/16 SUCCESS，367 Unit /16 Architecture；正式状态 HEAD CI 待独立核验。下一 P29 Movement Validation。
+
+P28 正式三阶段证据：实现 [#235](https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016152259)、REVIEW [#236](https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016560072)、ACCEPTED [#237](https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016970168) 各 **16/16 SUCCESS**，367 Unit/16 Architecture。下一阶段 P29 Movement Validation；最终归档 HEAD CI 待单独确认。

@@ -1,6 +1,6 @@
 # P28 — Server Motion / Path 技术契约
 
-状态：**ACCEPTED**（目标 C），直接依赖 P23 Terrain/Collision/Navigation B+C 与 P27 Movement C 均 ACCEPTED；首次实现 CI 尚未执行。
+状态：**ACCEPTED**（目标 C），直接依赖 P23 Terrain/Collision/Navigation B+C 与 P27 Movement C 均 ACCEPTED；实现 #235、独立 REVIEW #236、正式 ACCEPTED #237 各 16/16 SUCCESS。
 
 ## 角色、唯一当前位置及状态机
 
@@ -40,3 +40,7 @@
 
 - 实现加固 HEAD `19ccdf2` CI #235 与独立 REVIEW HEAD `37cc14c` CI #236 **各 16/16 SUCCESS**（367 Unit /16 Architecture；十种 Server Motion + P23 实路径 + 所有旧十五 Job）。P28 C 已正式 ACCEPTED，当前正式验收状态 HEAD 自身待 CI。
 - 未将 P28 的静态平面参考 Adapter、平滑路径插值或可信 Jump/Knockback 当作 P29 的正式反作弊/处罚或完整 3D/动态碰撞。下阶段 P29。
+
+## P28 三阶段正式 CI 证据
+
+- 稳定实现 `19ccdf2` [#235](https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016152259)、独立四视角 REVIEW `37cc14c` [#236](https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016560072)、正式 ACCEPTED `dc76c99` [#237](https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016970168) 均 **16/16 SUCCESS**，367 Unit、16 Architecture、全部十种 Motion 真实 P23/P18 集成和旧十五任务通过。P28 C 正式收口，下一阶段 P29 独立实现校验与 Violation。

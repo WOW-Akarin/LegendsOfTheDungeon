@@ -220,3 +220,8 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/L
 
 - 稳定实现 CI #235 与独立 REVIEW CI #236 均 16/16 SUCCESS，367 Unit、16 Architecture、P23 MotionProbe 十模式/六类真实场景及旧 15 Job 全绿。
 - P28 C 正式 ACCEPTED；正式状态提交 HEAD CI 尚未完成，不可提前将这份归档当作完整 CI 证据。P29 Movement Validation 是独立下阶段。
+
+## P28 完整独立验收归档
+
+- 稳定实现 HEAD `19ccdf2f97311234c2e158c4f0d97729c8bba6fe` CI #235、独立 REVIEW HEAD `37cc14cf389b81e6246234a459a89cced10494c5` CI #236、正式 ACCEPTED HEAD `dc76c99a7369a24680953f34ca216553fb12f7a2` CI #237 **各 16/16 SUCCESS**，367 Unit、16 Architecture、真实十类 Motion 的 `P28_SERVER_MOTION_INTEGRATION_PASS`、旧十五 Job 完整回归。
+- 状态为 P28 C 正式 ACCEPTED；当前归档 HEAD 尚待单独真实 CI。下一阶段 P29 Movement Validation 实现事件可追溯的合法/违规检测，不能用 P28 速度预算代替。

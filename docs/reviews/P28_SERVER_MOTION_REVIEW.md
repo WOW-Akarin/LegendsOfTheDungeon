@@ -62,3 +62,8 @@
 
 - 独立 REVIEW HEAD `37cc14cf389b81e6246234a459a89cced10494c5`，CI #236（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016560072）**16/16 SUCCESS**，367/367 Unit、16/16 Architecture、十模式 P28 六类真 Probe + 历史十五 Job 全 PASS。
 - 实现 HEAD #235 与 REVIEW HEAD #236 均独立全绿，确认四视角 P28 目标 C 范围必修阻塞为零，正式 **ACCEPTED**。状态决议 HEAD CI 必须另外执行，不能将 #236 作为它的证明。
+
+## 正式 ACCEPTED HEAD 自身 CI
+
+- P28 正式 ACCEPTED 决议 HEAD `dc76c99a7369a24680953f34ca216553fb12f7a2`，GitHub Actions #237（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016970168）**16/16 SUCCESS**，367 Unit /16 Architecture、十类 MotionProbe 和全部旧十五项 CI。
+- 实现 #235、独立 REVIEW #236、正式 ACCEPTED #237 各拥有独立全绿 GitHub CI，四视角必修阻塞 0，P28 C 完成三阶段正式验收。最终归档 HEAD CI 另行复核；P29/P60/P62/P64 不属于本次结论。

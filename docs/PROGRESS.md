@@ -2,8 +2,8 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：**P28 — Server Motion / Path（ACCEPTED，目标 C）**；P27 C 正式 ACCEPTED
-正式 ACCEPTED：P00–P23、P24(B)、P25(C)、P26(C)、P27(C)、P28(C)；P25 与 P27 实现/独立 REVIEW/正式 ACCEPTED HEAD 的真实 CI 均全绿（最新 P27 15 Job）。
+当前阶段：**P29 — Movement Validation（待启动）**；最新完成 P28 Server Motion / Path（ACCEPTED，C）
+正式 ACCEPTED：P00–P23、P24(B)、P25(C)、P26(C)、P27(C)、P28(C)；最新 P28 实现 #235、独立 REVIEW #236、正式 ACCEPTED #237 各 16/16 SUCCESS，367 Unit / 16 Architecture。
 
 ## 基线真实证据
 
@@ -195,3 +195,16 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - P28 目标 C 正式 **ACCEPTED**：Point/Random/Chase/Follow/Flee/Home/Waypoint/Spline/Jump/Knockback 服务器状态机、P23 真实路径消费及严格版本核验、取消/抢占/超时/无路/目标死亡、P20 Transform/Spatial 单一位置真相、P25 速度/控制和 P27 玩家会话切换、P19 v6 Replay 摘要；本阶段四视角必修阻塞为 0。
 - P29 Movement Validation 的可追溯 Violation/Accept/Correct/Reject/Flag、完整动态地图/3D Collision、P60 真实 Socket/Host 身份绑定、P62/P64 仍未完成；不可归入本阶段已验收。
 - **本次 ACCEPTED 状态提交 HEAD 尚须自身完整 16 Job CI**，不以已通过的 #236 冒充状态提交验证。下一阶段 P29，直接依赖 P27/P28 均已 ACCEPTED。
+
+## P28 四阶段独立验证归档（2026-11-17）
+
+| 阶段 | HEAD | GitHub Actions 结果 |
+|---|---|---|
+| 稳定实现 | `19ccdf2f97311234c2e158c4f0d97729c8bba6fe` | [#235](https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016152259)，**16/16 SUCCESS** |
+| 独立四视角 REVIEW | `37cc14cf389b81e6246234a459a89cced10494c5` | [#236](https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016560072)，**16/16 SUCCESS** |
+| 正式 ACCEPTED | `dc76c99a7369a24680953f34ca216553fb12f7a2` | [#237](https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016970168)，**16/16 SUCCESS** |
+
+- 三个独立阶段均严格 Release、locked restore、367/367 Unit、16/16 Architecture、P28 真正十种运动/六类 MotionProbe 和全部历史十五项阻断任务成功；#230–#233 的实际失败及修复已经保留。
+- 当前 P28 C **ACCEPTED**。下一任务 **P29 — Movement Validation（尚未开始）**：基于 P27/P28，实现合法/违规数据集、速度/位移/区域校验、Accept/Correct/Reject/Flag 结果可追溯以及检测和处罚分离。
+- P28 的静态二维参考环境、可信服务器有界 Jump/Knockback 和平滑 Spline 不代表完整动态/三维 NavMesh，不代表 P29 已验收，也不代表 P60 生产入口、P62 Replay 或 P64 长稳性能已完成。
+- 这份最终归档提交 HEAD 自身需单独跑完整十六 Job；**归档 HEAD CI NOT_RUN（提交前状态）**。

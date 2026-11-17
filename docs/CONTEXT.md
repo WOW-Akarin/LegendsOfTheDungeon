@@ -5,7 +5,7 @@
 
 ## 当前最新阶段
 
-P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（ACCEPTED，C）** 已具备三阶段真实 CI；当前 **P28 Server Motion / Path（ACCEPTED）**（直接依赖 P23/P27 ACCEPTED），首次真实 CI 尚未运行。main 直推、不创建分支。
+P00–P23、P24(B)、P25(C)、P26(C)、P27(C)、P28(C) 均正式 ACCEPTED。最新 P28 稳定实现 HEAD `19ccdf2` #235、独立四视角 REVIEW HEAD `37cc14c` #236、正式 ACCEPTED HEAD `dc76c99` #237 各 16/16 SUCCESS（367 Unit / 16 Architecture）；**下一阶段 P29 Movement Validation（尚未开始）**，依赖 P27/P28 已满足。main 直推、不创建分支。
 
 ## 前置阶段
 
@@ -150,3 +150,9 @@ P28 十类服务器 Motion 的真实 P23/P18/P20 闭环首次成功 #234 **16/16
 
 - P28 实现加固 HEAD `19ccdf2` CI #235、独立四视角 REVIEW HEAD `37cc14c` CI #236，**均 16/16 SUCCESS**（367 Unit /16 Architecture、P28 十模式 MotionProbe 及旧十五 Job）。四视角必修项 0，P28 C 正式 ACCEPTED；**当前正式 ACCEPTED 状态 HEAD 自己仍需要 16 Job CI 验证**。
 - 下阶段 **P29 — Movement Validation**，依赖 P27 + P28 均 ACCEPTED，需独立实现速度/跳变/非法区域基础规则、可追溯 Accept/Correct/Reject/Flag、合法与违规数据集误判量化、检测与处罚分离。P28 并未交付 P29 判罚；P60 生产认证端、P62 Replay/P64 长稳独立验收。
+
+## P28 最终归档恢复入口
+
+- 稳定实现 `19ccdf2f97311234c2e158c4f0d97729c8bba6fe` CI #235、独立 REVIEW `37cc14cf389b81e6246234a459a89cced10494c5` CI #236、正式 ACCEPTED `dc76c99a7369a24680953f34ca216553fb12f7a2` CI #237，分别 **16/16 SUCCESS**，367 Unit /16 Architecture，真实 P28 六类 MotionProbe 以及全部旧 Job 全绿。详细表在 [P28 归档](progress/P28.md)。
+- 下一工作 **P29 Movement Validation**，路线图直接依赖 P27/P28 已完成。必须建立检测与处罚分离，结构化 Violation 与 Accept/Correct/Reject/Flag 四类结果，真实合法/违规数据集与误判度量。不得把 P28 的基础路径速度检查作为 P29 正式反作弊验收。
+- P28 归档 HEAD 的 CI 尚待自身独立运行，前三阶段证据已全部固定；当前只在 main 更新，未创建分支。
