@@ -107,6 +107,14 @@ public sealed class EnvironmentQueryTests
             ((IList<Position>)snapshot.Waypoints)[0] = new Position(88, 0, 0));
         Assert.Throws<ArgumentException>(() => new NavigationPathResult(
             EnvironmentQueryStatus.NoPath, 17, 1, [Start]));
+        Assert.Throws<ArgumentException>(() => new NavigationPathResult(
+            EnvironmentQueryStatus.Success, 17, 1, []));
+        Assert.Throws<ArgumentException>(() => new NavigationPathResult(
+            EnvironmentQueryStatus.Success, 17, 1, [Start]));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new NavigationPathResult(
+            EnvironmentQueryStatus.Success, 0, 1, [Start, Goal]));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new NavigationPathResult(
+            EnvironmentQueryStatus.Success, 17, 0, [Start, Goal]));
     }
 
     [Fact]

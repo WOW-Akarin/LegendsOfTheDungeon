@@ -82,7 +82,14 @@ public sealed class NavigationPathResult
         IEnumerable<Position> waypoints)
     {
         ArgumentNullException.ThrowIfNull(waypoints);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestVersion);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(environmentVersion);
         var copy = waypoints.ToArray();
+        if (status == EnvironmentQueryStatus.Success && copy.Length < 2)
+        {
+            throw new ArgumentException("成功路径必须至少包含起点和终点。", nameof(waypoints));
+        }
+
         if (status != EnvironmentQueryStatus.Success && copy.Length != 0)
         {
             throw new ArgumentException("失败路径不得包含可被误用的路径点。", nameof(waypoints));
