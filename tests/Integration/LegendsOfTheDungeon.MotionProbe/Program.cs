@@ -146,7 +146,7 @@ static void DetourAndNoPath()
         new WorldMotionCommand(WorldMotionKind.Point,
             goal: new Position(3.5, .5, 0)));
     Require(ticket.HasValue, "Point did not request P23 path");
-    var path = nav.FindPath(ticket.Value.Request);
+    var path = nav.FindPath(ticket.GetValueOrDefault().Request);
     Require(path.Status == EnvironmentQueryStatus.Success && path.Waypoints.Count > 4,
         "P23 path unexpectedly skipped detour");
     var collision = new PlanarGridEnvironment(-9, -9, 9, 9, 1, 0, obstacles, 27);
@@ -156,7 +156,7 @@ static void DetourAndNoPath()
         Require(segment.Status == EnvironmentQueryStatus.Success && !segment.IsBlocked,
             "P28 approved a P23 path crossing a solid cell");
     }
-    Apply(world, executor, ticket.Value, nav);
+    Apply(world, executor, ticket.GetValueOrDefault(), nav);
     Require(Finish(world, executor, nav).State == WorldMotionState.Completed,
         "P28 detour did not finish");
     Require(world.TryGetSnapshot(Id().Id, out var done) &&
@@ -168,7 +168,7 @@ static void DetourAndNoPath()
         new WorldMotionCommand(WorldMotionKind.Point,
             goal: new Position(3.5, .5, 0)));
     Require(noPath.HasValue, "NoPath test had no request");
-    Apply(sealedWorld, sealedExecutor, noPath.Value,
+    Apply(sealedWorld, sealedExecutor, noPath.GetValueOrDefault(),
         Navigation(closedWall), WorldMotionResult.NoPath);
     Require(sealedWorld.TryGetSnapshot(Id().Id, out var blocked) &&
         blocked.Motion.State == WorldMotionState.NoPath &&
@@ -194,12 +194,12 @@ static void PriorityAndCancel()
             WorldMotionResult.Started, "high priority could not preempt");
     });
     Require(world.TryGetPendingMotionPath(Id(), out var latest) &&
-        latest.Request.RequestVersion > earlier.Value.Request.RequestVersion,
+        latest.Request.RequestVersion > earlier.GetValueOrDefault().Request.RequestVersion,
         "motion preemption did not advance request generation");
-    Apply(world, executor, earlier.Value, Navigation(), WorldMotionResult.Stale);
+    Apply(world, executor, earlier.GetValueOrDefault(), Navigation(), WorldMotionResult.Stale);
     Run(executor, ctx =>
     {
-        Require(world.CancelMotion(ctx, Id(), earlier.Value.MotionVersion) ==
+        Require(world.CancelMotion(ctx, Id(), earlier.GetValueOrDefault().MotionVersion) ==
             WorldMotionResult.Stale, "stale cancel was accepted");
         Require(world.CancelMotion(ctx, Id(), latest.MotionVersion) ==
             WorldMotionResult.Cancelled, "current motion cancel failed");
@@ -217,7 +217,7 @@ static void LifecycleAndTimeout()
     var original = Begin(world, executor,
         new WorldMotionCommand(WorldMotionKind.Chase, target: Id(2)));
     Require(original.HasValue, "Chase request missing");
-    Apply(world, executor, original.Value, Navigation());
+    Apply(world, executor, original.GetValueOrDefault(), Navigation());
     Run(executor, ctx =>
     {
         Require(world.Relocate(ctx, Id(2), new Transform(
@@ -227,9 +227,9 @@ static void LifecycleAndTimeout()
             WorldMotionResult.WaitingForPath, "target motion did not create a new path request");
     });
     Require(world.TryGetPendingMotionPath(Id(), out var replacement) &&
-        replacement.Request.RequestVersion > original.Value.Request.RequestVersion,
+        replacement.Request.RequestVersion > original.GetValueOrDefault().Request.RequestVersion,
         "target movement did not increment request version");
-    Apply(world, executor, original.Value, Navigation(), WorldMotionResult.Stale);
+    Apply(world, executor, original.GetValueOrDefault(), Navigation(), WorldMotionResult.Stale);
     Run(executor, ctx => Require(world.Remove(ctx, Id(2)) ==
         WorldEntityResult.Removed, "target retirement failed"));
     Apply(world, executor, replacement, Navigation(), WorldMotionResult.Stale);
@@ -248,7 +248,7 @@ static void LifecycleAndTimeout()
         Require(timed.AdvanceMotion(ctx, Id(), new Tick(2), new Duration(50)) ==
             WorldMotionResult.TimedOut, "logical deadline did not end pending motion");
     });
-    Apply(timed, timedExecutor, ticket.Value, Navigation(), WorldMotionResult.Stale);
+    Apply(timed, timedExecutor, ticket.GetValueOrDefault(), Navigation(), WorldMotionResult.Stale);
 }
 
 static void SpeedControlAndInput()
@@ -257,7 +257,7 @@ static void SpeedControlAndInput()
     var ticket = Begin(world, executor, new WorldMotionCommand(WorldMotionKind.Point,
         goal: new Position(3.5, .5, 0)));
     Require(ticket.HasValue, "speed test missing path");
-    Apply(world, executor, ticket.Value, Navigation());
+    Apply(world, executor, ticket.GetValueOrDefault(), Navigation());
     EntityEffectHandle rooted = default;
     Run(executor, ctx =>
     {
@@ -298,7 +298,7 @@ static void TickAndReplay()
         var ticket = Begin(world, executor, new WorldMotionCommand(WorldMotionKind.Point,
             priority: priority, goal: new Position(2.5, .5, 0)));
         Require(ticket.HasValue, "replay did not produce P23 path request");
-        Apply(world, executor, ticket.Value, Navigation());
+        Apply(world, executor, ticket.GetValueOrDefault(), Navigation());
         var clock = new FakeClock(new Duration(50),
             new DateTimeOffset(2026, 11, 17, 0, 0, 0, TimeSpan.Zero));
         var pipeline = new WorldTickPipeline(world, clock, [new WorldMotionTickStep(new Duration(50))]);

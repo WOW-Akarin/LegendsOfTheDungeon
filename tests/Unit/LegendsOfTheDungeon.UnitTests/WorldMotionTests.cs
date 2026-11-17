@@ -53,7 +53,7 @@ public sealed class WorldMotionTests
         public void Execute(IWorldWriteContext context) => body(context);
     }
 
-    private static INavigationQuery Port(IEnumerable<PlaneCell>? obstacles = null) =>
+    private static PlanarGridEnvironment Port(IEnumerable<PlaneCell>? obstacles = null) =>
         new PlanarGridEnvironment(-9, -9, 9, 9, 1, 0, obstacles ?? [], 12);
 
     private static WorldMotionPathRequest Begin(WorldInstance world, WorldExecutor executor,
