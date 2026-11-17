@@ -6,10 +6,10 @@ LegendsOfTheDungeon（副本霸主）是参考 AzerothCore 可泛化机制设计
 
 ## 当前进度
 
-- P00–P23、P24(B)、P25(C)、P26(C) 已正式验收。
+- P00–P23、P24(B)、P25(C)、P26(C)、P27(C) 已正式验收。
 - 已验收：**P23 — Terrain / Collision / Navigation Ports（ACCEPTED）**。三类通用查询 Port 与真实平面障碍参考 Adapter 已实现；稳定实现 CI #213、独立 REVIEW CI #214、正式 ACCEPTED CI #215 各 13/13 SUCCESS（322 Unit、16 Architecture），P23 B+C 正式验收完成。
 - 当前：**P25 — Stats / Resources / Modifier（ACCEPTED）**。已加入基础/派生属性、来源修饰与资源账本的实现候选，稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD #222 各 14/14 SUCCESS（334 Unit/16 Architecture），P25 目标 C 已完成正式验收。
-- 后续 P27/P28 Movement/Path、真实 3D NavMesh、网络 Host、全链路 Replay、性能长稳测试并未完成。
+- P27 已正式验收；P28 服务器运动正在开发。真实 3D NavMesh、P29 完整反作弊、网络 Host、全链路 Replay 和性能长稳测试尚未完成。
 
 ## 文档
 
@@ -26,6 +26,6 @@ LegendsOfTheDungeon（副本霸主）是参考 AzerothCore 可泛化机制设计
 
 用户要求直接更新 `main`、不创建分支；仍按独立实现/REVIEW/ACCEPTED 三阶段分别保留真实 CI 证据。
 
-当前开发：P27 — Movement State / Speed / Input（ACCEPTED，稳定实现 #226、独立 REVIEW #227、正式 ACCEPTED #228 均 15/15 SUCCESS），前置 P20/P25/P26/P60.F 已满足；新 Move Probe 将独立阻断 CI。
+当前开发：**P28 — Server Motion / Path（IN_PROGRESS）**，前置 P23/P27 已 ACCEPTED，首次新 MotionProbe 全量 16 Job CI 尚未完成。
 
-- 下一阶段：**P28 — Server Motion / Path**（P23/P27 前置已满足）。P27 正式状态 HEAD CI #228 已 15/15 SUCCESS，归档 HEAD CI 另行复核。
+- P27 归档 HEAD `7b7c84e` CI #229 15/15 SUCCESS；P28 十类服务器运动正在进行真实验证，禁止提前标记 ACCEPTED。

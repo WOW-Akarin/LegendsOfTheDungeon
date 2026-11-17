@@ -160,7 +160,8 @@ public readonly record struct WorldEntitySnapshot
         IReadOnlyList<EntityControlGrantSnapshot> controlGrants,
         IReadOnlyList<EntityTagGrantSnapshot> tagGrants,
         IReadOnlyList<string> permanentTags, ulong controlSequence, ulong tagSequence,
-        EntityAttributeSnapshot attributes, WorldMovementSnapshot movement)
+        EntityAttributeSnapshot attributes, WorldMovementSnapshot movement,
+        WorldMotionSnapshot motion)
     {
         Identity = identity;
         Lifecycle = lifecycle;
@@ -177,6 +178,7 @@ public readonly record struct WorldEntitySnapshot
         TagSequence = tagSequence;
         Attributes = attributes;
         Movement = movement;
+        Motion = motion;
     }
 
     /// <summary>包含代际的实体身份。</summary>
@@ -223,6 +225,9 @@ public readonly record struct WorldEntitySnapshot
 
     /// <summary>当前移动输入会话及基准，位置仍由 Transform 唯一持有。</summary>
     public WorldMovementSnapshot Movement { get; }
+
+    /// <summary>P28 不保存当前位置副本的服务器运动状态、请求与轨迹版本快照。</summary>
+    public WorldMotionSnapshot Motion { get; }
 }
 
 /// <summary>可选同步清理回调；供未来 Timer、订阅和异步请求撤销器接入。</summary>
@@ -484,7 +489,7 @@ public sealed partial class WorldInstance
             entry.Capabilities.Tags.PermanentTags,
             entry.Capabilities.Control.LastSequence, entry.Capabilities.Tags.LastSequence,
             entry.Capabilities.Attributes.Capture(),
-            MovementSnapshot(entry));
+            MovementSnapshot(entry), entry.Motion.Capture());
 
     private static WorldMovementSnapshot MovementSnapshot(Entry entry)
     {
@@ -766,7 +771,11 @@ public sealed partial class WorldInstance
                 context.Demand(identity.World, identity.Epoch, identity.Id, identity.Generation);
                 _spatial.Move(identity, originalCell, destination);
                 entry.Capabilities.Transform.Relocate(context, transform);
-                if (invalidateMovement) entry.Movement.Invalidate();
+                if (invalidateMovement)
+                {
+                    entry.Movement.Invalidate();
+                    entry.Motion.Cancel();
+                }
                 return WorldEntityResult.Relocated;
             }
             catch
@@ -1090,6 +1099,8 @@ public sealed partial class WorldInstance
             }
 
             entry.Movement.Invalidate();
+            entry.Motion.Cancel();
+            StopInboundMotions(identity);
             ClearInboundTargets(context, identity);
             return WorldEntityResult.LifeChanged;
         }
@@ -1256,6 +1267,8 @@ public sealed partial class WorldInstance
 
             // 提前清空自己的目标，否则稳定 ID 次序停机时先销毁的实体墓碑可能保留旧目标。
             entry.Capabilities.Target.Select(context, null);
+            entry.Motion.Cancel();
+            StopInboundMotions(entry.Identity);
             ClearInboundTargets(context, entry.Identity);
             ClearInboundRelations(context, entry.Identity);
             entry.Capabilities.Relationships.Clear(context);
@@ -1333,12 +1346,14 @@ public sealed partial class WorldInstance
             Identity = seed.Identity;
             Capabilities = new EntityCapabilities(seed.Identity, seed.Transform);
             Movement = new WorldMovementLedger();
+            Motion = new WorldMotionLedger(seed.Transform.Position);
             State = WorldEntityLifecycle.Attached;
         }
 
         internal EntityIdentity Identity { get; }
         internal EntityCapabilities Capabilities { get; }
         internal WorldMovementLedger Movement { get; }
+        internal WorldMotionLedger Motion { get; }
         internal WorldEntityLifecycle State { get; set; }
         internal List<IWorldEntityCleanup> Cleanup { get; } = [];
     }

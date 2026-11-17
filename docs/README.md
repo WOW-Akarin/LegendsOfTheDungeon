@@ -78,3 +78,6 @@ P00 固定的 AzerothCore 研究 SHA：
 P27 已正式 ACCEPTED：实现 #226、独立 REVIEW #227 均 15/15 SUCCESS；正式状态 HEAD CI 尚需单独检查。下一阶段 P28 Server Motion / Path。
 
 P27 三阶段 CI #226/#227/#228 各 15/15 SUCCESS，344 Unit/16 Architecture，正式 ACCEPTED。下一开发入口 P28 Server Motion/Path；本归档 HEAD 的 CI 独立核验。
+
+- [modules/WORLD_MOTION.md](modules/WORLD_MOTION.md)：P28 服务器运动、版本化 P23 导航路径与唯一 Transform
+- [progress/P28.md](progress/P28.md)：P28 实现/真实 CI/独立审查进度

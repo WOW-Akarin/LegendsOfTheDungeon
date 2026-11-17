@@ -2,7 +2,7 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：**P28 — Server Motion / Path（待启动）**；P27 C 正式 ACCEPTED
+当前阶段：**P28 — Server Motion / Path（IN_PROGRESS，目标 C）**；P27 C 正式 ACCEPTED
 正式 ACCEPTED：P00–P23、P24(B)、P25(C)、P26(C)、P27(C)；P25 与 P27 实现/独立 REVIEW/正式 ACCEPTED HEAD 的真实 CI 均全绿（最新 P27 15 Job）。
 
 ## 基线真实证据
@@ -171,3 +171,12 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - 初次 #224 CS8602 Release 编译 FAIL，#225 修复后首次 15/15 全绿（342 Unit），#226 加固后 15/15 全绿（344 Unit），全部原始失败和修复保留，未禁用 Nullable/Analyzers 或旧测试。
 - P27 目标 C 技术与审查全部正式 ACCEPTED。下阶段 **P28 Server Motion / Path**，直接依赖 P23/P27 均 ACCEPTED；P28 目前尚未实施。P60 生产网关、P29 Violation、P62/P64 仍为后续专项。
 - 本次归档 HEAD 自身 CI **尚未运行**；不能将 #228 误当归档 HEAD 的验证结果。
+
+## P28 首次真实实现（IN_PROGRESS，CI 尚待实测）
+
+- 起始 main HEAD `7b7c84e582f529ddcfba30f146b8e5e2a955f383`，P27 归档 CI #229（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44011672196）**15/15 SUCCESS**（344 Unit / 16 Architecture）。P28 直接依赖 P23/P27 均 ACCEPTED。
+- 新增 Runtime.World 的 `WorldMotion.cs`；服务端 Point/Random/Chase/Follow/Flee/Home/Waypoint/Spline/Jump/Knockback 十种模式、优先级/取消、真实 P23 `INavigationQuery` 异步工作请求和版本回执、当前逻辑 Tick 下驱动的 `WorldMotionTickStep`。
+- 路径只读计算可发生在 P18 同步租约之外，带 World/Epoch/Entity/Generation、MotionVersion、RequestVersion、EnvironmentVersion 与目标信息的回执必须回到真实 P18 同步 Scope 才可写。拒绝已取消/抢占/过期的旧回执；无路/超时/目标退休不会退化成穿障直线。
+- 每个 P17 Entry 的 `WorldMotionLedger` 仅保存 Motion 状态、导航计划和静态出生锚点，不再建当前位置；实际位置与 P20 Spatial 同锁一致，只能走 `RelocateCore`。服务器取得控制权时废止 P27 客户端旧会话，玩家重新绑定则停止服务器 Motion。
+- P19 状态 Hash schema v5→v6，纳入运动类型、优先级、请求版本、环境版本、目标身份、进度、受信任轨迹及冻结路径/命令摘要，跨版本不可直接比较。新 Unit/独立 MotionProbe 覆盖全部十类运动、P23 真避障/无路、取消/抢占、过期目标/超时、P25/P26/P27 联动、P19 同 Tick 状态 Hash。
+- 新增第十六个完整阻断 CI Job `server-motion`；首次实现 `NOT_RUN`，禁止提前写 REVIEW/ACCEPTED。技术契约 [WORLD_MOTION](modules/WORLD_MOTION.md)，阶段追踪 [P28](progress/P28.md)。

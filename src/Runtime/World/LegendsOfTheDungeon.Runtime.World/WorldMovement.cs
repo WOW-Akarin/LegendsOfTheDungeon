@@ -183,6 +183,7 @@ public sealed partial class WorldInstance
             if (!WorldSpeedModel.TrySpeed(entry!.Capabilities, out _))
                 return WorldEntityResult.MovementInvalidSpeed;
             sessionVersion = entry.Movement.Bind(subject, baselineTick, tickDuration);
+            entry.Motion.Cancel();
             return WorldEntityResult.MovementBound;
         }
     }

@@ -5,7 +5,7 @@
 
 ## 当前最新阶段
 
-P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（ACCEPTED，C）** 已具备三阶段真实 CI；下一 **P28 Server Motion / Path**（依赖 P23/P27 均 ACCEPTED），尚未开始。main 直推、不创建分支。
+P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（ACCEPTED，C）** 已具备三阶段真实 CI；当前 **P28 Server Motion / Path（IN_PROGRESS）**（直接依赖 P23/P27 ACCEPTED），首次真实 CI 尚未运行。main 直推、不创建分支。
 
 ## 前置阶段
 
@@ -134,3 +134,10 @@ P27 可信主体/会话与有序移动实现 #225 **15/15 SUCCESS**（342 Unit�
 - P27 所拥有的真实 P20 Canonical Move/Spatial、P25 动态速度、P26 控制/死亡、P60.F `BoundIdentity`、顺序 Tick、v5 同 Tick 来源敏感 Hash 均已正式验收；P60 正式生产 Socket/Host 并未实现，不能外部伪称已开放身份输入。
 - 参照 [P28 任务卡](DEVELOPMENT_ROADMAP.md) 下一步开始通用 Point/Random/Chase/Follow/Flee/Home/Waypoint、NavigationPort 请求版本与抢占/取消，不修改 P27 唯一 Transform 真相；真实 Spline/Jump/Knockback 在 P28 分批范围中另列。
 - 当前最终归档提交自身尚需单独完整 CI 验证，基线历史结果 #226/#227/#228 已确实全绿。禁止不经 CI 直接宣称 P28 ACCEPTED。
+
+## P28 当前恢复入口
+
+- P27 最终归档 HEAD `7b7c84e582f529ddcfba30f146b8e5e2a955f383` CI #229 15/15 SUCCESS（344 Unit/16 Architecture）；P28 直接依赖 P23/P27 ACCEPTED，始终只在 main 更新。
+- 新 P28 `WorldMotion.cs` 和 `WorldMotionTickStep`：十类服务器运动状态机；P23 外部只读导航请求+当前实体代际/运动版本/请求序号/环境版本回执；P18 内版本核验与真正 P20 RelocateCore，P27 玩家会话与服务器运动互斥，控制/死亡/目标失效终止。P19 v6 StateHash 含未来导航状态；无第二份当前位置。
+- 新 `tests/Unit/.../WorldMotionTests.cs` 与独立真实 `MotionProbe`，固定 Seed/真实 P23 平面网格避障及 NoPath/Deadline；新增第十六个阻断 `server-motion` CI Job，输出 `P28_SERVER_MOTION_INTEGRATION_PASS`。正式结果必须等本 HEAD 16/16 CI；之后独立四视角 REVIEW HEAD CI → ACCEPTED HEAD CI → 归档 CI。
+- P28 的 Spline 当前是已验证导航路径段的平滑插值，Jump/Knockback 为有界固定 Tick 可信服务器轨迹；不是完整 3D NavMesh、动态碰撞、多层地图或 P29 位移反作弊/处罚。

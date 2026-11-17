@@ -185,7 +185,7 @@ internal static class WorldStateDigest
         IReadOnlyList<WorldEntitySnapshot> snapshots, WorldId world, WorldEpoch epoch, Tick tick)
     {
         using var digest = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
-        Add(digest, 5); // P27: include authorized movement session/ordering in state digest
+        Add(digest, 6); // P28: preserve server motion plan, priority, replay and P23 request versions
         Add(digest, world.Value);
         Add(digest, epoch.Value);
         Add(digest, tick.Value);
@@ -296,6 +296,39 @@ internal static class WorldStateDigest
             Add(digest, (ulong)movement.TickDuration.Milliseconds);
             Add(digest, (ulong)movement.Mode);
             AddDecimal(digest, movement.EffectiveSpeed);
+
+            var motion = item.Motion;
+            Add(digest, (ulong)motion.Kind);
+            Add(digest, (ulong)motion.State);
+            Add(digest, unchecked((ulong)motion.Priority));
+            Add(digest, unchecked((ulong)motion.MotionVersion));
+            Add(digest, unchecked((ulong)motion.RequestVersion));
+            Add(digest, unchecked((ulong)motion.EnvironmentVersion));
+            Add(digest, motion.LastTick.Value);
+            Add(digest, motion.Deadline.HasValue ? 1UL : 0UL);
+            if (motion.Deadline is { } motionDeadline) Add(digest, motionDeadline.Value);
+            AddDouble(digest, motion.Goal.X);
+            AddDouble(digest, motion.Goal.Y);
+            AddDouble(digest, motion.Goal.Z);
+            AddRelated(digest, motion.Target);
+            Add(digest, (ulong)motion.LegIndex);
+            Add(digest, (ulong)motion.PathIndex);
+            Add(digest, (ulong)motion.PathCount);
+            AddDouble(digest, motion.SegmentProgress);
+            AddText(digest, motion.PathDigest ?? string.Empty);
+            Add(digest, (ulong)motion.NavigationStatus);
+            AddDouble(digest, motion.Home.X);
+            AddDouble(digest, motion.Home.Y);
+            AddDouble(digest, motion.Home.Z);
+            AddDouble(digest, motion.TargetAnchor.X);
+            AddDouble(digest, motion.TargetAnchor.Y);
+            AddDouble(digest, motion.TargetAnchor.Z);
+            AddDouble(digest, motion.BallisticStart.X);
+            AddDouble(digest, motion.BallisticStart.Y);
+            AddDouble(digest, motion.BallisticStart.Z);
+            Add(digest, motion.BallisticProgress);
+            Add(digest, motion.TrajectoryTicks);
+            AddText(digest, motion.CommandDigest ?? string.Empty);
         }
 
         return Convert.ToHexString(digest.GetHashAndReset());

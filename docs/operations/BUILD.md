@@ -203,3 +203,10 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/L
 - .NET 10.0.404，全部严格 `--locked-mode`，P03 manifest 与公开 API Security.Contracts 引用核验通过。
 - 稳定实现 #226、独立 REVIEW #227、正式 ACCEPTED HEAD #228 均 **15/15 SUCCESS**，344 Unit / 16 Architecture，P27 六类真实 Probe + 全部旧十四项 CI PASS；原始 `world-movement` Artifact 保存首版基准与 PASS。
 - #224 Nullable CS8602 真失败修复后未抑制分析器；P27 微基准记录而不设阈值，不能冒充 P64。下一 P28 Motion/Path。
+
+## P28 Server Motion / Path 独立真实集成
+
+- P23 `INavigationQuery` 通过 Runtime.Abstractions 不可变请求/回执注入，Runtime.World 无新增外部运行时生产引用；新 MotionProbe 额外引用 `Runtime.Environment` 平面障碍参考 Adapter，独立锁文件，避免将测试参考环境引入生产服务器模块。
+- `dotnet restore tests/Integration/LegendsOfTheDungeon.MotionProbe/LegendsOfTheDungeon.MotionProbe.csproj --locked-mode`。
+- `dotnet run --project tests/Integration/LegendsOfTheDungeon.MotionProbe/LegendsOfTheDungeon.MotionProbe.csproj --configuration Release --no-restore`；全部十个模式、真实有障碍路径/无路、版本过期/抢占/取消、目标退休/截止、P25/P26/P27、P19 v6 的通关标记 `P28_SERVER_MOTION_INTEGRATION_PASS`。
+- 第十六个独立 CI 阻断 Job `server-motion` 保留输出 `artifacts/server-motion/report.txt`；全部现有十五 Job（342+ Unit/16 Architecture 及旧集成）仍原样阻断。第一次运行结果尚未得到，不应以设计断言冒充 CI PASS。
