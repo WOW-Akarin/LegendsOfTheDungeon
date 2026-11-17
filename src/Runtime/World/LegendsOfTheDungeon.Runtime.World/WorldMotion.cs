@@ -136,9 +136,9 @@ public sealed class WorldMotionCommand
         {
             if (durationTicks is < 1 or > 20) throw new ArgumentOutOfRangeException(nameof(durationTicks));
         }
-        else if (durationTicks != 0)
+        else
         {
-            throw new ArgumentOutOfRangeException(nameof(durationTicks));
+            ArgumentOutOfRangeException.ThrowIfNotEqual(durationTicks, 0u);
         }
 
         Kind = kind;
@@ -714,11 +714,11 @@ public sealed partial class WorldInstance
             {
                 var next = motion.BallisticProgress + 1;
                 var fraction = (double)next / motion.Command.DurationTicks;
-                var destination = Interpolate(motion.BallisticStart, motion.Goal, fraction);
+                var ballisticDestination = Interpolate(motion.BallisticStart, motion.Goal, fraction);
                 if (motion.Command.Kind == WorldMotionKind.Jump)
-                    destination = new Position(destination.X, destination.Y,
-                        destination.Z + 4 * 1.5 * fraction * (1 - fraction));
-                var result = ApplyServerTransform(context, identity, before, destination);
+                    ballisticDestination = new Position(ballisticDestination.X, ballisticDestination.Y,
+                        ballisticDestination.Z + 4 * 1.5 * fraction * (1 - fraction));
+                var result = ApplyServerTransform(context, identity, before, ballisticDestination);
                 if (result != WorldMotionResult.Advanced) return result;
                 motion.BallisticStep(tick);
                 if (next == motion.Command.DurationTicks)
