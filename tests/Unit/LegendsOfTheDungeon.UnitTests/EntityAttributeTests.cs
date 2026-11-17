@@ -322,6 +322,49 @@ public sealed class EntityAttributeTests
     }
 
     [Fact]
+    public void ModifierCapacityRejectsTheNextSourceWithoutConsumingSequence()
+    {
+        var (world, executor, identity) = Create();
+        Run(executor, ctx =>
+        {
+            world.SetBaseAttribute(ctx, identity, Power, 10m);
+            for (ulong i = 1; i <= 256; i++)
+            {
+                Assert.Equal(WorldEntityResult.ModifierAdded,
+                    world.GrantAttributeModifier(ctx, identity, new AttributeModifierSource(i),
+                        Power, AttributeModifierOperation.Flat, 1m, 0, out var handle));
+                Assert.Equal(i, handle.Sequence);
+            }
+
+            Assert.Throws<InvalidOperationException>(() =>
+                world.GrantAttributeModifier(ctx, identity, new AttributeModifierSource(257),
+                    Power, AttributeModifierOperation.Flat, 1m, 0, out _));
+        });
+        var saved = Snapshot(world, identity);
+        Assert.Equal(266m, Stat(saved, Power));
+        Assert.Equal(256, saved.Modifiers.Count);
+        Assert.Equal(256UL, saved.LastModifierSequence);
+    }
+
+    [Fact]
+    public void ResourceDecimalOverflowAndUnknownResourceKeepOriginalValue()
+    {
+        var (world, executor, identity) = Create();
+        Run(executor, ctx =>
+        {
+            world.SetBaseAttribute(ctx, identity, HealthMax, 100m);
+            world.DefineEntityResource(ctx, identity, Health, HealthMax, 10m);
+            Assert.Equal(WorldEntityResult.ResourceOutOfRange,
+                world.ChangeEntityResource(ctx, identity, Health, decimal.MaxValue));
+            Assert.Equal(WorldEntityResult.ResourceOutOfRange,
+                world.SetEntityResource(ctx, identity, Health, -0.1m));
+            Assert.Equal(WorldEntityResult.NotFound,
+                world.ChangeEntityResource(ctx, identity, new AttributeKey("missing"), 1m));
+        });
+        Assert.Equal(10m, Resource(Snapshot(world, identity), Health).Current);
+    }
+
+    [Fact]
     public void KeysAndDefinitionsRejectInvalidInput()
     {
         Assert.Throws<ArgumentException>(() => new AttributeKey(""));
