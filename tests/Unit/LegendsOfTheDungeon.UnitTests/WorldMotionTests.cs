@@ -370,9 +370,14 @@ public sealed class WorldMotionTests
         var pipeline = new WorldTickPipeline(world, clock, [new WorldMotionTickStep(Step)]);
         clock.AdvanceTicks(1);
         Run(executor, ctx => pipeline.Execute(ctx, new Tick(1)));
+        Assert.True(world.TryGetSnapshot(Id().Id, out var initialCell));
+        Assert.Equal(new Position(.5, .5, 0), initialCell.Transform.Position);
+        Assert.Equal(2, initialCell.Motion.PathIndex);
+        clock.AdvanceTicks(1);
+        Run(executor, ctx => pipeline.Execute(ctx, new Tick(2)));
         Assert.True(world.TryGetSnapshot(Id().Id, out var entity));
         Assert.NotEqual(new Position(.5, .5, 0), entity.Transform.Position);
-        Assert.Equal(new Tick(1), entity.Motion.LastTick);
+        Assert.Equal(new Tick(2), entity.Motion.LastTick);
         Assert.Equal(64, pipeline.LastStateHash.Length);
     }
 

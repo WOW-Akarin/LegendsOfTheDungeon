@@ -304,8 +304,14 @@ static void TickAndReplay()
         var pipeline = new WorldTickPipeline(world, clock, [new WorldMotionTickStep(new Duration(50))]);
         clock.AdvanceTicks(1);
         Run(executor, ctx => pipeline.Execute(ctx, new Tick(1)));
+        Require(world.TryGetSnapshot(Id().Id, out var zeroSegment) &&
+            zeroSegment.Motion.PathIndex == 2 &&
+            zeroSegment.Transform.Position == new Position(.5, .5, 0),
+            "P23 initial zero-length segment should advance path index without moving");
+        clock.AdvanceTicks(1);
+        Run(executor, ctx => pipeline.Execute(ctx, new Tick(2)));
         Require(world.TryGetSnapshot(Id().Id, out var snapshot) &&
-            snapshot.Motion.LastTick == new Tick(1) &&
+            snapshot.Motion.LastTick == new Tick(2) &&
             snapshot.Transform.Position != new Position(.5, .5, 0),
             "P19 Simulation phase did not actually advance Motion");
         return pipeline.LastStateHash;
