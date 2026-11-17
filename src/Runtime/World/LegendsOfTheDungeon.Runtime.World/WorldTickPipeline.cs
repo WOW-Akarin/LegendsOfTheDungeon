@@ -185,7 +185,7 @@ internal static class WorldStateDigest
         IReadOnlyList<WorldEntitySnapshot> snapshots, WorldId world, WorldEpoch epoch, Tick tick)
     {
         using var digest = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
-        Add(digest, 4); // P25: add source-sensitive attribute/resource ledger to deterministic digest
+        Add(digest, 5); // P27: include authorized movement session/ordering in state digest
         Add(digest, world.Value);
         Add(digest, epoch.Value);
         Add(digest, tick.Value);
@@ -285,6 +285,17 @@ internal static class WorldStateDigest
                 AddDecimal(digest, resource.Current);
                 AddDecimal(digest, resource.Maximum);
             }
+
+            var movement = item.Movement;
+            Add(digest, movement.Bound ? 1UL : 0UL);
+            if (movement.SubjectKey is { } subjectKey) AddText(digest, subjectKey);
+            Add(digest, movement.SubjectOrigin.HasValue ? (ulong)movement.SubjectOrigin.Value : 0);
+            Add(digest, movement.SessionVersion);
+            Add(digest, movement.LastSequence);
+            Add(digest, movement.LastTick.Value);
+            Add(digest, (ulong)movement.TickDuration.Milliseconds);
+            Add(digest, (ulong)movement.Mode);
+            AddDecimal(digest, movement.EffectiveSpeed);
         }
 
         return Convert.ToHexString(digest.GetHashAndReset());

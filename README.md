@@ -26,4 +26,4 @@ LegendsOfTheDungeon（副本霸主）是参考 AzerothCore 可泛化机制设计
 
 用户要求直接更新 `main`、不创建分支；仍按独立实现/REVIEW/ACCEPTED 三阶段分别保留真实 CI 证据。
 
-下一阶段：P27 — Movement State / Speed / Input（P20/P25/P26/P60.F 前置已满足）。
+当前开发：P27 — Movement State / Speed / Input（IN_PROGRESS，尚未完成首次真实 CI），前置 P20/P25/P26/P60.F 已满足；新 Move Probe 将独立阻断 CI。

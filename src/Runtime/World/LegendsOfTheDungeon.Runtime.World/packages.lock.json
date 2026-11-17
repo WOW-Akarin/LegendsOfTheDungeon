@@ -17,6 +17,12 @@
           "LegendsOfTheDungeon.Kernel": "[1.0.0, )",
           "LegendsOfTheDungeon.Runtime.Abstractions": "[1.0.0, )"
         }
+      },
+      "legendsofthedungeon.security.contracts": {
+        "type": "Project",
+        "dependencies": {
+          "LegendsOfTheDungeon.Kernel": "[1.0.0, )"
+        }
       }
     }
   }

@@ -106,7 +106,25 @@ public enum WorldEntityResult
     /// <summary>资源当前值确实改变。</summary>
     ResourceChanged,
     /// <summary>资源超出当前最大值或小于零。</summary>
-    ResourceOutOfRange
+    ResourceOutOfRange,
+    /// <summary>P27 移动主体成功绑定或轮换会话。</summary>
+    MovementBound,
+    /// <summary>P27 移动输入已接受（包括原地静止）。</summary>
+    MovementAccepted,
+    /// <summary>移动尚未建立可信主体绑定。</summary>
+    MovementUnbound,
+    /// <summary>输入的主体键或会话版本与真实绑定不符。</summary>
+    MovementSubjectMismatch,
+    /// <summary>输入序号或逻辑 Tick 已被消费或倒退。</summary>
+    MovementOutOfOrder,
+    /// <summary>输入跨越过多逻辑 Tick，必须可信重新建立基准。</summary>
+    MovementTickGapExceeded,
+    /// <summary>速度属性未定义或超过当前 P27 上限。</summary>
+    MovementInvalidSpeed,
+    /// <summary>位置位移超出速度与逻辑 Tick 预算。</summary>
+    MovementSpeedExceeded,
+    /// <summary>移动被眩晕、定身或恐惧等控制禁止。</summary>
+    MovementControlled
 }
 
 /// <summary>注册前的不可变实体创建意图，不向调用方交付实体可变能力。</summary>
@@ -142,7 +160,7 @@ public readonly record struct WorldEntitySnapshot
         IReadOnlyList<EntityControlGrantSnapshot> controlGrants,
         IReadOnlyList<EntityTagGrantSnapshot> tagGrants,
         IReadOnlyList<string> permanentTags, ulong controlSequence, ulong tagSequence,
-        EntityAttributeSnapshot attributes)
+        EntityAttributeSnapshot attributes, WorldMovementSnapshot movement)
     {
         Identity = identity;
         Lifecycle = lifecycle;
@@ -158,6 +176,7 @@ public readonly record struct WorldEntitySnapshot
         ControlSequence = controlSequence;
         TagSequence = tagSequence;
         Attributes = attributes;
+        Movement = movement;
     }
 
     /// <summary>包含代际的实体身份。</summary>
@@ -201,6 +220,9 @@ public readonly record struct WorldEntitySnapshot
 
     /// <summary>当前基础/派生属性、来源修饰及资源的不可变快照。</summary>
     public EntityAttributeSnapshot Attributes { get; }
+
+    /// <summary>当前移动输入会话及基准，位置仍由 Transform 唯一持有。</summary>
+    public WorldMovementSnapshot Movement { get; }
 }
 
 /// <summary>可选同步清理回调；供未来 Timer、订阅和异步请求撤销器接入。</summary>
@@ -461,7 +483,14 @@ public sealed partial class WorldInstance
             entry.Capabilities.Control.ActiveGrants, entry.Capabilities.Tags.ActiveGrants,
             entry.Capabilities.Tags.PermanentTags,
             entry.Capabilities.Control.LastSequence, entry.Capabilities.Tags.LastSequence,
-            entry.Capabilities.Attributes.Capture());
+            entry.Capabilities.Attributes.Capture(),
+            MovementSnapshot(entry));
+
+    private static WorldMovementSnapshot MovementSnapshot(Entry entry)
+    {
+        WorldSpeedModel.TrySpeed(entry.Capabilities, out var speed);
+        return entry.Movement.Capture(speed);
+    }
 
     private static bool IsWithin(Position point, Position center, double radius) =>
         WorldSpatialIndex.IsWithin(point, center, radius);
@@ -702,7 +731,11 @@ public sealed partial class WorldInstance
     /// <param name="identity">活动实体精确身份。</param>
     /// <param name="transform">新的有限位置与方向。</param>
     /// <returns>重定位或拒绝状态。</returns>
-    public WorldEntityResult Relocate(IWorldWriteContext context, EntityIdentity identity, Transform transform)
+    public WorldEntityResult Relocate(IWorldWriteContext context, EntityIdentity identity, Transform transform) =>
+        RelocateCore(context, identity, transform, invalidateMovement: true);
+
+    private WorldEntityResult RelocateCore(IWorldWriteContext context, EntityIdentity identity,
+        Transform transform, bool invalidateMovement)
     {
         Demand(context);
         lock (_gate)
@@ -733,6 +766,7 @@ public sealed partial class WorldInstance
                 context.Demand(identity.World, identity.Epoch, identity.Id, identity.Generation);
                 _spatial.Move(identity, originalCell, destination);
                 entry.Capabilities.Transform.Relocate(context, transform);
+                if (invalidateMovement) entry.Movement.Invalidate();
                 return WorldEntityResult.Relocated;
             }
             catch
@@ -1055,6 +1089,7 @@ public sealed partial class WorldInstance
                 return WorldEntityResult.AlreadyCompleted;
             }
 
+            entry.Movement.Invalidate();
             ClearInboundTargets(context, identity);
             return WorldEntityResult.LifeChanged;
         }
@@ -1297,11 +1332,13 @@ public sealed partial class WorldInstance
         {
             Identity = seed.Identity;
             Capabilities = new EntityCapabilities(seed.Identity, seed.Transform);
+            Movement = new WorldMovementLedger();
             State = WorldEntityLifecycle.Attached;
         }
 
         internal EntityIdentity Identity { get; }
         internal EntityCapabilities Capabilities { get; }
+        internal WorldMovementLedger Movement { get; }
         internal WorldEntityLifecycle State { get; set; }
         internal List<IWorldEntityCleanup> Cleanup { get; } = [];
     }

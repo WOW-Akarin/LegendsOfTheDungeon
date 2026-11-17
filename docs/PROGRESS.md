@@ -2,7 +2,7 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：P25 — Stats / Resources / Modifier（ACCEPTED，目标 C）；下一阶段 P27
+当前阶段：P27 — Movement State / Speed / Input（IN_PROGRESS，目标 C）
 正式 ACCEPTED：P00–P23、P24(B)、P25(C)、P26(C)；P25 稳定实现/独立 REVIEW/正式 ACCEPTED HEAD 的 14 Job CI 均全绿。
 
 ## 基线真实证据
@@ -139,3 +139,12 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - 初次 #217 xUnit2031 BUILD FAIL、#218 旧 P20 快照相等 330/331 Unit FAIL，均真实修复且保留证据，无 Gate 豁免；#219 首次 14 Job 全绿，#220 加固后全绿。
 - 现进入下个阶段 **P27 — Movement State / Speed / Input**（直接依赖 P20/P25/P26/P60.F 均已满足）。目前 P27 未实现/未测试，不能将其纳入 P25 结论。P19 digest v4 不兼容 v3 的历史 StateHash；P62/P64 仍为后续专项。
 - 本归档 HEAD 自身的 CI 需提交后独立验证，不能以 #222 代替。
+
+## P27 初次实现（IN_PROGRESS，首次 CI 待运行）
+
+- 上一真实完整基线 P25 归档 HEAD `bd10dfe75eda9fb3b1608aba1b277f73faaf32d5`，CI #223（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44000218931）**14/14 SUCCESS**，334 Unit / 16 Architecture。P27 直接依赖 P20/P25/P26/P60.F 均可复用。
+- P27 在 Runtime.World 的独立 `WorldMovement.cs` 实现移动输入模型、SpeedModel、会话进度与真实 WorldInstance 重定位。仅保存主体/会话/输入序号/逻辑 Tick，不保存第二份 Position；唯一 Transform 与 Spatial 仍由 P20 Relocate 原子更新。
+- 不信任客户端声明的主体键：`WorldMovementIntent` 改为携带 P60.F 的 `BoundIdentity`，验证来源+主体+会话版本；外部 P18 `OfferExternal` 仍默认拒绝 LocalTest、匿名与未授权。可信 Host 负责先绑定主体，P60 正式生产身份与具体协议解析未在本阶段凭空实现。
+- `movement.speed` 来自 P25 原有 Attr/Modifier（上限 100 m/s），P26 Root/Stun/Fear 与 P24 死亡禁止移动；旧序号/旧 Tick/跨 4 Tick 跳变、越界空间目标拒绝不消费序号。手工世界传送/死亡显式使移动会话失效。
+- P19 WorldStateDigest 从 v4 升 v5，纳入主体来源、会话版本、最后成功序号/逻辑 Tick、当前速度与模式；旧 Hash 不可直接跨版本比对。
+- 新 Unit + 真实 P18/P17/P19/P60.F MovementProbe 五类场景及 100 实体×5 Tick 的记录型 Release 速度基准；新增第 15 个阻断 Job `world-movement`，本次实现尚未经过 CI，**NOT_RUN/NOT_ACCEPTED**。参见 [P27](progress/P27.md) 和 [WORLD_MOVEMENT](modules/WORLD_MOVEMENT.md)。

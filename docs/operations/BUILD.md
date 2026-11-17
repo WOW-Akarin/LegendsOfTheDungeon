@@ -190,3 +190,10 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/L
 - 新增独立 `tests/Integration/LegendsOfTheDungeon.AttributesProbe`，复用 P26 WorldControlProbe 的现有已锁定项目依赖图，新独立阻断 CI Job `entity-attributes` 使总 Job 数达到 14。
 - `dotnet restore tests/Integration/LegendsOfTheDungeon.AttributesProbe/LegendsOfTheDungeon.AttributesProbe.csproj --locked-mode` 后运行 `dotnet run --project tests/Integration/LegendsOfTheDungeon.AttributesProbe/LegendsOfTheDungeon.AttributesProbe.csproj --configuration Release --no-restore`；成功标记 `P25_ATTRIBUTES_INTEGRATION_PASS`，报告保存为 `artifacts/entity-attributes/report.txt`。
 - `./eng/verify.sh` 包括 Unit 与 Architecture，全部既有 Integration CI 仍阻断；实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD #222 均 14/14 SUCCESS（334 Unit、16 Architecture、P25 五类真实 Probe + 旧十三项回归），可在对应 Actions run / artifact 复现。
+
+## P27 Movement State / Speed / Input（首次实现尚待 CI）
+
+- Runtime.World 明确依赖已验收的 `Security.Contracts` P60.F `BoundIdentity` 类型；P03 manifest 的允许依赖与全部受影响的 Project NuGet Lock Graph 同步更新，未新增生产程序集或第三方包。
+- 额外 `tests/Integration/LegendsOfTheDungeon.MovementProbe` 只引用已存在的生产项目，在 `--locked-mode` 下验证真正 P17/P18/P19/P20/P25/P26 交互和本地测试身份拒绝。
+- `dotnet restore tests/Integration/LegendsOfTheDungeon.MovementProbe/LegendsOfTheDungeon.MovementProbe.csproj --locked-mode` 后 `dotnet run --project tests/Integration/LegendsOfTheDungeon.MovementProbe/LegendsOfTheDungeon.MovementProbe.csproj --configuration Release --no-restore`；标记 `P27_MOVEMENT_INTEGRATION_PASS`，写入 `artifacts/world-movement/report.txt`。
+- 第十五个阻断 CI Job `world-movement` 包含有 100 实体 × 5 Tick × 50ms 逻辑时钟、500 次真正移动输入的 Release p50/p95/p99 记录型基准。仅记录 SDK/运行时/CPU/OS/数量及样本，不设置未论证的性能通过阈值，P64 仍待后续专项。

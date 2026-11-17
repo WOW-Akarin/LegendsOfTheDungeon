@@ -5,7 +5,7 @@
 
 ## 当前最新阶段
 
-P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前下一阶段 **P27 Movement State / Speed / Input**（依赖 P20/P25/P26/P60.F），未开始。main 直推、不创建分支。
+P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（IN_PROGRESS）**（依赖 P20/P25/P26/P60.F），首次真实 CI 尚未运行。main 直推、不创建分支。
 
 ## 前置阶段
 
@@ -113,3 +113,9 @@ P25 稳定实现 #220、独立 REVIEW HEAD `6d66ae9` #221 **各 14/14 SUCCESS**�
 - P19 状态摘要已由 v3 升 v4，加入实体属性/派生/资源/来源序号；快照版本需要按构建区分。没有引入 WoW 专属值、数据库事务或不可信入口。
 - 下一按 [P27 路线图](DEVELOPMENT_ROADMAP.md) 设计 MovementState、SpeedModel、含主体与序号的 MovementIntent，真正调用 P18 WorldExecutor 内 P20 Relocate，严格 P60.F 授权与 P25/P26 状态读取。P27 未开始，绝不把 P25 的 Probe 说成移动输入已通过。
 - 最终归档 HEAD CI 尚需另行检查；实时可信结果以本段和 [P25 阶段记录](progress/P25.md) 为准。
+
+## P27 当前恢复入口（2026-11-17）
+
+- 上一已验证基线 P25 归档 HEAD `bd10dfe75eda9fb3b1608aba1b277f73faaf32d5` CI #223 **14/14 SUCCESS**。P27 正在 main 直接实现（未创建分支）。
+- 新增 `WorldMovement` 独立部分与严格 P60.F `BoundIdentity` 依赖、P25 Speed Stat、P26 控制、P20 唯一 Transform/Spatial 重定位。P19 digest schema v5，旧 schema v4 Hash 不可直接比较；P27 新真实 MovementProbe 报告标记 `P27_MOVEMENT_INTEGRATION_PASS`，记录型 Release baseline。
+- 新增第十五个 CI Job `world-movement`。首次提交 HEAD 的 CI 尚未验证，不可正式 ACCEPTED。恢复应先检查 [P27 阶段进度](progress/P27.md) → CI → 失败修复 → 独立四视角 REVIEW HEAD CI → 正式 ACCEPTED HEAD CI → 归档 CI。
