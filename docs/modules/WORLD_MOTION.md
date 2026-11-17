@@ -25,3 +25,8 @@
 - 真实 `tests/Integration/LegendsOfTheDungeon.MotionProbe` 的六组集成，输出 `P28_SERVER_MOTION_INTEGRATION_PASS`，引用 P23 平面障碍 Adapter 仅用于测试，不将 Runtime.Environment 引入生产 Runtime.World；新增第 16 个 CI 阻断 Job `server-motion`，保留旧十五 Job。
 - 完成目标 C 的前提是稳定实现 HEAD、独立四视角 REVIEW HEAD、正式 ACCEPTED HEAD 各自 **16/16 SUCCESS**。当前首轮尚未运行，P28 **NOT_ACCEPTED**。
 - P29 更严格速度/障碍/异常跳变与处罚、真实 3D NavMesh、多层高度、动态障碍与 P62/P64 长稳性能、P60 生产 Socket 认证均不在此处宣称完成。
+
+## Spline 速度预算安全补强（待 CI）
+
+- smoothstep 对参数的导数中点最高为 1.5，不能简单用 `speed×Δtick` 除以段长更新 `t`，否则中点实际位移可超速。P28 补强先计算候选平滑位移比例，再以 `旧平滑比例 + speed×Δtick/段长` 为硬上限，使用固定 40 次二分反解参数，确保真正 Transform 位移符合 P25 速度预算且 Replay 确定性。
+- 真实 P23 BudgetExceeded、Cancelled 结果终结为 Blocked（保留原状态）、非法路径仍保留待处理票据，严禁穿越未知/非法点；补强实现及测试需要新的完整十六 Job CI 通过，当前 NOT_RUN。

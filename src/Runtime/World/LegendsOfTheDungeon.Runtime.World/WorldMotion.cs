@@ -749,9 +749,18 @@ public sealed partial class WorldInstance
             var budget = (double)effective * duration.Milliseconds / 1000;
             var fractionAdvance = distance <= 1e-12 ? 1 : budget / distance;
             var nextProgress = Math.Min(1d, progress + fractionAdvance);
-            var interpolated = motion.Command.Kind == WorldMotionKind.Spline
-                ? nextProgress * nextProgress * (3 - 2 * nextProgress)
-                : nextProgress;
+            var interpolated = nextProgress;
+            if (motion.Command.Kind == WorldMotionKind.Spline)
+            {
+                // smoothstep 的中点斜率可达 1.5，直接按参数 t 推进会超过速度预算。
+                // 将目标平滑弧长上限钳到实际每 Tick 位移预算，再反求参数进度。
+                var previousDistanceFraction = Smoothstep(progress);
+                var candidateDistanceFraction = Smoothstep(nextProgress);
+                var allowedDistanceFraction = Math.Min(candidateDistanceFraction,
+                    previousDistanceFraction + fractionAdvance);
+                nextProgress = InverseSmoothstep(allowedDistanceFraction);
+                interpolated = Smoothstep(nextProgress);
+            }
             var destination = Interpolate(source, destinationPoint, interpolated);
             var relocated = ApplyServerTransform(context, identity, before, destination);
             if (relocated != WorldMotionResult.Advanced) return relocated;
@@ -810,6 +819,25 @@ public sealed partial class WorldInstance
         if (FindActive(identity, out var entry) == WorldEntityResult.Added)
             entry!.Motion.Fail(WorldMotionState.Blocked);
         return WorldMotionResult.Blocked;
+    }
+
+    private static double Smoothstep(double fraction) =>
+        fraction * fraction * (3 - 2 * fraction);
+
+    // 固定迭代次数而不是设备依赖的容差/时间循环；保证 Replay 一致。
+    private static double InverseSmoothstep(double distanceFraction)
+    {
+        if (distanceFraction <= 0) return 0;
+        if (distanceFraction >= 1) return 1;
+        var low = 0d;
+        var high = 1d;
+        for (var i = 0; i < 40; i++)
+        {
+            var midpoint = (low + high) / 2;
+            if (Smoothstep(midpoint) < distanceFraction) low = midpoint;
+            else high = midpoint;
+        }
+        return (low + high) / 2;
     }
 
     private static Position Interpolate(Position start, Position goal, double fraction) =>

@@ -402,6 +402,84 @@ public sealed class WorldMotionTests
     }
 
     [Fact]
+    public void SplineActualDistancePerTickCannotExceedP25EffectiveSpeed()
+    {
+        var (world, executor) = Start();
+        var port = Port();
+        var pending = Begin(world, executor, new WorldMotionCommand(WorldMotionKind.Spline,
+            points: [new Position(3.5, .5, 0)]));
+        Apply(world, executor, port, pending);
+        Run(executor, ctx => Assert.Equal(WorldEntityResult.AttributeChanged,
+            world.SetBaseAttribute(ctx, Id(), WorldSpeedModel.SpeedStat, 2m)));
+        var previous = new Position(.5, .5, 0);
+        for (ulong tick = 1; tick <= 16; tick++)
+        {
+            Run(executor, ctx =>
+            {
+                var result = world.AdvanceMotion(ctx, Id(), new Tick(tick), Step);
+                Assert.True(result is WorldMotionResult.Advanced or WorldMotionResult.Paused);
+            });
+            Assert.True(world.TryGetSnapshot(Id().Id, out var snapshot));
+            var moved = previous.DistanceTo(snapshot.Transform.Position).Meters;
+            Assert.True(moved <= .10000001d,
+                $"Spline crossed speed budget on Tick {tick}: moved {moved} metres for 2 m/s * 50 ms");
+            previous = snapshot.Transform.Position;
+        }
+        Assert.True(previous.X > .5, "Spline did not progress at all");
+    }
+
+    [Theory]
+    [InlineData(EnvironmentQueryStatus.BudgetExceeded)]
+    [InlineData(EnvironmentQueryStatus.Cancelled)]
+    public void RealP23BudgetAndCancelledReplyFailClosedWithoutStraightPath(
+        EnvironmentQueryStatus expected)
+    {
+        var (world, executor) = Start();
+        var port = Port();
+        var request = Begin(world, executor, new WorldMotionCommand(WorldMotionKind.Point,
+            goal: new Position(8.5, .5, 0)));
+        NavigationPathResult result;
+        if (expected == EnvironmentQueryStatus.BudgetExceeded)
+        {
+            result = port.FindPath(new NavigationRequest(request.Request.Start, request.Request.Goal,
+                request.Request.RequestVersion, MaxExpandedCells: 1));
+        }
+        else
+        {
+            using var cancellation = new CancellationTokenSource();
+            cancellation.Cancel();
+            result = port.FindPath(request.Request, cancellation.Token);
+        }
+        Assert.Equal(expected, result.Status);
+        Run(executor, ctx => Assert.Equal(WorldMotionResult.Blocked,
+            world.ApplyMotionPath(ctx, request, result)));
+        Assert.True(world.TryGetSnapshot(Id().Id, out var entity));
+        Assert.Equal(WorldMotionState.Blocked, entity.Motion.State);
+        Assert.Equal(expected, entity.Motion.NavigationStatus);
+        Assert.Equal(new Position(.5, .5, 0), entity.Transform.Position);
+        Assert.False(world.TryGetPendingMotionPath(Id(), out _));
+    }
+
+    [Fact]
+    public void MalformedP23RouteCannotConsumePendingRequestOrMutateSpatial()
+    {
+        var (world, executor) = Start();
+        var request = Begin(world, executor, new WorldMotionCommand(WorldMotionKind.Point,
+            goal: new Position(3.5, .5, 0)));
+        var forged = new NavigationPathResult(EnvironmentQueryStatus.Success,
+            request.Request.RequestVersion, request.EnvironmentVersion,
+            [request.Request.Start, new Position(1e20, 0, 0), request.Request.Goal]);
+        Run(executor, ctx => Assert.Equal(WorldMotionResult.InvalidPath,
+            world.ApplyMotionPath(ctx, request, forged)));
+        Assert.True(world.TryGetPendingMotionPath(Id(), out var stillPending));
+        Assert.Equal(request, stillPending);
+        Assert.Single(world.QueryNearby(new Position(.5, .5, 0), default));
+        Apply(world, executor, Port(), request);
+        Assert.True(world.TryGetMotion(Id(), out var motion));
+        Assert.Equal(WorldMotionState.Active, motion.State);
+    }
+
+    [Fact]
     public void InvalidStrategyInputsFailBeforeWorldWrites()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
