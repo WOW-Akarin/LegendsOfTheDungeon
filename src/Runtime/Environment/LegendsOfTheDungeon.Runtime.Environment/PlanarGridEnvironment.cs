@@ -54,10 +54,7 @@ public sealed class PlanarGridEnvironment : ITerrainQuery, ICollisionQuery, INav
             throw new ArgumentOutOfRangeException(nameof(groundHeightMeters));
         }
 
-        if (environmentVersion <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(environmentVersion));
-        }
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(environmentVersion);
 
         _minX = minimumX;
         _minY = minimumY;
