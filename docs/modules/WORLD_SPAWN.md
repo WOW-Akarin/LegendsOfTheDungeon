@@ -43,3 +43,8 @@
 
 - World.State 为 Faulted/Stopped 时所有 SpawnRegistry 写 API、Capture 都拒绝；保留 `TryGet` 快照供可信诊断。Draining 期间 `Advance` 拒绝继续生成，静态/动态新增也因 P17 Running 状态拒绝。
 - 新增 P18 Scope 真实测试：Faulted 时 Tick/Despawn/SetLinkedRespawn/Capture 均不能成功，且 Version、LastProcessedTick、已确认 Current 不改变；Draining 不能推进 Spawn Timers，Stop 后不能再激活 Cell。加固 HEAD CI 仍需实际执行，不能提前宣称通过。
+
+## Draining 期间的副作用前置拒绝
+
+- `UnloadGrid`、`SetLinkedRespawn` 和 `ConfirmRecovered` 明确要求 P17 世界仍为 Running。尤其卸载 Grid 必须在退休任何确认实例前拒绝 Draining，以免发生先 Despawn 再 UnloadCell InvalidState 的部分提交；`Despawn` 仍可在 Draining 中用于可信关闭清理。
+- 增加对应真实 P18 生命周期单测。正式 REVIEW 前必须对最新 HEAD 跑完整 12 Job；此处不表示测试已通过。

@@ -330,6 +330,11 @@ public sealed class WorldSpawnRegistry : IWorldTickStep
     public SpatialCellResult UnloadGrid(IWorldWriteContext context, SpatialCellKey cell)
     {
         Demand(context);
+        if (_world.State != WorldLifecycle.Running)
+        {
+            return SpatialCellResult.InvalidState;
+        }
+
         lock (_gate)
         {
             if (!_world.TryGetCell(cell, out var snapshot))
@@ -382,6 +387,11 @@ public sealed class WorldSpawnRegistry : IWorldTickStep
         WorldSpawnKey? parent)
     {
         Demand(context);
+        if (_world.State != WorldLifecycle.Running)
+        {
+            return WorldSpawnResult.InvalidState;
+        }
+
         lock (_gate)
         {
             if (!_records.TryGetValue(child, out var source) ||
@@ -661,6 +671,11 @@ public sealed class WorldSpawnRegistry : IWorldTickStep
         EntityIdentity identity)
     {
         Demand(context);
+        if (_world.State != WorldLifecycle.Running)
+        {
+            return WorldSpawnResult.InvalidState;
+        }
+
         lock (_gate)
         {
             if (!_records.TryGetValue(key, out var record))

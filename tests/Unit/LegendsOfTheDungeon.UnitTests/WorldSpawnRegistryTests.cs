@@ -637,6 +637,30 @@ public sealed class WorldSpawnRegistryTests
         Assert.Equal(0, world.LiveCount);
     }
 
+    [Fact]
+    public void DrainingGridUnloadAndRelinkAreRejectedWithoutPartialRetirement()
+    {
+        var (world, executor, clock, registry) = Create();
+        RegisterAndLoad(world, executor, registry, Def(1, 10));
+        var spawned = Assert.Single(Step(executor, clock, registry));
+        var before = registry.Version;
+        Run(executor, ctx =>
+        {
+            Assert.True(world.BeginDrain(ctx));
+            Assert.Equal(SpatialCellResult.InvalidState,
+                registry.UnloadGrid(ctx, new SpatialCellKey(0, 0, 0)));
+            Assert.Equal(WorldSpawnResult.InvalidState,
+                registry.SetLinkedRespawn(ctx, Key(1), null));
+            Assert.Equal(WorldSpawnResult.InvalidState,
+                registry.ConfirmRecovered(ctx, Key(1), spawned.Identity));
+            Assert.Equal(before, registry.Version);
+            Assert.Equal(1, world.LiveCount);
+            Assert.True(world.Stop(ctx));
+        });
+        Assert.Equal(WorldLifecycle.Stopped, world.State);
+        Assert.Equal(0, world.LiveCount);
+    }
+
     private sealed class Work(Action<IWorldWriteContext> action) : IWorldAction
     {
         public void Execute(IWorldWriteContext context) => action(context);
