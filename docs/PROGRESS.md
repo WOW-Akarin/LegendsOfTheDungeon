@@ -2,7 +2,7 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：**P28 — Server Motion / Path（IN_PROGRESS，目标 C）**；P27 C 正式 ACCEPTED
+当前阶段：**P28 — Server Motion / Path（REVIEW，目标 C）**；P27 C 正式 ACCEPTED
 正式 ACCEPTED：P00–P23、P24(B)、P25(C)、P26(C)、P27(C)；P25 与 P27 实现/独立 REVIEW/正式 ACCEPTED HEAD 的真实 CI 均全绿（最新 P27 15 Job）。
 
 ## 基线真实证据
@@ -180,3 +180,10 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - 每个 P17 Entry 的 `WorldMotionLedger` 仅保存 Motion 状态、导航计划和静态出生锚点，不再建当前位置；实际位置与 P20 Spatial 同锁一致，只能走 `RelocateCore`。服务器取得控制权时废止 P27 客户端旧会话，玩家重新绑定则停止服务器 Motion。
 - P19 状态 Hash schema v5→v6，纳入运动类型、优先级、请求版本、环境版本、目标身份、进度、受信任轨迹及冻结路径/命令摘要，跨版本不可直接比较。新 Unit/独立 MotionProbe 覆盖全部十类运动、P23 真避障/无路、取消/抢占、过期目标/超时、P25/P26/P27 联动、P19 同 Tick 状态 Hash。
 - 新增第十六个完整阻断 CI Job `server-motion`；首次实现 `NOT_RUN`，禁止提前写 REVIEW/ACCEPTED。技术契约 [WORLD_MOTION](modules/WORLD_MOTION.md)，阶段追踪 [P28](progress/P28.md)。
+
+## P28 稳定实现与独立 REVIEW
+
+- 首次完整成功实现 HEAD `9b0dbd5bd53f5bc640f8247d5061ed7c7363546a`，CI #234（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44015689359）**16/16 SUCCESS**，363 Unit / 16 Architecture、10 模式真实 MotionProbe 和旧 15 Job PASS。
+- Spline 实际位移预算加固、P23 BudgetExceeded/Cancelled 和伪造路径回执 fail-closed 后，稳定 HEAD `19ccdf2f97311234c2e158c4f0d97729c8bba6fe`，CI #235（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016152259）**16/16 SUCCESS**，367 Unit / 16 Architecture；真实 P28 六组探针和全部历史集成均 PASS。
+- #230–#233 编译/测试真实失败与修复及对照证据完整保留在 [P28 阶段记录](progress/P28.md)；无分析器抑制或测试删减。
+- [P28 独立四视角 REVIEW](reviews/P28_SERVER_MOTION_REVIEW.md) 单独提交，当前阶段 **REVIEW**。REVIEW HEAD 自身 CI 尚未运行，正式 ACCEPTED **尚不能宣称**。

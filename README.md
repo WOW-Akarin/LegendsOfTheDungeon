@@ -26,6 +26,8 @@ LegendsOfTheDungeon（副本霸主）是参考 AzerothCore 可泛化机制设计
 
 用户要求直接更新 `main`、不创建分支；仍按独立实现/REVIEW/ACCEPTED 三阶段分别保留真实 CI 证据。
 
-当前开发：**P28 — Server Motion / Path（IN_PROGRESS）**，前置 P23/P27 已 ACCEPTED，首次新 MotionProbe 全量 16 Job CI 尚未完成。
+当前开发：**P28 — Server Motion / Path（REVIEW，稳定实现 CI #235 16/16 SUCCESS）**，前置 P23/P27 已 ACCEPTED，首次新 MotionProbe 全量 16 Job CI 尚未完成。
 
 - P27 归档 HEAD `7b7c84e` CI #229 15/15 SUCCESS；P28 十类服务器运动正在进行真实验证，禁止提前标记 ACCEPTED。
+
+- P28 实现 HEAD `19ccdf2` CI #235 全 16 Job SUCCESS（367 Unit/16 Architecture），十种 Motion 真集成通过；独立四视角 REVIEW 提交后尚待它自己的 CI 及正式验收。

@@ -210,3 +210,8 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/L
 - `dotnet restore tests/Integration/LegendsOfTheDungeon.MotionProbe/LegendsOfTheDungeon.MotionProbe.csproj --locked-mode`。
 - `dotnet run --project tests/Integration/LegendsOfTheDungeon.MotionProbe/LegendsOfTheDungeon.MotionProbe.csproj --configuration Release --no-restore`；全部十个模式、真实有障碍路径/无路、版本过期/抢占/取消、目标退休/截止、P25/P26/P27、P19 v6 的通关标记 `P28_SERVER_MOTION_INTEGRATION_PASS`。
 - 第十六个独立 CI 阻断 Job `server-motion` 保留输出 `artifacts/server-motion/report.txt`；全部现有十五 Job（342+ Unit/16 Architecture 及旧集成）仍原样阻断。第一次运行结果尚未得到，不应以设计断言冒充 CI PASS。
+
+## P28 稳定实现完整 CI
+
+- 实现 #234 首次 16/16 SUCCESS，363 Unit/16 Architecture。补强 P25 Spline 单 Tick 真实速度界、P23 取消/预算、错路径回执后实现 HEAD `19ccdf2` CI #235 **16/16 SUCCESS**，367/367 Unit、16/16 Architecture，P28 六组真实 Probe 全 PASS 和旧十五 Job 无回归。
+- 独立四视角 [P28 SERVER MOTION REVIEW](../reviews/P28_SERVER_MOTION_REVIEW.md) 已准备，须 REVIEW HEAD 与正式 ACCEPTED HEAD 分别跑 16 Job，不能以实现 HEAD #235 冒充。

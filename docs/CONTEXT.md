@@ -5,7 +5,7 @@
 
 ## 当前最新阶段
 
-P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（ACCEPTED，C）** 已具备三阶段真实 CI；当前 **P28 Server Motion / Path（IN_PROGRESS）**（直接依赖 P23/P27 ACCEPTED），首次真实 CI 尚未运行。main 直推、不创建分支。
+P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（ACCEPTED，C）** 已具备三阶段真实 CI；当前 **P28 Server Motion / Path（REVIEW）**（直接依赖 P23/P27 ACCEPTED），首次真实 CI 尚未运行。main 直推、不创建分支。
 
 ## 前置阶段
 
@@ -141,3 +141,7 @@ P27 可信主体/会话与有序移动实现 #225 **15/15 SUCCESS**（342 Unit�
 - 新 P28 `WorldMotion.cs` 和 `WorldMotionTickStep`：十类服务器运动状态机；P23 外部只读导航请求+当前实体代际/运动版本/请求序号/环境版本回执；P18 内版本核验与真正 P20 RelocateCore，P27 玩家会话与服务器运动互斥，控制/死亡/目标失效终止。P19 v6 StateHash 含未来导航状态；无第二份当前位置。
 - 新 `tests/Unit/.../WorldMotionTests.cs` 与独立真实 `MotionProbe`，固定 Seed/真实 P23 平面网格避障及 NoPath/Deadline；新增第十六个阻断 `server-motion` CI Job，输出 `P28_SERVER_MOTION_INTEGRATION_PASS`。正式结果必须等本 HEAD 16/16 CI；之后独立四视角 REVIEW HEAD CI → ACCEPTED HEAD CI → 归档 CI。
 - P28 的 Spline 当前是已验证导航路径段的平滑插值，Jump/Knockback 为有界固定 Tick 可信服务器轨迹；不是完整 3D NavMesh、动态碰撞、多层地图或 P29 位移反作弊/处罚。
+
+## P28 稳定实现与 REVIEW
+
+P28 十类服务器 Motion 的真实 P23/P18/P20 闭环首次成功 #234 **16/16 SUCCESS**（363 Unit），修复 Spline smoothstep 真实速度预算与追加 P23 失败/畸形结果负向后稳定 HEAD `19ccdf2f97311234c2e158c4f0d97729c8bba6fe` CI #235 **16/16 SUCCESS**（367 Unit /16 Architecture），P28 六组 Probe + 历史十五 Job 全绿；失败历史 #230–#233 归档。独立四视角审查 [P28_SERVER_MOTION_REVIEW](reviews/P28_SERVER_MOTION_REVIEW.md) 单独提交候选，必须检查其自身 CI 16/16，之后才正式 ACCEPTED。尚未进行 P29 Detection/Correction 或 P60 真实 Socket 身份认证。

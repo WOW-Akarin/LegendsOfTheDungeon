@@ -1,6 +1,6 @@
 # P28 — Server Motion / Path 技术契约
 
-状态：**IN_PROGRESS**（目标 C），直接依赖 P23 Terrain/Collision/Navigation B+C 与 P27 Movement C 均 ACCEPTED；首次实现 CI 尚未执行。
+状态：**REVIEW**（目标 C），直接依赖 P23 Terrain/Collision/Navigation B+C 与 P27 Movement C 均 ACCEPTED；首次实现 CI 尚未执行。
 
 ## 角色、唯一当前位置及状态机
 
@@ -30,3 +30,8 @@
 
 - smoothstep 对参数的导数中点最高为 1.5，不能简单用 `speed×Δtick` 除以段长更新 `t`，否则中点实际位移可超速。P28 补强先计算候选平滑位移比例，再以 `旧平滑比例 + speed×Δtick/段长` 为硬上限，使用固定 40 次二分反解参数，确保真正 Transform 位移符合 P25 速度预算且 Replay 确定性。
 - 真实 P23 BudgetExceeded、Cancelled 结果终结为 Blocked（保留原状态）、非法路径仍保留待处理票据，严禁穿越未知/非法点；补强实现及测试需要新的完整十六 Job CI 通过，当前 NOT_RUN。
+
+## 稳定实现与独立审查
+
+- 首次全绿 #234 16/16 SUCCESS（363 Unit），Spline 实际位移上限和 P23 BudgetExceeded/Cancelled/恶意路径加固后的实现 HEAD `19ccdf2f97311234c2e158c4f0d97729c8bba6fe` CI #235 **16/16 SUCCESS**（367 Unit /16 Architecture）。
+- [P28 四视角 REVIEW](../reviews/P28_SERVER_MOTION_REVIEW.md) 单独提交，REVIEW HEAD 和正式 ACCEPTED HEAD 仍须各自完整 16 Job 验证。
