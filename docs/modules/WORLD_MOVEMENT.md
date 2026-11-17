@@ -1,6 +1,6 @@
 # P27 — Movement State / Speed / Input 技术契约
 
-状态：REVIEW（目标 C）；P20/P25/P26/P60.F 前置 ACCEPTED；初始实现待真实 CI 复验。
+状态：ACCEPTED（目标 C）；P20/P25/P26/P60.F 前置 ACCEPTED；初始实现待真实 CI 复验。
 
 ## 唯一状态真相与职责
 
@@ -28,3 +28,8 @@
 
 - 稳定实现 HEAD `9367a9a` CI #226 **15/15 SUCCESS**，344 Unit、16 Architecture；第十五个世界移动探针六场景与全部旧 Job PASS，Release baseline #225 已记录。
 - 独立 [P27 四视角 REVIEW](../reviews/P27_MOVEMENT_REVIEW.md) 文件单独提交；审查 HEAD CI 尚未完成，正式 C 验收尚未作出。
+
+## P27 正式验收
+
+- 稳定实现 CI #226、独立 REVIEW CI #227 各 **15/15 SUCCESS**（344 Unit / 16 Architecture、真实 P27六类 Probe 和原有十四 Job）。本阶段目标 C 正式 ACCEPTED；正式状态 HEAD CI 待单独检验。
+- 下一 P28 Motion/Navigation，切勿把 P27 基础速度预算当成完整 P29 反作弊校验。

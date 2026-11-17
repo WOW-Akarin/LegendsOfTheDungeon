@@ -2,8 +2,8 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：P27 — Movement State / Speed / Input（REVIEW，目标 C）
-正式 ACCEPTED：P00–P23、P24(B)、P25(C)、P26(C)；P25 稳定实现/独立 REVIEW/正式 ACCEPTED HEAD 的 14 Job CI 均全绿。
+当前阶段：P27 — Movement State / Speed / Input（ACCEPTED，目标 C）
+正式 ACCEPTED：P00–P23、P24(B)、P25(C)、P26(C)、P27(C)；P25 稳定实现/独立 REVIEW/正式 ACCEPTED HEAD 的 14 Job CI 均全绿。
 
 ## 基线真实证据
 
@@ -154,3 +154,11 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - 初始实现 #224 CS8602 Build FAIL；修复 HEAD `e401899271be3853e4a85ddea70a86669fc81d83` CI #225 **15/15 SUCCESS**（342 Unit、16 Architecture），P27 真实六类 Probe 与旧十四 Job 全 PASS。
 - 额外边界加固 HEAD `9367a9ac29076bdaabc6dc356a900e1bb5ec646c` CI #226（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44010607879）**15/15 SUCCESS**，344 Unit、16 Architecture、全部 P27/旧 CI Job PASS。
 - [P27 四视角独立审查](reviews/P27_MOVEMENT_REVIEW.md) 单独提交，本阶段进入 **REVIEW**。审查 HEAD CI 尚未运行；正式 ACCEPTED 尚未下结论。
+
+## P27 正式 ACCEPTED 决议（状态 HEAD CI 待跑）
+
+- 稳定实现 HEAD `9367a9ac29076bdaabc6dc356a900e1bb5ec646c`，CI #226（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44010607879）**15/15 SUCCESS**。
+- 独立 REVIEW HEAD `d40b21b1d2759df5b0ba1dc23d7e420d67e55895`，CI #227（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44010992018）**15/15 SUCCESS**。344 Unit、16 Architecture、真正 P27 MovementProbe 六类场景与原有 14 Job 回归完整全绿。
+- P27 目标 C 在 P60.F 已认证主体、会话/序号与逻辑 Tick、P25 Speed Modifier、P26 控制及 P20 Relocate+Spatial 原子一致性范围内正式 **ACCEPTED**，四视角必需阻塞 0。
+- 真实生产 P60 网络命令绑身份、P28 Motion/Navigation、P29 完整 Violation/Corrections、P62 Replay/P64 负载仍独立验收；P19 Hash v5 与 v4 不可直接比较。
+- 本次正式状态 HEAD CI 尚未运行，**不能以 #227 代替正式验收状态 HEAD 自身的证据**。下一阶段 P28 — Server Motion / Path，依赖 P23/P27 已满足。

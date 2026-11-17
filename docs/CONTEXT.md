@@ -5,7 +5,7 @@
 
 ## 当前最新阶段
 
-P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（REVIEW）**（依赖 P20/P25/P26/P60.F），首次真实 CI 尚未运行。main 直推、不创建分支。
+P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（ACCEPTED）**（依赖 P20/P25/P26/P60.F），首次真实 CI 尚未运行。main 直推、不创建分支。
 
 ## 前置阶段
 
@@ -123,3 +123,7 @@ P25 稳定实现 #220、独立 REVIEW HEAD `6d66ae9` #221 **各 14/14 SUCCESS**�
 ## P27 进入 REVIEW
 
 P27 可信主体/会话与有序移动实现 #225 **15/15 SUCCESS**（342 Unit），边界加固 #226 **15/15 SUCCESS**（344 Unit/16 Architecture）并通过 P27 六类真实 Probe 与旧十四 Job。#224 CS8602 Build FAIL 已真实修复；四视角审查 [P27_MOVEMENT_REVIEW](reviews/P27_MOVEMENT_REVIEW.md) 已单独提交候选，审查 HEAD 需要自己取得 15/15 SUCCESS 才能正式 ACCEPTED。P60 真网关/P28 Path/P29 反作弊/P62/P64 后续独立。
+
+## P27 正式 ACCEPTED 决议（待验证自身 HEAD）
+
+稳定实现 #226 与独立四视角审查 #227 分别 **15/15 SUCCESS**（344/344 Unit、16/16 Architecture，P27 六场景与旧十四 Job）。P27 C 目标正式 ACCEPTED，正式验收状态提交 HEAD CI 尚待独立复核。下一安全开发 P28 Server Motion / Path，直接依赖 P23 Terrain/Collision/Navigation 与 P27 Movement 均 ACCEPTED。注意 P60 真实生产网关/P29 Violation/P62/P64 另行验收；严禁通过外部反序列化任意 IWorldAction 绕过可信绑定。
