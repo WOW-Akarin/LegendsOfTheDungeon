@@ -82,3 +82,5 @@ P27 三阶段 CI #226/#227/#228 各 15/15 SUCCESS，344 Unit/16 Architecture，�
 - [modules/WORLD_MOTION.md](modules/WORLD_MOTION.md)：P28 服务器运动、版本化 P23 导航路径与唯一 Transform
 - [progress/P28.md](progress/P28.md)：P28 实现/真实 CI/独立审查进度
 - [reviews/P28_SERVER_MOTION_REVIEW.md](reviews/P28_SERVER_MOTION_REVIEW.md)：P28 独立四视角质量审查与正式验收证据
+
+P28 正式 ACCEPTED（目标 C）：稳定实现 #235、独立四视角 REVIEW #236 各 16/16 SUCCESS，367 Unit /16 Architecture；正式状态 HEAD CI 待独立核验。下一 P29 Movement Validation。

@@ -57,3 +57,8 @@
 ## 独立 REVIEW 结论（自身 CI 尚待验证）
 
 按 P28 C 已指定的十类策略状态机、P23 PathPort 真消费/版本核验、抢占/取消/超时/实体退休、P20 唯一 Transform/Spatial 和 P19 固定 Tick 与拒绝优先约束，稳定实现 #235 范围内**尚无必修阻塞**。审查承认二维平面适配器不等于真实生产动态 3D Navigation、P29 反作弊、P60 完整网络安全或 P64 性能，留待各阶段专项验收。REVIEW HEAD 必须单独 **16/16 SUCCESS** 才能进入正式 ACCEPTED。
+
+## 独立 REVIEW HEAD 与正式 ACCEPTED 决议
+
+- 独立 REVIEW HEAD `37cc14cf389b81e6246234a459a89cced10494c5`，CI #236（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016560072）**16/16 SUCCESS**，367/367 Unit、16/16 Architecture、十模式 P28 六类真 Probe + 历史十五 Job 全 PASS。
+- 实现 HEAD #235 与 REVIEW HEAD #236 均独立全绿，确认四视角 P28 目标 C 范围必修阻塞为零，正式 **ACCEPTED**。状态决议 HEAD CI 必须另外执行，不能将 #236 作为它的证明。

@@ -1,6 +1,6 @@
 # P28 — Server Motion / Path 技术契约
 
-状态：**REVIEW**（目标 C），直接依赖 P23 Terrain/Collision/Navigation B+C 与 P27 Movement C 均 ACCEPTED；首次实现 CI 尚未执行。
+状态：**ACCEPTED**（目标 C），直接依赖 P23 Terrain/Collision/Navigation B+C 与 P27 Movement C 均 ACCEPTED；首次实现 CI 尚未执行。
 
 ## 角色、唯一当前位置及状态机
 
@@ -35,3 +35,8 @@
 
 - 首次全绿 #234 16/16 SUCCESS（363 Unit），Spline 实际位移上限和 P23 BudgetExceeded/Cancelled/恶意路径加固后的实现 HEAD `19ccdf2f97311234c2e158c4f0d97729c8bba6fe` CI #235 **16/16 SUCCESS**（367 Unit /16 Architecture）。
 - [P28 四视角 REVIEW](../reviews/P28_SERVER_MOTION_REVIEW.md) 单独提交，REVIEW HEAD 和正式 ACCEPTED HEAD 仍须各自完整 16 Job 验证。
+
+## P28 目标 C 正式验收
+
+- 实现加固 HEAD `19ccdf2` CI #235 与独立 REVIEW HEAD `37cc14c` CI #236 **各 16/16 SUCCESS**（367 Unit /16 Architecture；十种 Server Motion + P23 实路径 + 所有旧十五 Job）。P28 C 已正式 ACCEPTED，当前正式验收状态 HEAD 自身待 CI。
+- 未将 P28 的静态平面参考 Adapter、平滑路径插值或可信 Jump/Knockback 当作 P29 的正式反作弊/处罚或完整 3D/动态碰撞。下阶段 P29。

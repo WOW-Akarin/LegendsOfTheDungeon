@@ -5,7 +5,7 @@
 
 ## 当前最新阶段
 
-P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（ACCEPTED，C）** 已具备三阶段真实 CI；当前 **P28 Server Motion / Path（REVIEW）**（直接依赖 P23/P27 ACCEPTED），首次真实 CI 尚未运行。main 直推、不创建分支。
+P00–P23、P24(B)、P25(C)、P26(C) 均正式 ACCEPTED。最新 P25 稳定实现 #220、独立 REVIEW #221、正式 ACCEPTED HEAD `59d8d55` #222 均 14/14 SUCCESS（334 Unit / 16 Architecture）；当前 **P27 Movement State / Speed / Input（ACCEPTED，C）** 已具备三阶段真实 CI；当前 **P28 Server Motion / Path（ACCEPTED）**（直接依赖 P23/P27 ACCEPTED），首次真实 CI 尚未运行。main 直推、不创建分支。
 
 ## 前置阶段
 
@@ -145,3 +145,8 @@ P27 可信主体/会话与有序移动实现 #225 **15/15 SUCCESS**（342 Unit�
 ## P28 稳定实现与 REVIEW
 
 P28 十类服务器 Motion 的真实 P23/P18/P20 闭环首次成功 #234 **16/16 SUCCESS**（363 Unit），修复 Spline smoothstep 真实速度预算与追加 P23 失败/畸形结果负向后稳定 HEAD `19ccdf2f97311234c2e158c4f0d97729c8bba6fe` CI #235 **16/16 SUCCESS**（367 Unit /16 Architecture），P28 六组 Probe + 历史十五 Job 全绿；失败历史 #230–#233 归档。独立四视角审查 [P28_SERVER_MOTION_REVIEW](reviews/P28_SERVER_MOTION_REVIEW.md) 单独提交候选，必须检查其自身 CI 16/16，之后才正式 ACCEPTED。尚未进行 P29 Detection/Correction 或 P60 真实 Socket 身份认证。
+
+## P28 ACCEPTED，下一阶段 P29
+
+- P28 实现加固 HEAD `19ccdf2` CI #235、独立四视角 REVIEW HEAD `37cc14c` CI #236，**均 16/16 SUCCESS**（367 Unit /16 Architecture、P28 十模式 MotionProbe 及旧十五 Job）。四视角必修项 0，P28 C 正式 ACCEPTED；**当前正式 ACCEPTED 状态 HEAD 自己仍需要 16 Job CI 验证**。
+- 下阶段 **P29 — Movement Validation**，依赖 P27 + P28 均 ACCEPTED，需独立实现速度/跳变/非法区域基础规则、可追溯 Accept/Correct/Reject/Flag、合法与违规数据集误判量化、检测与处罚分离。P28 并未交付 P29 判罚；P60 生产认证端、P62 Replay/P64 长稳独立验收。

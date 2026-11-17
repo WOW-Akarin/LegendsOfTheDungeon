@@ -215,3 +215,8 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/L
 
 - 实现 #234 首次 16/16 SUCCESS，363 Unit/16 Architecture。补强 P25 Spline 单 Tick 真实速度界、P23 取消/预算、错路径回执后实现 HEAD `19ccdf2` CI #235 **16/16 SUCCESS**，367/367 Unit、16/16 Architecture，P28 六组真实 Probe 全 PASS 和旧十五 Job 无回归。
 - 独立四视角 [P28 SERVER MOTION REVIEW](../reviews/P28_SERVER_MOTION_REVIEW.md) 已准备，须 REVIEW HEAD 与正式 ACCEPTED HEAD 分别跑 16 Job，不能以实现 HEAD #235 冒充。
+
+## P28 目标 C 独立 REVIEW 与正式 ACCEPTED
+
+- 稳定实现 CI #235 与独立 REVIEW CI #236 均 16/16 SUCCESS，367 Unit、16 Architecture、P23 MotionProbe 十模式/六类真实场景及旧 15 Job 全绿。
+- P28 C 正式 ACCEPTED；正式状态提交 HEAD CI 尚未完成，不可提前将这份归档当作完整 CI 证据。P29 Movement Validation 是独立下阶段。

@@ -2,8 +2,8 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：**P28 — Server Motion / Path（REVIEW，目标 C）**；P27 C 正式 ACCEPTED
-正式 ACCEPTED：P00–P23、P24(B)、P25(C)、P26(C)、P27(C)；P25 与 P27 实现/独立 REVIEW/正式 ACCEPTED HEAD 的真实 CI 均全绿（最新 P27 15 Job）。
+当前阶段：**P28 — Server Motion / Path（ACCEPTED，目标 C）**；P27 C 正式 ACCEPTED
+正式 ACCEPTED：P00–P23、P24(B)、P25(C)、P26(C)、P27(C)、P28(C)；P25 与 P27 实现/独立 REVIEW/正式 ACCEPTED HEAD 的真实 CI 均全绿（最新 P27 15 Job）。
 
 ## 基线真实证据
 
@@ -187,3 +187,11 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - Spline 实际位移预算加固、P23 BudgetExceeded/Cancelled 和伪造路径回执 fail-closed 后，稳定 HEAD `19ccdf2f97311234c2e158c4f0d97729c8bba6fe`，CI #235（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016152259）**16/16 SUCCESS**，367 Unit / 16 Architecture；真实 P28 六组探针和全部历史集成均 PASS。
 - #230–#233 编译/测试真实失败与修复及对照证据完整保留在 [P28 阶段记录](progress/P28.md)；无分析器抑制或测试删减。
 - [P28 独立四视角 REVIEW](reviews/P28_SERVER_MOTION_REVIEW.md) 单独提交，当前阶段 **REVIEW**。REVIEW HEAD 自身 CI 尚未运行，正式 ACCEPTED **尚不能宣称**。
+
+## P28 正式 ACCEPTED 决议（状态 HEAD 自身 CI 待执行）
+
+- 稳定实现 HEAD `19ccdf2f97311234c2e158c4f0d97729c8bba6fe`，CI #235（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016152259）**16/16 SUCCESS**，367 Unit /16 Architecture。
+- 独立四视角 REVIEW HEAD `37cc14cf389b81e6246234a459a89cced10494c5`，CI #236（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/44016560072）**16/16 SUCCESS**，相同全部 Unit/Architecture、十类 Motion/六大类真实 Probe 与旧十五项集成均 PASS。
+- P28 目标 C 正式 **ACCEPTED**：Point/Random/Chase/Follow/Flee/Home/Waypoint/Spline/Jump/Knockback 服务器状态机、P23 真实路径消费及严格版本核验、取消/抢占/超时/无路/目标死亡、P20 Transform/Spatial 单一位置真相、P25 速度/控制和 P27 玩家会话切换、P19 v6 Replay 摘要；本阶段四视角必修阻塞为 0。
+- P29 Movement Validation 的可追溯 Violation/Accept/Correct/Reject/Flag、完整动态地图/3D Collision、P60 真实 Socket/Host 身份绑定、P62/P64 仍未完成；不可归入本阶段已验收。
+- **本次 ACCEPTED 状态提交 HEAD 尚须自身完整 16 Job CI**，不以已通过的 #236 冒充状态提交验证。下一阶段 P29，直接依赖 P27/P28 均已 ACCEPTED。
