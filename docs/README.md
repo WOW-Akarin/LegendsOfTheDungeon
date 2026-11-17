@@ -45,7 +45,7 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 ## 当前状态
 
 当前里程碑：M3 世界补齐。  
-当前阶段：P25 — Stats / Resources / Modifier，**IN_PROGRESS**（目标 C）；P00–P23、P24(B)、P26(C) 已 ACCEPTED。实时状态、分阶段 CI 与限制以 [PROGRESS.md](PROGRESS.md) 为准。
+当前阶段：P25 — Stats / Resources / Modifier，**REVIEW**（目标 C）；P00–P23、P24(B)、P26(C) 已 ACCEPTED。实时状态、分阶段 CI 与限制以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 
@@ -59,6 +59,7 @@ P00 固定的 AzerothCore 研究 SHA：
 - 当前用户明确要求持续直接更新 `main`，因此本项目当前工作流不创建任务分支。
 - 复制、改写或分发上游代码/数据/测试向量前必须核查实际来源许可与归属要求。
 
+- [reviews/P25_ENTITY_ATTRIBUTES_REVIEW.md](reviews/P25_ENTITY_ATTRIBUTES_REVIEW.md)：P25 四视角独立审查
 - [modules/ENTITY_ATTRIBUTES.md](modules/ENTITY_ATTRIBUTES.md)：P25 属性/资源/Modifier 窄契约、优先级、裁剪和快照
 - [progress/P25.md](progress/P25.md)：P25 开发、CI 与审查证据
 - [modules/ENVIRONMENT_QUERIES.md](modules/ENVIRONMENT_QUERIES.md)：P23 地形、碰撞与导航 Port、平面障碍参考适配器

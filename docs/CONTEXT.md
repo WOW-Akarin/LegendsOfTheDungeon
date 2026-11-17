@@ -98,3 +98,7 @@ P23 **ACCEPTED（B+C）**：稳定实现 #213、独立 REVIEW #214、正式 ACCE
 ## P25 当前安全入口（2026-11-17）
 
 最新完整绿色基线 P23 归档 HEAD `84b43c1`、CI #216 **13/13 SUCCESS**；P00–P23、P24(B)、P26(C) ACCEPTED。P25 Stats/Resources/Modifier 当前 **IN_PROGRESS（目标 C）**，依赖 P24/P07 已满足。P25 增加 Entities 属性资源账本与 WorldInstance 窄写路由，P19 状态 Hash schema v4，Unit + 真实 AttributesProbe 及第 14 个 CI Job。首次实现 HEAD CI 尚未运行，不能 ACCEPTED。恢复顺序：查看 [P25](progress/P25.md) → CI → 修正 → 独立四视角 REVIEW → 正式 ACCEPTED；始终只在 main 推送。
+
+## P25 实现稳定，当前 REVIEW
+
+P25 稳定实现 `a90505a` CI #220 **14/14 SUCCESS**（334 Unit、16 Architecture、真实 P25 Probe + 原有十三项），#217/#218 失败已修复并保留。当前 **REVIEW**：独立四视角审查 [P25](reviews/P25_ENTITY_ATTRIBUTES_REVIEW.md) 另行提交，审查 HEAD 需单独 14 Job 全绿后才正式 ACCEPTED。P19 digest v4 新旧 Hash 不兼容、未来 P27/Combat/Replay/负载为后续范围。

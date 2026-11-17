@@ -117,3 +117,9 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - 同步重算采用 decimal 两位小数 AwayFromZero、优先级与句柄序号稳定排序、最多 64 属性/64 资源/256 来源；先验证候选，成功后才提交。最大资源降低裁剪 Current、不凭空回复；死亡拒绝资源消费/回复。
 - P19 `WorldStateDigest` schema v4 纳入全部属性/派生公式/来源修饰/资源账本及末尾句柄序号，区分相同有效值不同来源。
 - 新增 Unit 和真实 P18/P17/P19 `AttributesProbe` 五场景，第 14 个阻断 CI Job `entity-attributes`。本次首次提交的 CI **NOT_RUN**，不可将完成代码视为阶段验收。参见 [P25](progress/P25.md) 与 [ENTITY_ATTRIBUTES](modules/ENTITY_ATTRIBUTES.md)。
+
+## P25 稳定实现与独立 REVIEW 阶段
+
+- P25 稳定代码 HEAD `a90505a1f4ce23dc0ac6e37c945ebb28839d5073`，CI #220（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43999035617）**14/14 SUCCESS**，334 Unit、16 Architecture、真实 `entity-attributes` 五场景及原有全部 13 Job 回归通过。
+- 失败历程 #217 xUnit2031 Release Build FAIL、#218 P20 既有快照相等 330/331 Unit FAIL；#219 修复后 14 Job SUCCESS，#220 256 Modifier 限额及 Resource Decimal 溢出增强后再绿。未弱化 Gate。
+- 独立四视角审查 [P25 REVIEW](reviews/P25_ENTITY_ATTRIBUTES_REVIEW.md) 已作为单独提交候选，阶段进入 **REVIEW**；审查 HEAD 自身 CI 尚待运行，正式 ACCEPTED 尚未给出。下阶段 P27 必须等 P25 验收完成。
