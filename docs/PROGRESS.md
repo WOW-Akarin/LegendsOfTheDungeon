@@ -2,8 +2,8 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：P22 — Spawn / Respawn（REVIEW，目标 C）
-正式 ACCEPTED：P00–P21、P24(B)、P26(C)。P22 进入独立 REVIEW，尚未正式 ACCEPTED。
+当前阶段：P22 — Spawn / Respawn（ACCEPTED，目标 C）
+正式 ACCEPTED：P00–P21、P24(B)、P26(C)。P22(C) 正式 ACCEPTED；状态提交 CI 尚待核验。
 
 ## 基线真实证据
 
@@ -48,11 +48,11 @@ P21 实现 #197、独立 REVIEW #198、正式 ACCEPTED #199 各自 11/11 SUCCESS
 
 - 稳定实现 HEAD `485e94891dfd3c3c8db85196b02a6d6e755b6a26`，CI #205（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43984436900）**12/12 SUCCESS**，315/315 Unit、16/16 Architecture，真实 P22 WorldSpawnProbe 五场景和原有十一个 Job 全 PASS。
 - 真实历程 #201 初次十二 Job PASS（307 Unit）、#202 因 Timer Tick 异常类型错序 311/312 Unit FAIL、#203 修复后十二 Job PASS（312 Unit）、#204 故障生命周期加固十二 Job PASS（314 Unit）、#205 防 Draining 部分副作用加固十二 Job PASS（315 Unit）。失败已透明保留，不豁免 Gate。
-- 独立审查 [P22 Spawn Review](reviews/P22_SPAWN_RESPAWN_REVIEW.md) 已另行提交；**本次 REVIEW HEAD CI 尚待验证**。
+- 独立审查 [P22 Spawn Review](reviews/P22_SPAWN_RESPAWN_REVIEW.md) 已另行提交；独立 REVIEW HEAD `fd099e818851c255cbb125457d455eaca4b6d39c` 的 CI #206（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43984888412）**12/12 SUCCESS**，审查完成并正式 ACCEPTED。
 
 ## 下一阶段安全动作
 
-核验独立 REVIEW HEAD 的 12 Job CI，随后正式 ACCEPTED HEAD 再独立跑全量。C 级只验 P22 Spawn/Timer/Grid/关联/Checkpoint 防副本安全边界，不将外部 DB/Host 事务、完整 P62 Replay 或 P64 大规模负载冒充完成。
+核验本次正式 ACCEPTED HEAD 的 12 Job CI，归档三阶段结果。C 级只验 P22 Spawn/Timer/Grid/关联/Checkpoint 防副本安全边界，不将外部 DB/Host 事务、完整 P62 Replay 或 P64 大规模负载冒充完成。
 
 ## P22 实现 HEAD 首次真实验证与加固
 
@@ -63,3 +63,10 @@ P21 实现 #197、独立 REVIEW #198、正式 ACCEPTED #199 各自 11/11 SUCCESS
 
 - #202 跳 Tick / 超时重叠错误优先级导致 Unit 311/312 FAIL，未被任何 Gate 豁免；修复后 #203 **12/12 SUCCESS**，312 Unit / 16 Architecture。
 - 进一步加固 Faulted/Stopped World 的 Registry 写入拒绝及 Draining 不运行 Timers，新增两个专门 P18 真实回归，下一 HEAD CI 尚未验证。
+
+## P22 正式验收记录
+
+- 实现 HEAD `485e94891dfd3c3c8db85196b02a6d6e755b6a26`：CI #205 **12/12 SUCCESS**，315 Unit / 16 Architecture。
+- 独立 REVIEW HEAD `fd099e818851c255cbb125457d455eaca4b6d39c`：CI #206 **12/12 SUCCESS**，315 Unit / 16 Architecture。
+- P22 C 必需 Spawn/Respawn/LinkedRespawn/Grid/Checkpoint 防副本证据齐备，必修技术阻塞 0，**正式 ACCEPTED**。
+- 本次验收状态提交自身必须另跑 12 Job。真实 DB 跨事务恢复、完整 P62 Replay、P64 负载仍不在 P22 C 结论内。

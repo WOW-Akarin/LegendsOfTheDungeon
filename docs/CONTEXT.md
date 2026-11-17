@@ -61,3 +61,9 @@ P00–P20、P24(B)、P26(C) 已正式 ACCEPTED。最新 P26 归档 HEAD `58e8443
 - P22 状态转为 **REVIEW（目标 C）**：独立审查 [P22](reviews/P22_SPAWN_RESPAWN_REVIEW.md) 已另行提交，但 REVIEW HEAD CI 尚未验证。
 - 失败历史 #202（311/312 Unit FAIL，Timer Tick 非法组合的异常类型），#203 修复后 12 Job PASS、#204 Faulted/Stopped 守卫 12 Job PASS、#205 Draining Grid 前置拒绝 12 Job PASS。
 - Checkpoint 是明确的内存领域快照 + 外部持久化 Port 边界，并非 PostgreSQL 真实跨事务提交；崩溃后确认实例无 P17 真实恢复回执时永久 RecoveryHold，不能自动猜测再生。P62 完整跨存储 replay 与 P64 负载仍待后续阶段。
+
+## P22 正式验收状态（待验收 HEAD CI）
+
+- 稳定实现 `485e948` CI #205 12/12 SUCCESS，独立 REVIEW `fd099e8` CI #206 12/12 SUCCESS；315 Unit / 16 Architecture、P22 真实 Probe。
+- **P22 正式 ACCEPTED（目标 C）**，本次正式状态提交 HEAD CI 尚需独立 12 Job 完整核验。
+- P23 — Terrain / Collision / Navigation Ports 是后续可独立展开的候选阶段，直接依赖 P06/P09；P22 不代表 P23 已完成。

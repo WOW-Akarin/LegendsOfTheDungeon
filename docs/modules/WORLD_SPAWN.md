@@ -1,6 +1,6 @@
 # P22 — Spawn / Respawn 技术契约
 
-状态：REVIEW（目标 C）；依赖 P16.F/P19/P20/P24 均 ACCEPTED。稳定实现 HEAD `485e94891dfd3c3c8db85196b02a6d6e755b6a26` CI #205 十二 Job SUCCESS；独立 REVIEW HEAD 尚待 CI。
+状态：ACCEPTED（目标 C）；依赖 P16.F/P19/P20/P24 均 ACCEPTED。实现 #205、独立 REVIEW HEAD `fd099e818851c255cbb125457d455eaca4b6d39c` CI #206 均 12/12 SUCCESS；正式 ACCEPTED HEAD CI 待核验。
 
 ## 单一写所有权和注册表语义
 
@@ -53,3 +53,7 @@
 
 - #205（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43984436900）12/12 SUCCESS；315 Unit / 16 Architecture；P22 真实 WorldSpawnProbe 五个场景与旧全部回归通过。
 - 阶段实现首次成功 #201；#202 负向异常类型错序 FAIL；#203 修复成功；#204 Faulted/Stopped 守卫成功；#205 Draining Grid 未退休前拒绝成功。独立四视角审查：[P22](../reviews/P22_SPAWN_RESPAWN_REVIEW.md)。
+
+## 独立 REVIEW 成功与正式接受
+
+[P22 四视角审查](../reviews/P22_SPAWN_RESPAWN_REVIEW.md) HEAD `fd099e818851c255cbb125457d455eaca4b6d39c` 的 CI #206 十二 Job SUCCESS，315 Unit、16 Architecture，当前 C 阶段必修阻塞 0，正式 ACCEPTED。验收状态 HEAD 自身仍需跑完整 12 Job。
