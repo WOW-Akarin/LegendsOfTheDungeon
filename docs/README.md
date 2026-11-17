@@ -44,8 +44,8 @@ LegendsOfTheDungeon 的设计、决策、研究、进度和验收事实统一维
 
 ## 当前状态
 
-当前里程碑：M1 基础。  
-当前阶段：P18 — WorldMailbox / WorldExecutor，**ACCEPTED**。P00–P16 已验收，P17 仍受 P18/P24 依赖阻塞，实时状态以 [PROGRESS.md](PROGRESS.md) 为准。
+当前里程碑：M3 世界补齐。  
+当前阶段：P23 — Terrain / Collision / Navigation Ports，**REVIEW**（目标 B+C）；P00–P22、P24(B)、P26(C) 已 ACCEPTED。实时状态、分阶段 CI 与限制以 [PROGRESS.md](PROGRESS.md) 为准。
 
 P00 固定的 AzerothCore 研究 SHA：
 
@@ -61,3 +61,5 @@ P00 固定的 AzerothCore 研究 SHA：
 
 - [modules/ENVIRONMENT_QUERIES.md](modules/ENVIRONMENT_QUERIES.md)：P23 地形、碰撞与导航 Port、平面障碍参考适配器
 - [progress/P23.md](progress/P23.md)：P23 真实 CI 与验收状态
+
+- [reviews/P23_ENVIRONMENT_REVIEW.md](reviews/P23_ENVIRONMENT_REVIEW.md)：P23 功能、架构、失败恢复和证据四视角独立审查

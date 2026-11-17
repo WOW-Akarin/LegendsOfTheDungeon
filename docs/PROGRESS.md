@@ -2,7 +2,7 @@
 
 更新时间：2026-11-17
 分支：main（直接更新，不创建分支）
-当前阶段：P22 — Spawn / Respawn（ACCEPTED，目标 C）
+当前阶段：P23 — Terrain / Collision / Navigation Ports（REVIEW，目标 B+C）
 正式 ACCEPTED：P00–P21、P24(B)、P26(C)。P22(C) 正式 ACCEPTED，三阶段 CI 已全绿。
 
 ## 基线真实证据
@@ -87,3 +87,9 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - 明确区分区域外、阻挡、不可达、预算耗尽、逻辑截止 Tick、取消；不提供真实 NavMesh、复杂 3D 地形或 P28 Movement 集成。
 - 首批 P23 Unit 和独立 EnvironmentProbe 已接入 `environment-query` CI 阻断 Job（预计 13 Job），但**尚未得到提交 HEAD 的 CI 证据；不能 ACCEPTED**。
 - 详见 [P23](progress/P23.md) 与 [ENVIRONMENT_QUERIES](modules/ENVIRONMENT_QUERIES.md)。
+
+## P23 稳定实现与独立审查
+
+- P23 加固后实现 HEAD `cd9e804b944a3ae2ea0a5103bcede1e593b91e33`，CI #213（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43995006336）**13/13 SUCCESS**，322 Unit、16 Architecture、真实 P23 EnvironmentProbe 五场景和所有旧回归全绿。
+- 失败链 #209 CA1716、#210 CA1512、#211 CA1859 保留；#212 首次 13 Job 全绿，#213 结果不变量加固后再次全绿，所有 Gate 保持。
+- P23 已进入 **REVIEW**；[四视角审查](reviews/P23_ENVIRONMENT_REVIEW.md) 另行提交，必须等待 REVIEW HEAD 自身 CI 全绿后才能正式 ACCEPTED。暂无生产 P28 Movement/AI 调用方；3D NavMesh 和硬实时寻路不在此参考 Adapter 结论内。

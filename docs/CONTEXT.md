@@ -82,3 +82,7 @@ P00–P20、P24(B)、P26(C) 已正式 ACCEPTED。最新 P26 归档 HEAD `58e8443
 ## P23 恢复入口（2026-11-17）
 
 P22 正式 ACCEPTED 后，P23 B+C 已启动（IN_PROGRESS），三种环境查询 Port + 静态平面真实 Adapter、Unit/Fake 和 EnvironmentProbe 已就绪。预计 13 Job，但尚无真实 CI 通过证据；后续依次执行实现验证、独立 REVIEW、正式 ACCEPTED。P28 Motion/AI 生产调用方未实现，不能冒充生产链路已集成。以 [P23](progress/P23.md) 为准。
+
+## P23 稳定实现与 REVIEW（2026-11-17）
+
+P23 B+C 稳定实现 HEAD `cd9e804` CI #213 **13/13 SUCCESS**（322 Unit、16 Architecture、P23 五真实 Probe、全部旧集成）。状态 REVIEW；独立审查 [P23 REVIEW](reviews/P23_ENVIRONMENT_REVIEW.md) 已单独提交，其 HEAD CI 尚需运行。历史 #209/#210/#211 的失败在 [P23](progress/P23.md) 保留。不得称 P28 Movement/AI 已有调用方、不得混淆逻辑截止 Tick 与硬实时超时。
