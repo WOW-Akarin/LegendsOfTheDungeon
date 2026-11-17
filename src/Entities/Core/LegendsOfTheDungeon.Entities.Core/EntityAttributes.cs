@@ -107,7 +107,7 @@ public readonly record struct AttributeResourceSnapshot(
     AttributeKey Key, AttributeKey MaximumStat, decimal Current, decimal Maximum);
 
 /// <summary>稳定排序、不可原地修改的属性/资源/来源账本快照。</summary>
-public sealed class EntityAttributeSnapshot
+public sealed class EntityAttributeSnapshot : IEquatable<EntityAttributeSnapshot>
 {
     internal EntityAttributeSnapshot(
         IReadOnlyList<AttributeStatSnapshot> stats,
@@ -132,6 +132,32 @@ public sealed class EntityAttributeSnapshot
     public IReadOnlyList<AttributeResourceSnapshot> Resources { get; }
     /// <summary>最后发出的 Modifier 序号；撤销后也不能回退。</summary>
     public ulong LastModifierSequence { get; }
+
+    /// <summary>以所有值和来源账本进行结构比较，而非比较冻结数组引用。</summary>
+    /// <param name="other">另一份领域状态快照。</param>
+    /// <returns>状态与历史序号均相同则相等。</returns>
+    public bool Equals(EntityAttributeSnapshot? other) =>
+        other is not null &&
+        LastModifierSequence == other.LastModifierSequence &&
+        Stats.SequenceEqual(other.Stats) &&
+        Derived.SequenceEqual(other.Derived) &&
+        Modifiers.SequenceEqual(other.Modifiers) &&
+        Resources.SequenceEqual(other.Resources);
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => Equals(obj as EntityAttributeSnapshot);
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        hash.Add(LastModifierSequence);
+        foreach (var value in Stats) hash.Add(value);
+        foreach (var value in Derived) hash.Add(value);
+        foreach (var value in Modifiers) hash.Add(value);
+        foreach (var value in Resources) hash.Add(value);
+        return hash.ToHashCode();
+    }
 }
 
 /// <summary>

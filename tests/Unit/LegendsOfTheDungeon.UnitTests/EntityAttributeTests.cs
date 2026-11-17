@@ -299,6 +299,29 @@ public sealed class EntityAttributeTests
     }
 
     [Fact]
+    public void IdenticalCanonicalSnapshotsCompareByValueNotArrayIdentity()
+    {
+        var (world, executor, identity) = Create();
+        var emptyA = Snapshot(world, identity);
+        var emptyB = Snapshot(world, identity);
+        Assert.Equal(emptyA, emptyB);
+        Assert.Equal(emptyA.GetHashCode(), emptyB.GetHashCode());
+        Run(executor, ctx =>
+        {
+            world.SetBaseAttribute(ctx, identity, Power, 10m);
+            world.GrantAttributeModifier(ctx, identity, new AttributeModifierSource(7),
+                Power, AttributeModifierOperation.Flat, 5m, 0, out _);
+        });
+        var first = Snapshot(world, identity);
+        var second = Snapshot(world, identity);
+        Assert.Equal(first, second);
+        Assert.Equal(first.GetHashCode(), second.GetHashCode());
+        Assert.NotEqual(emptyA, first);
+        Run(executor, ctx => world.SetBaseAttribute(ctx, identity, Power, 20m));
+        Assert.NotEqual(first, Snapshot(world, identity));
+    }
+
+    [Fact]
     public void KeysAndDefinitionsRejectInvalidInput()
     {
         Assert.Throws<ArgumentException>(() => new AttributeKey(""));
