@@ -222,9 +222,9 @@ public sealed partial class WorldInstance
                 intent.Identity.Id, intent.Identity.Generation);
             var ledger = entry!.Movement;
             if (!ledger.IsBound) return WorldEntityResult.MovementUnbound;
-            if (ledger.Subject is not { } boundSubject ||
-                !string.Equals(intent.Subject?.SubjectKey, boundSubject.SubjectKey, StringComparison.Ordinal) ||
-                intent.Subject.Origin != boundSubject.Origin || intent.SessionVersion != ledger.SessionVersion)
+            if (intent.Subject is not { } actor || ledger.Subject is not { } boundSubject ||
+                !string.Equals(actor.SubjectKey, boundSubject.SubjectKey, StringComparison.Ordinal) ||
+                actor.Origin != boundSubject.Origin || intent.SessionVersion != ledger.SessionVersion)
                 return WorldEntityResult.MovementSubjectMismatch;
             if (intent.Sequence <= ledger.Sequence || intent.Tick <= ledger.LastTick)
                 return WorldEntityResult.MovementOutOfOrder;
