@@ -101,3 +101,11 @@ P22 实现 #205、独立 REVIEW #206、正式 ACCEPTED #207 全部 12/12 SUCCESS
 - 322 Unit / 16 Architecture、五类真实 P23 EnvironmentProbe 和原有十二项 Job 回归完整通过。目标 B+C 范围内必须修复的阻塞 0，**P23 正式 ACCEPTED**。
 - 本次状态提交 HEAD 的 CI **尚未运行**；不得用 #214 代表正式 ACCEPTED HEAD 的结果。未来 P28/AI 调用方验收 N/A，真实 NavMesh、硬实时抢占和 P64 负载仍非本阶段结论。
 - 下一阶段建议 **P25 — Stats / Resources / Modifier**（直接依赖 P24/P07 均 ACCEPTED）。P26 已单独 ACCEPTED，P27 需要 P25 才能推进。
+
+## P23 三阶段完整 CI 验收归档（最新证据）
+
+- 稳定实现 HEAD `cd9e804b944a3ae2ea0a5103bcede1e593b91e33`，CI #213 **13/13 SUCCESS**。
+- 独立 REVIEW HEAD `dc568e4fe317810a544e4bf8895089e2e84e4746`，CI #214 **13/13 SUCCESS**。
+- 正式 ACCEPTED HEAD `82851e7ef97b22d28a16c6eb275ec0ecb330a966`，CI #215（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43995827389）**13/13 SUCCESS**。基线 322/322 Unit、16/16 Architecture、新 P23 真实五场景及原有十二项阻断 Job 全 PASS；三阶段证据齐全。
+- #209/#210/#211 三次编译失败与修复记录保留，未降低 CS1591/分析器/架构/负向 Gate。P23 目标 B+C 正式收口，未来 P28/P37 真消费方、3D NavMesh 与 P64 性能单独验收。
+- 下阶段按依赖图推进 **P25 Stats / Resources / Modifier**（前置 P24/P07 ACCEPTED）；本归档提交自身的 CI 不预先声称已通过。

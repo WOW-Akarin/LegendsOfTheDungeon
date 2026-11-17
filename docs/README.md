@@ -64,4 +64,4 @@ P00 固定的 AzerothCore 研究 SHA：
 
 - [reviews/P23_ENVIRONMENT_REVIEW.md](reviews/P23_ENVIRONMENT_REVIEW.md)：P23 功能、架构、失败恢复和证据四视角独立审查
 
-- P23 正式决议基于实现 #213 与独立审查 #214 两轮 13 Job 全绿；状态提交 HEAD CI 仍须独立核验。下一阶段 P25 Stats / Resources / Modifier。
+- P23 正式决议基于实现 #213 与独立审查 #214 两轮 13 Job 全绿；状态提交 HEAD #215 亦已 13/13 SUCCESS。下一阶段 P25 Stats / Resources / Modifier。

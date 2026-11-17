@@ -90,3 +90,7 @@ P23 B+C 稳定实现 HEAD `cd9e804` CI #213 **13/13 SUCCESS**（322 Unit、16 Ar
 ## P23 正式 ACCEPTED，下一阶段 P25（2026-11-17）
 
 P23 加固实现 #213、独立四视角审查 #214 两轮 13/13 SUCCESS（322 Unit、16 Architecture、真实五场景 EnvironmentProbe）。P23 B+C 无必修技术阻塞，现正式 ACCEPTED；**本状态提交 HEAD 自身的 CI 待核验**。下一优先 P25 — Stats / Resources / Modifier（P24/P07 依赖已满足），而非重做已验收 P26。未来 P28/AI 与真实 NavMesh 另验。
+
+## P23 三阶段 CI 完成归档与恢复点（2026-11-17）
+
+P23 **ACCEPTED（B+C）**：稳定实现 #213、独立 REVIEW #214、正式 ACCEPTED HEAD `82851e7` #215 均为 **13/13 SUCCESS**（322 Unit、16 Architecture；五项真实环境 Probe + 前置全部回归）；#215 https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43995827389。三阶段已完成，本归档 HEAD CI 仍需单独核验。下一 P25 属性/资源/Modifier（P24/P07 依赖已满足）；P27 需先有 P25。详见 [P23](progress/P23.md)。

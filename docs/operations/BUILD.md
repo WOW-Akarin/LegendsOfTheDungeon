@@ -178,8 +178,8 @@ dotnet run --project tests/Integration/LegendsOfTheDungeon.WorldExecutionProbe/L
 - P18 独立 REVIEW HEAD run #160：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43880202422 — 六 Job 全部 SUCCESS。
 - P18 正式 ACCEPTED HEAD run #161：https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43880688909 — 六 Job 全部 SUCCESS，210 Unit、16 Architecture、WorldExecutionProbe 及全部前置集成通过。
 
-## P23 Environment Query（待真实 CI）
+## P23 Environment Query（已通过真实 CI）
 
 - 新项目：`src/Runtime/Environment/LegendsOfTheDungeon.Runtime.Environment`，仅依赖 Kernel/Runtime.Abstractions，无外部 NuGet 包；真实有限平面、障碍和有界导航 Adapter。
 - `environment-query` 是新第 13 个阻断 Job：`dotnet restore tests/Integration/LegendsOfTheDungeon.EnvironmentProbe/LegendsOfTheDungeon.EnvironmentProbe.csproj --locked-mode` 后运行对应 `dotnet run --configuration Release --no-restore`。
-- 预期标记 `P23_ENVIRONMENT_INTEGRATION_PASS`，Artifact `environment-query/report.txt`。本轮暂未实际执行。
+- 预期标记 `P23_ENVIRONMENT_INTEGRATION_PASS`，Artifact `environment-query/report.txt`。经独立真实 CI #213 实现、#214 REVIEW、#215 ACCEPTED HEAD 三轮 13/13 SUCCESS；322 Unit、16 Architecture，五类 P23 探针 PASS。

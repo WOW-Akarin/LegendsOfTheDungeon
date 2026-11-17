@@ -51,3 +51,8 @@ P23 定义的三 Port、Fake、真实平面障碍 Adapter 和无路/预算/逻�
 
 - REVIEW HEAD `dc568e4fe317810a544e4bf8895089e2e84e4746`，CI #214（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43995437055）**13/13 SUCCESS**，322/322 Unit、16/16 Architecture、P23 探针和所有原有 CI 全绿。
 - 四个审查视角必修阻塞 0；P23 B+C 仅限 Port 与真实二维参考 Adapter、Fake 及失败边界，正式 **ACCEPTED**。正式状态 HEAD CI 尚待单独复核；保留未来 Motion/AI、真实 3D NavMesh 与 P64 性能独立验收。
+
+## 正式 ACCEPTED HEAD 复验
+
+- P23 正式状态 HEAD `82851e7ef97b22d28a16c6eb275ec0ecb330a966`，CI #215（https://github.com/WOW-Akarin/LegendsOfTheDungeon/actions/runs/43995827389）**13/13 SUCCESS**，322/322 Unit、16/16 Architecture、P23 EnvironmentProbe 与此前全部集成 Job 均通过。
+- 稳定实现 #213、独立审查 #214、正式状态 #215 三轮完整成功，P23 B+C 正式收口。P28/P37 消费方和 3D NavMesh 仍为后续验收项。
